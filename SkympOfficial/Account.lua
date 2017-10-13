@@ -1,4 +1,4 @@
--- Account.lua
+п»ї-- Account.lua
 
 local Account = {}
 
@@ -13,7 +13,7 @@ function Account.Load(name, callback)
 		local playerData = {}
 		local success, err = pcall(function() playerData = Account.json.decode(str) end)
 		if not success then
-			-- json.decode бросила исключение
+			-- json.decode Р±СЂРѕСЃРёР»Р° РёСЃРєР»СЋС‡РµРЅРёРµ
 			SetTimer(0, function() callback(nil) end)
 			print(err)
 		else
@@ -115,7 +115,7 @@ function SetLook(player, look)
 	player:RemoveAllTintmasks()
 	for i = 1, #look.tints do
 		local tint = look.tints[i]
-		--player:AddTintmask(i, tint.texture, tint.type, tint.color, tonumber(tint.alpha)) -- краш игры
+		--player:AddTintmask(i, tint.texture, tint.type, tint.color, tonumber(tint.alpha)) -- РєСЂР°С€ РёРіСЂС‹
 		player:AddTintmask(tint.texture, tint.type, tint.color, tonumber(tint.alpha))
 	end
 	player:SetFacePresets(look.facePresets)
@@ -212,12 +212,12 @@ function Account.OnPlayerDisconnect(player)
 end
 
 local function ShowRegister(player)
-	player:ShowDialog(Account.enums.DialogRegister, "Input", "Придумайте пароль для Вашего аккаунта:", "", -1)
+	player:ShowDialog(Account.enums.DialogRegister, "Input", "РџСЂРёРґСѓРјР°Р№С‚Рµ РїР°СЂРѕР»СЊ РґР»СЏ Р’Р°С€РµРіРѕ Р°РєРєР°СѓРЅС‚Р°:", "", -1)
 end
 
 local function ShowLogin(player)
 return
-	player:ShowDialog(Account.enums.DialogLogin, "Input", "Введите Ваш пароль:", "", -1)
+	player:ShowDialog(Account.enums.DialogLogin, "Input", "Р’РІРµРґРёС‚Рµ Р’Р°С€ РїР°СЂРѕР»СЊ:", "", -1)
 end
 
 function Account.OnPlayerSpawn(player)
@@ -265,17 +265,17 @@ function Account.OnPlayerDialogResponse(player, dialogID, inputText, listItem)
 		end
 
 		if inputText:len() < minPass then 
-			player:SendChatMessage(Color.red .. "Пароль не должен быть короче " .. tostring(minPass) .. " символов")
+			player:SendChatMessage(Color.red .. "РџР°СЂРѕР»СЊ РЅРµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РєРѕСЂРѕС‡Рµ " .. tostring(minPass) .. " СЃРёРјРІРѕР»РѕРІ")
 			ShowRegister(player)
 		elseif inputText:len() > maxPass then 
-			player:SendChatMessage(Color.red .. "Пароль не должен быть длиннее " .. tostring(maxPass) .. " символов")
+			player:SendChatMessage(Color.red .. "РџР°СЂРѕР»СЊ РЅРµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РґР»РёРЅРЅРµРµ " .. tostring(maxPass) .. " СЃРёРјРІРѕР»РѕРІ")
 			ShowRegister(player)
 		elseif WrongCharsInPassword(inputText) then
-			player:SendChatMessage(Color.red .. "Пароль может содержать только символы латинского алфавита, цифры и '_'")
-			player:SendChatMessage(Color.grey .. "Если не удаётся переключить раскладку клавиатуры, попробуйте перезапустить клиент")
+			player:SendChatMessage(Color.red .. "РџР°СЂРѕР»СЊ РјРѕР¶РµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ С‚РѕР»СЊРєРѕ СЃРёРјРІРѕР»С‹ Р»Р°С‚РёРЅСЃРєРѕРіРѕ Р°Р»С„Р°РІРёС‚Р°, С†РёС„СЂС‹ Рё '_'")
+			player:SendChatMessage(Color.grey .. "Р•СЃР»Рё РЅРµ СѓРґР°С‘С‚СЃСЏ РїРµСЂРµРєР»СЋС‡РёС‚СЊ СЂР°СЃРєР»Р°РґРєСѓ РєР»Р°РІРёР°С‚СѓСЂС‹, РїРѕРїСЂРѕР±СѓР№С‚Рµ РїРµСЂРµР·Р°РїСѓСЃС‚РёС‚СЊ РєР»РёРµРЅС‚")
 			ShowRegister(player)
 		else
-			player:ShowDialog(Account.enums.DialogRepeatPass, "Input", "Пожалуйста, повторите пароль", "", -1)
+			player:ShowDialog(Account.enums.DialogRepeatPass, "Input", "РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїР°СЂРѕР»СЊ", "", -1)
 			Account.accounts[name].password = HashPassword(inputText)
 		end
 		return
@@ -289,7 +289,7 @@ function Account.OnPlayerDialogResponse(player, dialogID, inputText, listItem)
 		if HashPassword(inputText) ~= Account.accounts[name].password then
 			local maxAttempts = 3
 			Account.temp[name].authAttempts = Account.temp[name].authAttempts + 1
-			player:SendChatMessage(Color.red .. "Неправильный пароль (" .. Account.temp[name].authAttempts .. "/" .. maxAttempts .. ")")
+			player:SendChatMessage(Color.red .. "РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ РїР°СЂРѕР»СЊ (" .. Account.temp[name].authAttempts .. "/" .. maxAttempts .. ")")
 			if Account.temp[name].authAttempts == maxAttempts then
 				return player:Kick()
 			end
@@ -305,7 +305,7 @@ function Account.OnPlayerDialogResponse(player, dialogID, inputText, listItem)
 			return ShowRegister(player)
 		end
 		if HashPassword(inputText) ~= Account.accounts[name].password then
-			player:SendChatMessage(Color.red .. "Пароли не совпадают")
+			player:SendChatMessage(Color.red .. "РџР°СЂРѕР»Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚")
 			return ShowRegister(player)
 		end
 		Account.SavePlayer(player)
@@ -323,7 +323,7 @@ function Account.OnReady(player)
 	else
 		player:SetVirtualWorld(0)
 		SetLook(player, acc.look)
-		player:SendChatMessage("Добро пожаловать")
+		player:SendChatMessage("Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ")
 	end
 	player:MuteInventoryNotifications(true)
 	SetInventory(player, acc.inventory)
@@ -350,7 +350,7 @@ end
 function Account.OnPlayerCharacterCreated(player)
 	local name = player:GetName()
 	Account.accounts[name].look = GetLook(player)
-	player:SendChatMessage(Color.green .. "Провинция Скайрим приветствует Вас")
+	player:SendChatMessage(Color.green .. "РџСЂРѕРІРёРЅС†РёСЏ РЎРєР°Р№СЂРёРј РїСЂРёРІРµС‚СЃС‚РІСѓРµС‚ Р’Р°СЃ")
 	Account.SavePlayer(player)
 	player:SetVirtualWorld(0)
 end
