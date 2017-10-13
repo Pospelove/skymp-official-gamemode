@@ -1,4 +1,4 @@
-п»ї-- ItemTypes.lua
+-- ItemTypes.lua
 
 local ItemTypes = {}
 
@@ -33,7 +33,7 @@ function ItemTypes.OnPlayerChatCommand(player, tokens)
 		if not hasExtraPermission then return player:SendChatMessage(Strings.NoPermission) end
 		local itemT = ItemTypes.LookupByIdentifier(tostring(tokens[2]))
 		local count = tonumber(tokens[3])
-		if not itemT then return player:SendChatMessage(Color.red .. "РџСЂРµРґРјРµС‚ РЅРµ РЅР°Р№РґРµРЅ (" .. tostring(tokens[2]) .. ")") end
+		if not itemT then return player:SendChatMessage(Color.red .. "Предмет не найден (" .. tostring(tokens[2]) .. ")") end
 		if not count then count = 1 end
 		player:AddItem(itemT, count)
 		return

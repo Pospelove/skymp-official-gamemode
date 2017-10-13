@@ -1,4 +1,4 @@
-п»ї-- SkympOfficial.lua
+-- SkympOfficial.lua
 
 callbacks = {
 	-- Standard
@@ -54,7 +54,7 @@ function Main.OnPlayerChatCommand(player, tokens)
 
 	if tokens[1] == "/secretlogin" then
 		if tokens[2] == adminPassword then
-			player:SendChatMessage(Color.green .. "Р’С‹ РІРѕС€Р»Рё РєР°Рє СЂР°Р·СЂР°Р±РѕС‚С‡РёРє")
+			player:SendChatMessage(Color.green .. "Вы вошли как разработчик")
 			Main.isDeveloper[player:GetName()] = true
 			print(player:GetName() .. " used /secretlogin")
 		else
@@ -98,5 +98,5 @@ Color = {
 }
 
 Strings = {
-	NoPermission = Color.red .. "РЈ Р’Р°СЃ РЅРµС‚ РїСЂР°РІ РґР»СЏ РІС‹РїРѕР»РЅРµРЅРёСЏ СЌС‚РѕРіРѕ РґРµР№СЃС‚РІРёСЏ"
+	NoPermission = Color.red .. "У Вас нет прав для выполнения этого действия"
 }

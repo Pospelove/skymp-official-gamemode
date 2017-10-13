@@ -1,4 +1,4 @@
-﻿-- AntiCheat.lua
+-- AntiCheat.lua
 
 local AntiCheat = {}
 
