@@ -149,6 +149,47 @@ function SetInventory(player, inv)
 	end
 end
 
+function GetEquipment(player)
+	local eq = {}
+	for i = 1, player:GetNumInventorySlots() do
+		local entry = {}
+		local itemT = player:GetItemTypeInSlot(i)
+		entry.ident = itemT:GetIdentifier()
+		entry.hand = -1
+		if player:IsEquipped(itemT) and itemT:GetClass() ~= "Weapon" then
+			table.insert(eq, entry)
+		end
+	end
+	for i = 0, 1 do
+		local itemT = player:GetEquippedWeapon(i)
+		if itemT then
+			table.insert(eq, {ident = itemT:GetIdentifier(), hand = i})
+		end
+	end
+	return eq
+end
+
+function UnequipAllItems(player)
+	for i = 1, player:GetNumInventorySlots() do
+		local itemT = player:GetItemTypeInSlot(i)
+		if itemT and player:IsEquipped(itemT) then
+			player:UnequipItem(itemT)
+		end
+	end
+end
+
+function SetEquipment(player, eq)
+	UnequipAllItems(player)
+	if eq ~= nil then
+		for i = 1, #eq do
+			local entry = eq[i]
+			local itemT = ItemTypes.LookupByIdentifier(entry.ident)
+			local hand = entry.hand
+			player:EquipItem(itemT, hand)
+		end
+	end
+end
+
 local function SetRandomSpawn(player)
 	local Tamriel = Location(0x0000003c)
 	local spawns = {
@@ -327,6 +368,7 @@ function Account.OnReady(player)
 	end
 	player:MuteInventoryNotifications(true)
 	SetInventory(player, acc.inventory)
+	SetEquipment(player, acc.equipment)
 	player:MuteInventoryNotifications(false)
 end
 
@@ -340,6 +382,7 @@ function Account.OnPlayerUpdate(player)
 	Account.accounts[name].z = math.floor(player:GetZ())
 	Account.accounts[name].angle = math.floor(player:GetAngleZ())
 	Account.accounts[name].inventory = GetInventory(player)
+	Account.accounts[name].equipment = GetEquipment(player)
 	if player:GetLocation() then
 		Account.accounts[name].locationID = player:GetLocation():GetID()
 	else
