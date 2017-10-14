@@ -39,6 +39,17 @@ function ItemTypes.OnPlayerChatCommand(player, tokens)
 		return
 	end
 
+	if tokens[1] == "/enumitems" then
+		if not hasExtraPermission then return player:SendChatMessage(Strings.NoPermission) end
+		for i = 1, player:GetNumInventorySlots() do
+		local entry = {}
+		entry.ident = player:GetItemTypeInSlot(i):GetIdentifier()
+		entry.count = player:GetItemCountInSlot(i)
+		player:SendChatMessage(entry.ident .. " " .. entry.count)
+		end
+		return
+	end
+
 end
 
 function ItemTypes.LookupByIdentifier(str)

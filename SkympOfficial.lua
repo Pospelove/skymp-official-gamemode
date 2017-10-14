@@ -80,12 +80,15 @@ function OnServerInit()
 	for i = 1, #callbacks do
 		local fnName = callbacks[i]
 		_G[fnName] = function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
+			local val = true
 			for j = 1, #listeners do
 				local listener = listeners[j]
 				if type(listener[fnName]) == "function" then
-					listener[fnName](arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+					local result = listener[fnName](arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+					val = val and result
 				end
 			end
+			return val
 		end
 	end
 	OnServerInit()
