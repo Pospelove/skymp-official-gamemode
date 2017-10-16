@@ -46,6 +46,9 @@ Main = {
 		local tokens = Main.Split(str)
 		OnPlayerChatCommand(player, tokens)
 	end,
+
+	OnPlayerEquipItem = function(player, itemT)
+	end,
 }
 
 function Main.OnPlayerChatCommand(player, tokens)

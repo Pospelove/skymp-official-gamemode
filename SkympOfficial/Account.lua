@@ -368,7 +368,6 @@ function Account.OnReady(player)
 	end
 	player:MuteInventoryNotifications(true)
 	SetInventory(player, acc.inventory)
-	SetEquipment(player, acc.equipment)
 	player:MuteInventoryNotifications(false)
 end
 
@@ -382,7 +381,6 @@ function Account.OnPlayerUpdate(player)
 	Account.accounts[name].z = math.floor(player:GetZ())
 	Account.accounts[name].angle = math.floor(player:GetAngleZ())
 	Account.accounts[name].inventory = GetInventory(player)
-	Account.accounts[name].equipment = GetEquipment(player)
 	if player:GetLocation() then
 		Account.accounts[name].locationID = player:GetLocation():GetID()
 	else
