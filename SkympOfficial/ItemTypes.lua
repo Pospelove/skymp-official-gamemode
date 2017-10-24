@@ -14,7 +14,10 @@ function ItemTypes.Create()
 		{"IronShield",		"Armor",				0x00012EB6,		14.0,			55,			20.0},
 		{"Gold001",			"Misc.Gold",			0x0000000F,		0.0,			1,			nil},
 		{"Lockpick",		"Misc.Lockpick",		0x0000000A,		0.0,			3,			nil},
-		{"Drum",			"Misc.Misc",			0x000DABA9,		4.5,			11,			nil}
+		{"Drum",			"Misc.Misc",			0x000DABA9,		4.5,			11,			nil},
+		{"SteelSword",		"Weapon.Sword",			0x00013989,		10.0,			45,			8.0},
+		{"IronArrow",		"Ammo",					0x0001397D,		0.0,			1,			8.0},
+		{"LongBow",			"Weapon.Bow",			0x0003B562,		5.0,			50,			7.0},
 	}
 	for i = 1, #itemTs do
 		ItemType.Create(itemTs[i][1], itemTs[i][2], itemTs[i][3], itemTs[i][4], itemTs[i][5], itemTs[i][6])
@@ -47,6 +50,22 @@ function ItemTypes.OnPlayerChatCommand(player, tokens)
 		entry.count = player:GetItemCountInSlot(i)
 		player:SendChatMessage(entry.ident .. " " .. entry.count)
 		end
+		return
+	end
+
+	if tokens[1] == "/randeq" then
+		player:MuteInventoryNotifications(true)
+		if not hasExtraPermission then return player:SendChatMessage(Strings.NoPermission) end
+		for i = 1, player:GetNumInventorySlots() do
+			local itemT = player:GetItemTypeInSlot(i)
+			player:UnequipItem(itemT, -1)
+			if itemT:GetClass() == "Armor" or itemT:GetClass() == "Weapon" or itemT:GetClass() == "Ammo" then
+				if math.random(0, 1) == 1 then
+					player:EquipItem(itemT, -1)
+				end
+			end
+		end
+		player:MuteInventoryNotifications(false)
 		return
 	end
 

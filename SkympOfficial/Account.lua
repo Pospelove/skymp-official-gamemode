@@ -68,7 +68,7 @@ function Account.NewTemp()
 	}
 end
 
-function GetLook(player)
+function Account.GetLook(player)
 	local look = {}
 	if player:GetRace() then
 		look.raceID = player:GetRace():GetID()
@@ -104,7 +104,7 @@ function GetLook(player)
 	return look
 end
 
-function SetLook(player, look)
+function Account.SetLook(player, look)
 	if not look then return end
 	player:SetRace(Race(look.raceID))
 	player:SetWeight(look.weight)
@@ -127,7 +127,7 @@ function SetLook(player, look)
 	player:SetHeadTextureSetID(look.headTexture)
 end
 
-function GetInventory(player)
+function Account.GetInventory(player)
 	local inv = {}
 	for i = 1, player:GetNumInventorySlots() do
 		local entry = {}
@@ -138,7 +138,7 @@ function GetInventory(player)
 	return inv
 end
 
-function SetInventory(player, inv)
+function Account.SetInventory(player, inv)
 	player:RemoveAllItems()
 	if inv ~= nil then
 		for i = 1, #inv do
@@ -149,7 +149,7 @@ function SetInventory(player, inv)
 	end
 end
 
-function GetEquipment(player)
+function Account.GetEquipment(player)
 	local eq = {}
 	for i = 1, player:GetNumInventorySlots() do
 		local entry = {}
@@ -169,17 +169,17 @@ function GetEquipment(player)
 	return eq
 end
 
-function UnequipAllItems(player)
-	for i = 1, player:GetNumInventorySlots() do
-		local itemT = player:GetItemTypeInSlot(i)
-		if itemT and player:IsEquipped(itemT) then
-			player:UnequipItem(itemT)
+function Account.SetEquipment(player, eq)
+	local unequipAllItems = function(player)
+		for i = 1, player:GetNumInventorySlots() do
+			local itemT = player:GetItemTypeInSlot(i)
+			if itemT and player:IsEquipped(itemT) then
+				player:UnequipItem(itemT)
+			end
 		end
 	end
-end
 
-function SetEquipment(player, eq)
-	UnequipAllItems(player)
+	unequipAllItems(player)
 	if eq ~= nil then
 		for i = 1, #eq do
 			local entry = eq[i]
@@ -236,7 +236,7 @@ function Account.OnPlayerConnect(player)
 		local acc = Account.accounts[name]
 
 		if acc.locationID == 0 then
-			SetRandomSpawn(player)
+			setRandomSpawn(player)
 		else
 			player:SetSpawnPoint(Location(acc.locationID), acc.x, acc.y, acc.z, acc.angle)
 		end
@@ -363,11 +363,12 @@ function Account.OnReady(player)
 		player:ShowMenu("RaceSex Menu")
 	else
 		player:SetVirtualWorld(0)
-		SetLook(player, acc.look)
+		Account.SetLook(player, acc.look)
 		player:SendChatMessage("Добро пожаловать")
 	end
 	player:MuteInventoryNotifications(true)
-	SetInventory(player, acc.inventory)
+	Account.SetInventory(player, acc.inventory)
+	Account.SetEquipment(player, acc.equipment)
 	player:MuteInventoryNotifications(false)
 end
 
@@ -380,7 +381,8 @@ function Account.OnPlayerUpdate(player)
 	Account.accounts[name].y = math.floor(player:GetY())
 	Account.accounts[name].z = math.floor(player:GetZ())
 	Account.accounts[name].angle = math.floor(player:GetAngleZ())
-	Account.accounts[name].inventory = GetInventory(player)
+	Account.accounts[name].inventory = Account.GetInventory(player)
+	Account.accounts[name].equipment = Account.GetEquipment(player)
 	if player:GetLocation() then
 		Account.accounts[name].locationID = player:GetLocation():GetID()
 	else
@@ -390,7 +392,7 @@ end
 
 function Account.OnPlayerCharacterCreated(player)
 	local name = player:GetName()
-	Account.accounts[name].look = GetLook(player)
+	Account.accounts[name].look = Account.GetLook(player)
 	player:SendChatMessage(Color.green .. "Провинция Скайрим приветствует Вас")
 	Account.SavePlayer(player)
 	player:SetVirtualWorld(0)
