@@ -190,7 +190,7 @@ function Account.SetEquipment(player, eq)
 	end
 end
 
-local function SetRandomSpawn(player)
+function Account.SetRandomSpawn(player)
 	local Tamriel = Location(0x0000003c)
 	local spawns = {
 		{Tamriel, 17224.7734, -47204.4531, -51.8551, 58.7287}
@@ -213,7 +213,7 @@ function Account.OnServerInit()
 end
 
 function Account.OnPlayerConnect(player)
-	player:SetVirtualWorld(player:GetID())
+	player:SetVirtualWorld(player:GetID() + 1000000)
 
 	local name = player:GetName()
 
@@ -236,7 +236,7 @@ function Account.OnPlayerConnect(player)
 		local acc = Account.accounts[name]
 
 		if acc.locationID == 0 then
-			setRandomSpawn(player)
+			Account.SetRandomSpawn(player)
 		else
 			player:SetSpawnPoint(Location(acc.locationID), acc.x, acc.y, acc.z, acc.angle)
 		end

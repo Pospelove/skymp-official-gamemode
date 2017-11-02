@@ -51,6 +51,10 @@ Main = {
 	end,
 }
 
+function Main.IsTest()
+	return true
+end
+
 function Main.OnPlayerChatCommand(player, tokens)
 
 	local adminPassword = "228228"
@@ -72,13 +76,20 @@ function OnServerInit()
 	Account = require "SkympOfficial/Account"
 	AntiCheat = require "SkympOfficial/AntiCheat"
 	ItemTypes = require "SkympOfficial/ItemTypes"
+	Death = require "SkympOfficial/Death"
+	DemoMine = require "SkympOfficial/DemoMine"
 
 	listeners = {
 		Main,
 		Account,
 		AntiCheat,
 		ItemTypes,
+		Death
 	}
+	
+	if Main.IsTest() then
+		table.insert(listeners, DemoMine)
+	end
 
 	for i = 1, #callbacks do
 		local fnName = callbacks[i]
@@ -100,7 +111,8 @@ end
 Color = {
 	green =		"#1edb6d",
 	red =		"#db271e",
-	grey =		"#bebebe"
+	grey =		"#bebebe",
+	gold =		"#f4e241",
 }
 
 Strings = {

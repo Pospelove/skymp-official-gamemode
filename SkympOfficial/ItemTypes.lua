@@ -18,6 +18,8 @@ function ItemTypes.Create()
 		{"SteelSword",		"Weapon.Sword",			0x00013989,		10.0,			45,			8.0},
 		{"IronArrow",		"Ammo",					0x0001397D,		0.0,			1,			8.0},
 		{"LongBow",			"Weapon.Bow",			0x0003B562,		5.0,			50,			7.0},
+		{"Pickaxe",			"Weapon.WarAxe",		0x000E3C16,		10.0,			0,			0},
+		{"IronOre",			"Misc.Misc",			0x00071CF3,		0.5,			1,			nil},
 	}
 	for i = 1, #itemTs do
 		ItemType.Create(itemTs[i][1], itemTs[i][2], itemTs[i][3], itemTs[i][4], itemTs[i][5], itemTs[i][6])
