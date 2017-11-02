@@ -6,7 +6,7 @@ function ItemTypes.Create()
 	local itemTs = {
 	--	Identifier			Class					FormID			Weight			Price		Damage/Armor/etc
 		{"IronSword",		"Weapon.Sword",			0x00012EB7,		8.0,			30,			7.0},
-		{"IronGreatsword",	"Weapon.GreatSword",	0x0001359D,		14.0,			60,			14.5},
+		{"IronGreatsword",	"Weapon.GreatSword",	0x0001359D,		14.0,			60,			70.5},
 		{"IronArmor",		"Armor",				0x00012E49,		31.0,			150,		26.0},
 		{"IronBoots",		"Armor",				0x00012E4B,		6.0,			25,			10.0},
 		{"IronGauntlets",	"Armor",				0x00012E46,		5.0,			30,			10.0},
@@ -18,7 +18,7 @@ function ItemTypes.Create()
 		{"SteelSword",		"Weapon.Sword",			0x00013989,		10.0,			45,			8.0},
 		{"IronArrow",		"Ammo",					0x0001397D,		0.0,			1,			8.0},
 		{"LongBow",			"Weapon.Bow",			0x0003B562,		5.0,			50,			7.0},
-		{"Pickaxe",			"Weapon.WarAxe",		0x000E3C16,		10.0,			0,			0},
+		{"Pickaxe",			"Weapon.WarAxe",		0x000E3C16,		10.0,			0,			5.0},
 		{"IronOre",			"Misc.Misc",			0x00071CF3,		0.5,			1,			nil},
 	}
 	for i = 1, #itemTs do
@@ -78,6 +78,14 @@ function ItemTypes.LookupByIdentifier(str)
 		ItemTypes.cache[str] = ItemType.LookupByIdentifier(str)
 	end
 	return ItemTypes.cache[str]
+end
+
+function ItemTypes.OnPlayerUpdate(player)
+	if player:IsStanding() then
+		local Gold001 = ItemTypes.LookupByIdentifier("Gold001")
+		local n = player:GetItemCount(Gold001)
+		player:SetDisplayGold(n)
+	end
 end
 
 return ItemTypes

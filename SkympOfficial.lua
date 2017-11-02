@@ -78,6 +78,7 @@ function OnServerInit()
 	ItemTypes = require "SkympOfficial/ItemTypes"
 	Death = require "SkympOfficial/Death"
 	DemoMine = require "SkympOfficial/DemoMine"
+	Chat = require "SkympOfficial/Chat"
 
 	listeners = {
 		Main,

@@ -23,8 +23,8 @@ function Death.OnPlayerDying(player, killer)
 end
 
 function Death.OnPlayerDeath(player, killer)
-	player:SendChatMessage(Color.grey .. "Вы будете перемещены на точку возрождения через 3 секуды")
-	SetTimer(3333, function()
+	player:SendChatMessage(Color.grey .. "Вы будете перемещены на точку возрождения через 5 секунд")
+	SetTimer(5250, function()
 		Account.SetRandomSpawn(player)
 		player:Spawn()
 	end)

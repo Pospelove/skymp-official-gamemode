@@ -87,6 +87,14 @@ function DemoMine.OnPlayerHitObject(player, object, weap, ammo)
 	end
 end
 
+function DemoMine.OnPlayerHitPlayer(player, target, weap, ammo)
+	if DemoMine.state[player:GetName()] and DemoMine.state[target:GetName()] then
+		player:SendChatMessage(Color.red .. "Вы не можете наносить урон другим работникам шахты")
+		return false
+	end
+	return true
+end
+
 function DemoMine.OnPlayerDialogResponse(player, dialogID, inputText, listItem)
 
 	if dialogID == 10001 then
