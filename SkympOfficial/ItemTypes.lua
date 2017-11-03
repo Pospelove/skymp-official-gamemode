@@ -4,23 +4,23 @@ local ItemTypes = {}
 
 function ItemTypes.Create()
 	local itemTs = {
-	--	Identifier			Class					FormID			Weight			Price		Damage/Armor/etc
-		{"IronSword",		"Weapon.Sword",			0x00012EB7,		8.0,			30,			7.0},
-		{"IronGreatsword",	"Weapon.GreatSword",	0x0001359D,		14.0,			60,			70.5},
-		{"IronArmor",		"Armor",				0x00012E49,		31.0,			150,		26.0},
-		{"IronBoots",		"Armor",				0x00012E4B,		6.0,			25,			10.0},
-		{"IronGauntlets",	"Armor",				0x00012E46,		5.0,			30,			10.0},
-		{"IronHelmet",		"Armor",				0x00012E4D,		5.0,			80,			15.0},
-		{"IronShield",		"Armor",				0x00012EB6,		14.0,			55,			20.0},
-		{"Gold001",			"Misc.Gold",			0x0000000F,		0.0,			1,			nil},
-		{"Lockpick",		"Misc.Lockpick",		0x0000000A,		0.0,			3,			nil},
-		{"Drum",			"Misc.Misc",			0x000DABA9,		4.5,			11,			nil},
-		{"SteelSword",		"Weapon.Sword",			0x00013989,		10.0,			45,			8.0},
-		{"IronArrow",		"Ammo",					0x0001397D,		0.0,			1,			8.0},
-		{"LongBow",			"Weapon.Bow",			0x0003B562,		5.0,			50,			7.0},
-		{"Pickaxe",			"Weapon.WarAxe",		0x000E3C16,		10.0,			0,			5.0},
-		{"IronOre",			"Misc.Misc",			0x00071CF3,		0.5,			1,			nil},
-		{"MinersClothes",	"Armor",				0x00080697,		0.5,			1,			0.0},
+	--	Identifier			Class					FormID			Weight			Price		Damage/Armor/etc		Skill
+		{"IronSword",		"Weapon.Sword",			0x00012EB7,		8.0,			30,			7.0,					"OneHanded"},
+		{"IronGreatsword",	"Weapon.Greatsword",	0x0001359D,		14.0,			60,			70.5,					"TwoHanded"},
+		{"IronArmor",		"Armor.Armor",			0x00012E49,		31.0,			150,		26.0,					"HeavyArmor"},
+		{"IronBoots",		"Armor.Boots",			0x00012E4B,		6.0,			25,			10.0,					"HeavyArmor"},
+		{"IronGauntlets",	"Armor.Gauntlets",		0x00012E46,		5.0,			30,			10.0,					"HeavyArmor"},
+		{"IronHelmet",		"Armor.Helmet",			0x00012E4D,		5.0,			80,			15.0,					"HeavyArmor"},
+		{"IronShield",		"Armor.Shield",			0x00012EB6,		14.0,			55,			20.0,					"HeavyArmor"},
+		{"Gold001",			"Misc.Gold",			0x0000000F,		0.0,			1,			nil,					""},
+		{"Lockpick",		"Misc.Lockpick",		0x0000000A,		0.0,			3,			nil,					""},
+		{"Drum",			"Misc.Misc",			0x000DABA9,		4.5,			11,			nil,					""},
+		{"SteelSword",		"Weapon.Sword",			0x00013989,		10.0,			45,			8.0,					"OneHanded"},
+		{"IronArrow",		"Ammo",					0x0001397D,		0.0,			1,			8.0,					""},
+		{"LongBow",			"Weapon.Bow",			0x0003B562,		5.0,			50,			7.0,					"Marksman"},
+		{"Pickaxe",			"Weapon.WarAxe",		0x000E3C16,		10.0,			0,			5.0,					"OneHanded"},
+		{"IronOre",			"Misc.Misc",			0x00071CF3,		0.5,			1,			nil,					""},
+		{"MinersClothes",	"Armor.Armor",			0x00080697,		0.5,			1,			0.0,					"LightArmor"},
 	}
 	for i = 1, #itemTs do
 		ItemType.Create(itemTs[i][1], itemTs[i][2], itemTs[i][3], itemTs[i][4], itemTs[i][5], itemTs[i][6])
