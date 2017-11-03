@@ -190,6 +190,37 @@ function Account.SetEquipment(player, eq)
 	end
 end
 
+function Account.GetActorValues(player)
+	local avNames = {
+		"Health", "Magicka", "Stamina",
+		"HealRate", "MagickaRate", "StaminaRate",
+		"OneHanded", "TwoHanded", "Marksman", "Block", "Smithing", "HeavyArmor", "LightArmor", "Pickpocket", "Lockpicking", "Sneak", 
+		"Alchemy", "Speechcraft", "Alteration", "Conjuration", "Destruction", "Illusion", "Restoration", "Enchanting",
+		"CarryWeight"
+	}
+
+	local avs = {}
+
+	for i = 1, #avNames do
+		avs[avNames[i]] = math.floor(player:GetBaseAV(avNames[i]))
+		avs[avNames[i] .. "_CURRENT"] = math.floor(player:GetCurrentAV(avNames[i]))
+	end
+
+	return avs
+end
+
+function Account.SetActorValues(player, avs)
+	if not avs then return end
+
+	for key, value in pairs(avs) do 
+		if key:gsub("_CURRENT", "") ~= key then
+			player:SetCurrentAV(key:gsub("_CURRENT", ""), value)
+		else
+			player:SetBaseAV(key, value)
+		end
+	end
+end
+
 function Account.SetRandomSpawn(player)
 	local Tamriel = Location(0x0000003c)
 	local spawns = {
@@ -369,6 +400,7 @@ function Account.OnReady(player)
 	player:MuteInventoryNotifications(true)
 	Account.SetInventory(player, acc.inventory)
 	Account.SetEquipment(player, acc.equipment)
+	Account.SetActorValues(player, acc.avs)
 	player:MuteInventoryNotifications(false)
 end
 
@@ -383,6 +415,7 @@ function Account.OnPlayerUpdate(player)
 	Account.accounts[name].angle = math.floor(player:GetAngleZ())
 	Account.accounts[name].inventory = Account.GetInventory(player)
 	Account.accounts[name].equipment = Account.GetEquipment(player)
+	Account.accounts[name].avs = Account.GetActorValues(player)
 	if player:GetLocation() then
 		Account.accounts[name].locationID = player:GetLocation():GetID()
 	else
