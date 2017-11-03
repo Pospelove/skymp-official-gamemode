@@ -85,7 +85,8 @@ function OnServerInit()
 		Account,
 		AntiCheat,
 		ItemTypes,
-		Death
+		Death,
+		Chat
 	}
 	
 	if Main.IsTest() then
