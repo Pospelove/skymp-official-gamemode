@@ -23,6 +23,7 @@ function DemoMine.OnServerInit()
 	DemoMine.ore1 = ore1
 
 	DemoMine.state = {}
+	DemoMine.lastEq = {}
 end
 
 function DemoMine.OnPlayerChatCommand(player, tokens)
@@ -111,15 +112,23 @@ function DemoMine.OnPlayerDialogResponse(player, dialogID, inputText, listItem)
 				DemoMine.state[player:GetName()].tutorial1 = true
 				player:SendChatMessage(Color.gold .. "Пройдите в шахту и добудьте немного железной руды")
 				player:SendChatMessage(Color.gold .. "Для этого достаньте кирку на R (как оружие) и стучите по залежам руды")
+				DemoMine.lastEq[player:GetName()] = Account.GetEquipment(player)
 				player:AddItem(ItemType.LookupByIdentifier("Pickaxe"), 1)
 				player:EquipItem(ItemType.LookupByIdentifier("Pickaxe"), 0)
+				player:AddItem(ItemType.LookupByIdentifier("MinersClothes"), 1)
+				player:EquipItem(ItemType.LookupByIdentifier("MinersClothes"), 0)
 			else
 				DemoMine.state[player:GetName()] = nil
-				player:SendChatMessage(Color.green .. "Руководство шахты благодарно за ваш труд")
 				local n = player:GetItemCount(ItemType.LookupByIdentifier("IronOre"))
+				if n > 0 then
+					player:SendChatMessage(Color.green .. "Руководство шахты благодарно за ваш труд")
+				end
 				player:RemoveItem(ItemType.LookupByIdentifier("IronOre"), n)
 				player:RemoveItem(ItemType.LookupByIdentifier("Pickaxe"), 1)
 				player:AddItem(ItemType.LookupByIdentifier("Gold001"), n * 2)
+				player:RemoveItem(ItemType.LookupByIdentifier("MinersClothes"), 1)
+				Account.SetEquipment(player, DemoMine.lastEq[player:GetName()])
+				DemoMine.lastEq[player:GetName()] = nil
 			end
 		end
 	end

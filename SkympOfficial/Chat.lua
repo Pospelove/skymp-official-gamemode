@@ -3,6 +3,8 @@
 local Chat = {}
 
 function Chat.OnPlayerChatInput(player, text)
+	if text:sub(1, 1) == "/" then return end
+
 	local n = 144
 	if text:len() > n then
 		return player:SendChatMessage(Color.red .. "Длина сообщения не должна превышать " .. n .. " символов")
