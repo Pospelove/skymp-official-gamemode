@@ -59,7 +59,8 @@ function Secunda.LoadModules()
 	local tDirectories = {
 		"SecundaModules",
 		"SecundaModules/MPSE",
-		"SecundaModules/Utils"
+		"SecundaModules/Utils",
+		"SecundaModules/Experimental"
 	}
 	for i, sDir in ipairs(tDirectories) do
 		local iNumModules = LoadModulesFromDir(sDir)
