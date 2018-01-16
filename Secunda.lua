@@ -58,7 +58,7 @@ function Secunda.LoadModules()
 
 	local tDirectories = {
 		"SecundaModules",
-		"SecundaModules/Library",
+		"SecundaModules/SecundaLibrary",
 		"SecundaModules/Utils",
 		"SecundaModules/Experimental"
 	}
