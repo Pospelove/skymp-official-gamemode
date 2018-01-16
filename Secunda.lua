@@ -9,7 +9,7 @@ stringx = require "pl/stringx"
 
 Secunda = {}
 Secunda.sName = "Secunda"
-Secunda.sVersion = "0.1"
+Secunda.sVersion = "0.0"
 Secunda.sAuthor = "Pospelov"
 
 print ""
@@ -58,7 +58,7 @@ function Secunda.LoadModules()
 
 	local tDirectories = {
 		"SecundaModules",
-		"SecundaModules/MPSE",
+		"SecundaModules/Library",
 		"SecundaModules/Utils",
 		"SecundaModules/Experimental"
 	}
