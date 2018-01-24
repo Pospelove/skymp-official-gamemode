@@ -6,6 +6,13 @@ All rights reserved.
 
 class = require "pl/class"
 stringx = require "pl/stringx"
+pretty = require "pl/pretty"
+url = require "pl/url"
+tablex = require "pl/tablex"
+json = require "json/json"
+sha256 = require "sha256/sha256"
+
+dsres = require "data/dsres"
 
 Secunda = {}
 Secunda.sName = "Secunda"
@@ -20,6 +27,10 @@ print ""
 
 function Secunda.ShouldRunTests()
 	return "you must"
+end
+
+function Secunda.ShouldTestPerfomance()
+	return "yes"
 end
 
 function Secunda.LoadModules()
@@ -56,11 +67,13 @@ function Secunda.LoadModules()
 		return iNumLoaded
 	end
 
+	-- Do not change load order of dirs without reason
 	local tDirectories = {
 		"SecundaModules",
-		"SecundaModules/SecundaLibrary",
 		"SecundaModules/Utils",
-		"SecundaModules/Experimental"
+		"SecundaModules/SecundaLibrary", -- Is dependent of Utils
+		"SecundaModules/Experimental",
+		"SecundaModules/Systems" -- Is dependent of SecundaLibrary
 	}
 	for i, sDir in ipairs(tDirectories) do
 		local iNumModules = LoadModulesFromDir(sDir)
@@ -133,8 +146,21 @@ if Secunda.ShouldRunTests() then
 	SetTimer(1, function()
 		print ""
 		print "Running tests..."
+
 		Secunda.RunTests()
 		print "Done"
-		print ""
 	end)
+	if Secunda.ShouldTestPerfomance() then
+		SetTimer(1000, function()
+			print ""
+			print "Testing perfomance..."
+			Secunda.TestPerfomance()
+			print "Done"
+		end)
+	end
 end
+
+SetTimer(1000, function()
+	print ""
+	print "Secunda is still alive"
+end)
