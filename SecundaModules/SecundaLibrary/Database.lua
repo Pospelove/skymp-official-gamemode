@@ -72,7 +72,7 @@ function OnHTTPResult(requestID, body, code)
   return true
 end
 
-function Database.RunTests()
+function Database.RunTests123123()
   Database.Get("/account/SecundaTest", function(body, status)
     local t = json.decode(body)
 
