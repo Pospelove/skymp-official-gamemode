@@ -164,5 +164,3 @@ SetTimer(1000, function()
 	print ""
 	print "Secunda is still alive"
 end)
-
-print(tostring(function() end))
