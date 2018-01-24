@@ -61,6 +61,8 @@ function Database.Get(path, callback)
   print("1.d")
   local suc, err = pcall(function()
     gCallbacksMap[gQID] = callback
+    print(tostring(gQID))
+    print(tostring(callback))
   end)
   print(tostring(suc))
   print(tostring(err))
