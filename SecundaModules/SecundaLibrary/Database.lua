@@ -52,10 +52,15 @@ function Database.Post(path, body, callback)
 end
 
 function Database.Get(path, callback)
+  print("1.a")
   gQID = gQID + 1
+  print("1.b")
   local cli = GetRandomClient()
+  print("1.c")
   cli:Get(gQID, path)
+  print("1.d")
   gCallbacksMap[gQID] = callback
+  print("1.e")
 end
 
 function Database.OnServerInit()
@@ -72,7 +77,8 @@ function OnHTTPResult(requestID, body, code)
   return true
 end
 
-function Database.RunTests123123()
+function Database.RunTests()
+  print("1")
   Database.Get("/account/SecundaTest", function(body, status)
     local t = json.decode(body)
 
@@ -92,9 +98,11 @@ function Database.RunTests123123()
       end
     end)
   end)
+  print("2")
   Database.Get("/auth/dapoemfdddkeiadkieo/127.0.0.1", function(body, status)
     if body ~= "bad" and body ~= "ok" then error("test failed " .. tostring(body)) end
   end)
+  print("3")
   SetTimer(6000, function()
     if gResponse ~= true then
       error("database not working")
