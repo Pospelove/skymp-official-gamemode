@@ -19,11 +19,11 @@ local function Foo()
   -- Tip is command name + arguments
   local tip = "/kick <Player Name> <Reason Code>"
 
-  local onCall = function(player, args)
+  local onCall = function(user, args)
 
-    -- Player can be nil, table, userdata, etc ONLY if the command is called by script
+    -- User can be nil, table, userdata, etc ONLY if the command is called by script
     -- You don't need to check passed player if the command is NOT called by script
-    if player == nil then
+    if user == nil then
       -- ...
     end
 
@@ -95,9 +95,9 @@ function Command:Destroy()
   end
 end
 
-function Command:Call(uPl, tArguments)
+function Command:Call(uUser, tArguments)
   if not self.bIsDestroyed then
-    self.OnCall(uPl, tArguments)
+    self.OnCall(uUser, tArguments)
   end
 end
 
@@ -135,7 +135,7 @@ function ChatCommands.OnPlayerChatInput(uPl, sInputText)
     local sCmdText = tTokens[1]
     local tCmd = ChatCommands.tCreatedCommands[sCmdText]
     if tCmd ~= nil then
-      local bSuccess = tCmd:Call(uPl, Parse(tTokens, tCmd:GetTemplate()))
+      local bSuccess = tCmd:Call(User.Lookup(uPl:GetName()), Parse(tTokens, tCmd:GetTemplate()))
       if not bSuccess then
         uPl:SendChatMessage(tCmd:GetTip())
       end
@@ -209,6 +209,7 @@ function ChatCommands.RunTests()
     end)
 
     local uZombie = Player.CreateNPC(0xDEAD00)
+    uZombie:SetName("Test")
     ChatCommands.OnPlayerChatInput(uZombie, "/test Skyrim 2028 0.115")
 
     if not ChatCommands.bSuccessfulTest then

@@ -4,6 +4,7 @@ User = class()
 
 local gUserCtorEnabled = true
 local gUsersMap = {}
+local gUserTested = false
 
 -- Interface
 
@@ -12,10 +13,170 @@ function User.Lookup(key)
 end
 
 function User:__tostring()
-  return self.pl:GetName() .. "[" .. self.pl:GetID() .. "]"
+  return self:GetName() .. "[" .. self:GetID() .. "]"
 end
 
--- Implementation
+function User:Load()
+  Database.LoadAccount(self:GetName(), function(t)
+    self.account = t
+    Secunda.OnUserLoad(self)
+    self:_ApplyAccount()
+  end)
+end
+
+function User:Save()
+  if self.account == nil then
+    error "user with account expected"
+  end
+  self:_PrepareAccountToSave()
+  Database.SaveAccount(self.account)
+  Secunda.OnUserSave(self)
+end
+
+function User:GetAccountVar(varName)
+  if self.account == nil then return nil end
+  return self.account[varName]
+end
+
+function User:SetAccountVar(varName, newValue)
+  if self.account == nil then return nil end
+  self.account[varName] = newValue
+end
+
+function User:ShowRaceMenu()
+  self.pl:ShowMenu("RaceSex Menu")
+  self.pl:SetVirtualWorld(1000000)
+end
+
+--[[ IMPLEMENTATION ]]--
+
+-- Get/Set for save and load
+
+function User:_GetLook()
+  local player = self.pl
+	local look = {}
+	if player:GetRace() then
+		look.raceID = player:GetRace():GetID()
+	else
+		look.raceID = 0x00000000
+	end
+	look.isFemale = player:IsFemale()
+	look.weight = math.floor(player:GetWeight())
+	look.skinColor = player:GetSkinColor()
+	look.hairColor = player:GetHairColor()
+	look.headparts = {}
+	for i = 1, player:GetHeadpartCount() do
+		table.insert(look.headparts, player:GetNthHeadpartID(i))
+	end
+	look.tints = {}
+	for i = 1, player:GetTintmaskCount() do
+		local tint = {}
+		tint.texture = player:GetNthTintmaskTexture(i)
+		tint.type = player:GetNthTintmaskType(i)
+		tint.color = player:GetNthTintmaskColor(i)
+		tint.alpha = tostring(player:GetNthTintmaskAlpha(i))
+		table.insert(look.tints, tint)
+	end
+	look.faceOptions = {}
+	for i = 1, player:GetFaceOptionCount() do
+		table.insert(look.faceOptions, tostring(player:GetNthFaceOption(i)))
+	end
+	look.facePresets = {}
+	for i = 1, player:GetFacePresetCount() do
+		table.insert(look.facePresets, (player:GetNthFacePreset(i)))
+	end
+	look.headTexture = player:GetHeadTextureSetID()
+	return look
+end
+
+function User:_SetLook(look)
+	if not look then return end
+  pcall(function()
+   local player = self.pl
+	 player:SetRace(Race(look.raceID))
+	 player:SetWeight(look.weight)
+	 player:SetFemale(look.isFemale)
+	 player:SetSkinColor(look.skinColor)
+	 player:SetHairColor(look.hairColor)
+	 player:SetHeadpartIDs(look.headparts)
+	 player:RemoveAllTintmasks()
+	 for i = 1, #look.tints do
+		  local tint = look.tints[i]
+      -- This string will crash the game! Someone (server/client/gamemode) must check tintmasks!
+		  --player:AddTintmask(i, tint.texture, tint.type, tint.color, tonumber(tint.alpha))
+		  player:AddTintmask(tint.texture, tint.type, tint.color, tonumber(tint.alpha))
+	 end
+	 player:SetFacePresets(look.facePresets)
+	 local faceOptions = {}
+	 for i = 1, #look.faceOptions do
+		  table.insert(faceOptions,tonumber(look.faceOptions[i]))
+	 end
+	 player:SetFaceOptions(faceOptions)
+	 player:SetHeadTextureSetID(look.headTexture)
+  end)
+end
+
+function User:_GetActorValues()
+  local player = self.pl
+	local avNames = {
+		"Health", "Magicka", "Stamina",
+		"HealRate", "MagickaRate", "StaminaRate",
+		"OneHanded", "TwoHanded", "Marksman", "Block", "Smithing", "HeavyArmor", "LightArmor", "Pickpocket", "Lockpicking", "Sneak",
+		"Alchemy", "Speechcraft", "Alteration", "Conjuration", "Destruction", "Illusion", "Restoration", "Enchanting",
+		"CarryWeight"
+	}
+
+	local avs = {}
+
+	for i = 1, #avNames do
+		avs[avNames[i]] = math.floor(player:GetBaseAV(avNames[i]))
+		avs[avNames[i] .. "_CURRENT"] = math.floor(player:GetCurrentAV(avNames[i]))
+	end
+
+	return avs
+end
+
+function User:_SetActorValues(avs)
+	if not avs then return end
+
+  local player = self.pl
+
+	for key, value in pairs(avs) do
+		if key:gsub("_CURRENT", "") ~= key then
+			player:SetCurrentAV(key:gsub("_CURRENT", ""), value)
+		else
+			player:SetBaseAV(key, value)
+		end
+	end
+end
+
+function User:_ApplyAccount()
+  local success, err = pcall(function()
+    local player = self.pl
+    local account = tablex.deepcopy(self.account)
+    player:SetSpawnPoint(Location(account.location), account.x, account.y, account.z, account.angle)
+    player:Spawn()
+    pcall(function() self:_SetLook(json.decode(account.look)) end)
+    pcall(function() self:_SetActorValues(json.decode(account.avs)) end)
+  end)
+  if not success then
+    print(err)
+    self.pl:Kick()
+  end
+end
+
+function User:_PrepareAccountToSave()
+  local player = self.pl
+  self.account.location = player:GetLocation():GetID()
+  self.account.x = math.floor(player:GetX())
+  self.account.y = math.floor(player:GetY())
+  self.account.z = math.floor(player:GetZ())
+  self.account.angle = math.floor(player:GetAngleZ())
+  self.account.look = json.encode(self:_GetLook())
+  self.account.avs = json.encode(self:_GetActorValues())
+end
+
+-- ...
 
 local function SetUserCtorEnabled(enabled)
   if enabled then
@@ -47,7 +208,15 @@ function User:_init(pl)
   if not gUserCtorEnabled then
     error("user ctor is disabled")
   end
+  if pl == nil then
+    error "nil player"
+  end
+  if pl:IsNPC() and gUserTested then
+    error "unexcepted npc"
+  end
   self.pl = pl
+  self.name = pl:GetName()
+  self.id = pl:GetID()
 end
 
 function User:__index(key)
@@ -56,13 +225,36 @@ function User:__index(key)
   end
 end
 
+function User:GetID()
+  return self.id
+end
+
+function User:GetName()
+  return self.name
+end
+
+function User:SetName(newName)
+  self.name = newName
+  self.pl:SetName(newName)
+end
+
+function User.HasOverride(key)
+  return key == "GetID" or key == "GetName" or key == "SetName"
+end
+
 function User.Index(self, key)
   local result = rawget(self, key)
   if result == nil then
     result = function(badSelf, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
-      local foundMethodInPlayer, pcallResult = pcall(function()
-        return self.pl[key](self.pl, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
-      end)
+      local success
+      local pcallResult
+      local foundMethodInPlayer = false
+      if not User.HasOverride(key) then
+        success, pcallResult = pcall(function()
+          return self.pl[key](self.pl, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
+        end)
+        foundMethodInPlayer = success
+      end
       if foundMethodInPlayer then
         return pcallResult
       else
@@ -92,32 +284,56 @@ end
 function User.OnPlayerConnect(pl)
   if pl:IsNPC() == false then
     local user = NewUser(pl)
+    Secunda.OnUserConnect(user)
   end
   return true
 end
 
 function User.OnPlayerDisconnect(pl)
   if pl:IsNPC() == false then
+    Secunda.OnUserDisconnect(User.Lookup(pl:GetName()))
     DeleteUser(pl)
   end
   return true
 end
 
+function User.OnPlayerCharacterCreated(pl)
+  if pl:IsNPC() == false then
+    pl:SetVirtualWorld(0)
+    local user = User.Lookup(pl:GetName())
+    user:Save()
+    Secunda.OnUserCharacterCreated(user)
+  end
+  return true
+end
+
+function User.OnPlayerSpawn(pl)
+  if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    Secunda.OnUserSpawn(user)
+  end
+end
+
 function User.RunTests()
 
   local Test_SetUserCtorEnabled = function()
+    local pl = Player.CreateNPC(0x00000014)
+    pl:SetName("Test")
+
     local wasEnabled = IsUserCtorEnabled()
     SetUserCtorEnabled(false)
-    local success, errorText = pcall(function() local usr = User(nil) end)
+    local success, errorText = pcall(function() local usr = User(pl) end)
     if success then
       error("test failed - Ctor was not disabled")
     end
     SetUserCtorEnabled(true)
-    local success, errorText = pcall(function() local usr = User(nil) end)
+    local success, errorText = pcall(function() local usr = User(pl) end)
     if not success then
-      error("test failed - Ctor was disabled")
+      error("test failed - Unable to construct User " .. errorText)
     end
     SetUserCtorEnabled(wasEnabled)
+
+    pl:Kick()
   end
 
   local Test_NewUser = function()
@@ -153,6 +369,14 @@ function User.RunTests()
       error("test failed - Index failed (" .. tostring(av) .. " ~= "  .. 200 .. ")")
     end
 
+    if user:GetID() ~= pl:GetID() then
+      error("test failed - Bad ID (" .. tostring(user:GetID()) .. " ~= "  .. tostring(pl:GetID()) .. ")")
+    end
+
+    if user:GetName() ~= pl:GetName() then
+      error("test failed - Bad Name (" .. tostring(user:GetName()) .. " ~= "  .. tostring(pl:GetName()) .. ")")
+    end
+
     user:SetVirtualWorld(1)
 
     pl:Kick()
@@ -160,6 +384,8 @@ function User.RunTests()
 
   Test_SetUserCtorEnabled()
   Test_NewUser()
+
+  gUserTested = true
 
 end
 
