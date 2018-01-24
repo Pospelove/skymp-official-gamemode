@@ -59,7 +59,11 @@ function Database.Get(path, callback)
   print("1.c")
   cli:Get(gQID, path)
   print("1.d")
-  gCallbacksMap[gQID] = callback
+  local suc, err = pcall(function()
+    gCallbacksMap[gQID] = callback
+  end)
+  print(tostring(suc))
+  print(tostring(err))
   print("1.e")
 end
 
