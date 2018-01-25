@@ -41,7 +41,7 @@ function Auth.OnUserConnect(user)
   user:SetVirtualWorld(user:GetID())
   gLoggedMap[user:GetID()] = false
   ShowLoadingMessage(user)
-  Database.CheckAuth(user, function(isLogged)
+  user:CheckAuth(function(isLogged)
     SetTimer(2000, function()
       StopLoadingMessage(user)
       user:ClearChat()

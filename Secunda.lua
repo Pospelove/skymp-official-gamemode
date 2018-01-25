@@ -4,6 +4,8 @@ Copyright (C) 2018, Sirius
 All rights reserved.
 --]]
 
+mongorover = require "mongorover"
+
 class = require "pl/class"
 stringx = require "pl/stringx"
 pretty = require "pl/pretty"

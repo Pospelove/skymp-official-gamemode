@@ -5,6 +5,9 @@ User = class()
 local gUserCtorEnabled = true
 local gUsersMap = {}
 local gUserTested = false
+local gMongoClient = mongorover.MongoClient.new(Config.Database.url)
+local gMongoDB = gMongoClient:getDatabase(Config.Database.name)
+local gMongoColUsers = database:getCollection("users")
 
 -- Interface
 
@@ -17,11 +20,9 @@ function User:__tostring()
 end
 
 function User:Load()
-  Database.LoadAccount(self:GetName(), function(t)
-    self.account = t
-    Secunda.OnUserLoad(self)
-    self:_ApplyAccount()
-  end)
+  local t = gMongoColUsers:find_one({ name = self:GetName() })
+  self.account = t
+  Secunda.OnUserLoad(self)
 end
 
 function User:Save()
@@ -29,8 +30,13 @@ function User:Save()
     error "user with account expected"
   end
   self:_PrepareAccountToSave()
-  Database.SaveAccount(self.account)
+  gMongoColUsers:update_one({ name = self:GetName() }, {["$set"] = self.account})
   Secunda.OnUserSave(self)
+end
+
+function User:CheckAuth(callback)
+  local isLogged = true
+  SetTimer(1, function() callback(isLogged) end)
 end
 
 function User:GetAccountVar(varName)

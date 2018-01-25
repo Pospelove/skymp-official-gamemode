@@ -1,9 +1,7 @@
 Config = {
   Database = {
-    host = "127.0.0.1",
-    port = 8000,
-    user = "nirnroot",
-    pass = "riverwoodgiantinn"
+    url = "mongodb://nirnroot:riverwoodgiantinn@ds249727.mlab.com:49727/secunda",
+    name = "secunda"
   }
 }
 
