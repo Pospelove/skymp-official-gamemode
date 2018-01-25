@@ -51,6 +51,8 @@ function Recipes.OnServerInit()
 end
 
 function Recipes.OnPlayerSpawn(player)
+  if true then return true end
+
   if gHasRecipes[player:GetID()] == true then return end
 
   SetTimer(1000, function()
