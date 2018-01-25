@@ -17,13 +17,21 @@ function User:__tostring()
 end
 
 function User:Load()
-  local file = io.open("files/players/" .. self:GetName() .. ".json", "r")
-  local str = ""
-  for line in file:lines() do
-    str = str .. line
+  local suc = pcall(function()
+    local file = io.open("files/players/" .. self:GetName() .. ".json", "r")
+    local str = ""
+    for line in file:lines() do
+      str = str .. line
+    end
+    self.account = json.decode(str)
+    io.close(file)
+  end)
+  if not suc then
+    self.account = {}
+    self.account.name = self:GetName()
+    self:Save()
+    print("creating new account for " .. tostring(self))
   end
-  self.account = json.decode(str)
-  io.close(file)
   Secunda.OnUserLoad(self)
 end
 
