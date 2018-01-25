@@ -188,7 +188,12 @@ end
 
 function User:_PrepareAccountToSave()
   local player = self.pl
-  self.account.location = player:GetLocation():GetID()
+  local location = player:GetLocation()
+  if location ~= nil then
+    self.account.location = location:GetID()
+  else
+    self.account.location = 60
+  end
   self.account.x = math.floor(player:GetX())
   self.account.y = math.floor(player:GetY())
   self.account.z = math.floor(player:GetZ())
