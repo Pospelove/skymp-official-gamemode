@@ -36,6 +36,7 @@ function User:Load()
     print("creating new account for " .. tostring(self))
   end
   Secunda.OnUserLoad(self)
+  self:_ApplyAccount()
 end
 
 function User:Save()
