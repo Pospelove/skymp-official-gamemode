@@ -5,9 +5,6 @@ User = class()
 local gUserCtorEnabled = true
 local gUsersMap = {}
 local gUserTested = false
-local gMongoClient = mongorover.MongoClient.new(Config.Database.url)
-local gMongoDB = gMongoClient:getDatabase(Config.Database.name)
-local gMongoColUsers = database:getCollection("users")
 
 -- Interface
 
