@@ -20,7 +20,7 @@ function User:__tostring()
 end
 
 function User:Load()
-  local file = io.open(self:GetName() .. ".json", "r")
+  local file = io.open("files/players/" .. self:GetName() .. ".json", "r")
   local str = ""
   for line in file:lines() do
     str = str .. line
@@ -35,7 +35,7 @@ function User:Save()
     error "user with account expected"
   end
   self:_PrepareAccountToSave()
-  local file = io.open(self:GetName() .. ".json", "w")
+  local file = io.open("files/players/" .. self:GetName() .. ".json", "w")
   file:write(json.encode(self.account))
   io.close(file)
   Secunda.OnUserSave(self)
