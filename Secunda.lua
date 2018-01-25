@@ -4,7 +4,7 @@ Copyright (C) 2018, Sirius
 All rights reserved.
 --]]
 
-package.path = package.path .. ";usr/local/share/lua/5.1/?.lua"
+package.path = package.path .. ";/usr/local/share/lua/5.1/?.lua"
 
 mongorover = require "mongorover"
 
