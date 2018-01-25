@@ -17,15 +17,18 @@ function User:__tostring()
 end
 
 function User:Load()
+  local file = nil
   local suc = pcall(function()
-    local file = io.open("files/players/" .. self:GetName() .. ".json", "r")
+    file = io.open("files/players/" .. self:GetName() .. ".json", "r")
     local str = ""
     for line in file:lines() do
       str = str .. line
     end
     self.account = json.decode(str)
-    io.close(file)
   end)
+  if file ~= nil then
+    io.close(file)
+  end
   if not suc then
     self.account = {}
     self.account.name = self:GetName()
