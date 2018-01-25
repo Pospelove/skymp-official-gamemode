@@ -8,7 +8,8 @@ All rights reserved.
 --package.cpath = package.cpath .. ";/usr/local/lib/lua/5.1/?.so"
 
 --mongorover = require "mongorover"
-mongo = require 'mongo'
+--mongo = require 'mongo'
+socket = require 'socket'
 
 class = require "pl/class"
 stringx = require "pl/stringx"
