@@ -20,8 +20,13 @@ function User:__tostring()
 end
 
 function User:Load()
-  local t = gMongoColUsers:find_one({ name = self:GetName() })
-  self.account = t
+  local file = io.open(self:GetName() .. ".json", "r")
+  local str = ""
+  for line in file:lines() do
+    str = str .. line
+  end
+  self.account = json.decode(str)
+  io.close(file)
   Secunda.OnUserLoad(self)
 end
 
@@ -30,7 +35,9 @@ function User:Save()
     error "user with account expected"
   end
   self:_PrepareAccountToSave()
-  gMongoColUsers:update_one({ name = self:GetName() }, {["$set"] = self.account})
+  local file = io.open(self:GetName() .. ".json", "w")
+  file:write(json.encode(self.account))
+  io.close(file)
   Secunda.OnUserSave(self)
 end
 

@@ -9,7 +9,6 @@ All rights reserved.
 
 --mongorover = require "mongorover"
 --mongo = require 'mongo'
-socket = require 'socket'
 
 class = require "pl/class"
 stringx = require "pl/stringx"
