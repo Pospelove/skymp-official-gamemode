@@ -179,3 +179,8 @@ ru = function(str)
 	return str
 end
 if ru "рст" ~= "<cyrillic:16><cyrillic:31><cyrillic:15>" then error("test failed - ru()") end
+
+local item = Command("/item", "x", "/item <formID>", function(user, args)
+	user:AddItem(ItemTypes.LookupByID(args[1]), 1)
+	user:SendChatMessage("Added")
+end)

@@ -2,9 +2,14 @@ ItemTypes = {}
 
 local gRaw = dsres.itemTypes
 local gNumIdensUse = {}
+local gItemTypesByID = {}
 
 function ItemTypes.Get(iden)
   return ItemType.LookupByIdentifier(iden)
+end
+
+function ItemTypes.LookupByID(id)
+  return gItemTypesByID[id]
 end
 
 function ItemTypes.Init()
@@ -52,6 +57,8 @@ function ItemTypes.Init()
         local itemType = ItemType.Create(iden_, class, formID, weight, goldValue, damageArmorPoints, skill)
         if itemType == nil then
           print ("Unable to create " .. iden_)
+        else
+          gItemTypesByID[formID] = itemType
         end
         gNumIdensUse[iden] = gNumIdensUse[iden] + 1
       end
