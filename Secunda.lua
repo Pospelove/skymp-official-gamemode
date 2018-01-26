@@ -174,8 +174,8 @@ end)
 ru = function(str)
 	local cyr  = "éöóêåíãøùçõúôûâàïğîëäæıÿ÷ñìèòüáşÉÖÓÊÅÍÃØÙÇÕÚÔÛÂÀÏĞÎËÄÆİß×ÑÌÈÒÜÁŞ"
 	for i = 1, string.len(cyr) do
-		str = string.gsub(str, stringx.at(cyr, i), "#!" .. tostring(i) .. "#")
+		str = string.gsub(str, stringx.at(cyr, i), "<cyrillic:" .. tostring(i) .. ">")
 	end
 	return str
 end
-if ru "àáâ" ~= "#!16##!31##!15#" then error("test failed - ru()") end
+if ru "àáâ" ~= "<cyrillic:16><cyrillic:31><cyrillic:15>" then error("test failed - ru()") end
