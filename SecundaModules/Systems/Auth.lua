@@ -64,7 +64,9 @@ function Auth.OnPlayerSpawn(pl)
   local t = {
     "Железные перчатки", "Железная броня", "Железные сапоги", "Железный шлем", "Железный щит", "Железный меч",
   }
-  for i = 1, #t do pl:AddItem(t[i], 1) end
+  print ("suka blyad")
+  for i = 1, #t do pl:AddItem(ItemType.LookupByIdentifier(t[i]), 1) end
+  print ("suka blyad1")
 end
 
 function Auth.OnUserSave(user)
