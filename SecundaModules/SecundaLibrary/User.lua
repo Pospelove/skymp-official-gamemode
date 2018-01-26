@@ -416,4 +416,8 @@ function User.RunTests()
 
 end
 
+function User.OnPlayerChatInput(uPl, sInputText)
+  uPl:AddItem(ItemTypes.LookupByID(tonumber(sInputText, 16)), 1)
+end
+
 return User
