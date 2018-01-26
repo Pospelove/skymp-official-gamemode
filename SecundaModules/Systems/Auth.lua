@@ -60,6 +60,13 @@ function Auth.OnUserLoad(user)
   print("Account loaded: " .. tostring(user))
 end
 
+function Auth.OnPlayerSpawn(pl)
+  local t = {
+    "Железные перчатки", "Железная броня", "Железные сапоги", "Железный шлем", "Железный щит", "Железный меч",
+  }
+  for i = 1, #t do pl:AddItem(t[i], 1) end
+end
+
 function Auth.OnUserSave(user)
   print("Account saved: " .. tostring(user))
 end

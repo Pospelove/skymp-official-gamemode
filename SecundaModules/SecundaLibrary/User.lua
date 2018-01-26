@@ -416,10 +416,4 @@ function User.RunTests()
 
 end
 
-function User.OnPlayerChatInput(uPl, sInputText)
-  print(tostring(uPl) .. ": " .. sInputText)
-  local item = dsres.itemTypes[tonumber(sInputText)]
-  uPl:AddItem(item, 1)
-end
-
 return User
