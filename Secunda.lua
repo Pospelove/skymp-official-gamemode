@@ -30,6 +30,7 @@ print("----------------------- " .. Secunda.sName .. " v" .. Secunda.sVersion ..
 print ""
 print "Preparing to start"
 print ""
+print "€русский"
 
 function Secunda.ShouldRunTests()
 	return "you must"
