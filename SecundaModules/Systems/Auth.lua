@@ -15,7 +15,7 @@ local function LoadingMsgStep(user)
     return
   end
 
-  local base = Theme.info .. "Загрузка"
+  local base = Theme.info .. ru "Загрузка"
   local addiTxt = {"", ".", "..", "..."}
 
   user:ClearChat()
@@ -46,10 +46,10 @@ function Auth.OnUserConnect(user)
       StopLoadingMessage(user)
       user:ClearChat()
       if isLogged then
-        user:SendChatMessage(Theme.success .. "С возвращением, " .. user:GetName())
+        user:SendChatMessage(Theme.success .. ru "С возвращением, " .. user:GetName())
         user:Load()
       else
-        user:SendChatMessage(Theme.error .. "Вы не были авторизированы")
+        user:SendChatMessage(Theme.error .. ru "Вы не были авторизированы")
         user:Kick()
       end
     end)

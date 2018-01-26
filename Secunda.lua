@@ -30,7 +30,6 @@ print("----------------------- " .. Secunda.sName .. " v" .. Secunda.sVersion ..
 print ""
 print "Preparing to start"
 print ""
-print "ÿğóññêèé"
 
 function Secunda.ShouldRunTests()
 	return "you must"
@@ -171,3 +170,12 @@ SetTimer(1000, function()
 	print ""
 	print "Secunda is still alive"
 end)
+
+ru = function(str)
+	local cyr  = "éöóêåíãøùçõúôûâàïğîëäæıÿ÷ñìèòüáşÉÖÓÊÅÍÃØÙÇÕÚÔÛÂÀÏĞÎËÄÆİß×ÑÌÈÒÜÁŞ"
+	for i = 1, string.len(cyr) do
+		str = string.gsub(str, stringx.at(cyr, i), "#!" .. tostring(i) .. "#")
+	end
+	return str
+end
+if ru "àáâ" ~= "#!16##!31##!15#" then error("test failed - ru()") end
