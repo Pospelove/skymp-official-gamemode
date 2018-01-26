@@ -38,7 +38,7 @@ local function StopLoadingMessage(user)
 end
 
 function Auth.OnUserConnect(user)
-  user:SetVirtualWorld(user:GetID())
+  --user:SetVirtualWorld(user:GetID())
   gLoggedMap[user:GetID()] = false
   ShowLoadingMessage(user)
   user:CheckAuth(function(isLogged)
