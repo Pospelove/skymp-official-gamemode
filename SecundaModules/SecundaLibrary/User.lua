@@ -1,12 +1,38 @@
 User = class()
 
+function User.Docs(
+  return [[
+
+  -- Static methods:
+  User.Lookup(key) -- Lookup user by key (ID or Name)
+
+  -- Methods:
+  tostring(user) -- Convert user to "<name>[<id>]" string (example: Pospelov[0])
+  user:Load() -- Load account
+  user:Save() -- Save account
+  user:CheckAuth(callback) -- Async check if user is logged. Calls callback(true) if is logged or callback(false) if not
+  user:GetAccountVar(varName) -- Get value of account variable with specified name
+  user:SetAccountVar(varName, newValue) -- Change account var value. It's OK to use in OnUserLoad
+  user:ShowRaceMenu() -- Show the character editor
+
+  -- Callbacks:
+  OnUserLoad(user) -- Called from user:Load() when loading account
+  OnUserSave(user) -- Called from user:Save() when account is saved (NOT saving)
+  OnUserConnect(user) --
+  OnUserDisconnect(user) --
+  OnUserSpawn(user) --
+  OnUserCharacterCreated(user) --
+  OnUserChatMessage(user, text) -- Called on chat message (not command)
+  ]]
+end)
+
 -- Private variables
 
 local gUserCtorEnabled = true
 local gUsersMap = {}
 local gUserTested = false
 
--- Interface
+-- Public
 
 function User.Lookup(key)
   return gUsersMap[key]
@@ -339,6 +365,17 @@ function User.OnPlayerSpawn(pl)
     local user = User.Lookup(pl:GetName())
     Secunda.OnUserSpawn(user)
   end
+  return true
+end
+
+function User.OnPlayerCharInput(pl, input)
+  if pl:IsNPC() == false then
+    if stringx.at(input, 1) ~= "/" then
+      local user = User.Lookup(pl:GetName())
+      Secunda.OnUserChatMessage(user, input)
+    end
+  end
+  return true
 end
 
 function User.RunTests()

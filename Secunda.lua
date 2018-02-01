@@ -4,12 +4,6 @@ Copyright (C) 2018, Sirius
 All rights reserved.
 --]]
 
---package.path = package.path .. ";/usr/local/share/lua/5.1/?.lua"
---package.cpath = package.cpath .. ";/usr/local/lib/lua/5.1/?.so"
-
---mongorover = require "mongorover"
---mongo = require 'mongo'
-
 class = require "pl/class"
 stringx = require "pl/stringx"
 pretty = require "pl/pretty"
@@ -22,11 +16,11 @@ dsres = require "data/dsres"
 
 Secunda = {}
 Secunda.sName = "Secunda"
-Secunda.sVersion = "0.1.1"
+Secunda.sVersion = "0.2.0"
 Secunda.sAuthor = "Pospelov"
 
 print ""
-print("----------------------- " .. Secunda.sName .. " v" .. Secunda.sVersion ..  " -----------------------")
+print("----------------------- " .. Secunda.sName .. " " .. Secunda.sVersion ..  " -----------------------")
 print ""
 print "Preparing to start"
 print ""
