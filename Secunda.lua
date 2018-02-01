@@ -112,6 +112,10 @@ function Secunda.SetMeta()
 	setmetatable(Secunda, SecundaMeta)
 end
 
+function OnPlayerChatInput(pl, text)
+	pl:SendChatMessage(text)
+end
+
 function Secunda.Hook()
 	local tStandard = {
 		"OnServerInit",
@@ -122,7 +126,7 @@ function Secunda.Hook()
 		"OnPlayerUpdate",
 		"OnPlayerDying",
 		"OnPlayerDeath",
-		"OnPlayerChatInput",
+		--"OnPlayerChatInput",
 		"OnPlayerDialogResponse",
 		"OnPlayerCharacterCreated",
 		"OnPlayerActivateObject",
