@@ -22,7 +22,7 @@ dsres = require "data/dsres"
 
 Secunda = {}
 Secunda.sName = "Secunda"
-Secunda.sVersion = "0.1"
+Secunda.sVersion = "0.1.1"
 Secunda.sAuthor = "Pospelov"
 
 print ""
@@ -172,10 +172,10 @@ SetTimer(1000, function()
 end)
 
 ru = function(str)
-	local cyr  = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+	local cyr  = "éöóêåíãøùçõúôûâàïğîëäæıÿ÷ñìèòüáşÉÖÓÊÅÍÃØÙÇÕÚÔÛÂÀÏĞÎËÄÆİß×ÑÌÈÒÜÁŞ"
 	for i = 1, string.len(cyr) do
 		str = string.gsub(str, stringx.at(cyr, i), "<cyrillic:" .. tostring(i) .. ">")
 	end
 	return str
 end
-if ru "ï¿½ï¿½ï¿½" ~= "<cyrillic:16><cyrillic:31><cyrillic:15>" then error("test failed - ru()") end
+if ru "àáâ" ~= "<cyrillic:16><cyrillic:31><cyrillic:15>" then error("test failed - ru()") end
