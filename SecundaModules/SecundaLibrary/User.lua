@@ -1,8 +1,7 @@
 User = class()
 
-function User.Docs(
+function User.Docs()
   return [[
-
   -- Static methods:
   User.Lookup(key) -- Lookup user by key (ID or Name)
 
@@ -24,7 +23,7 @@ function User.Docs(
   OnUserCharacterCreated(user) --
   OnUserChatMessage(user, text) -- Called on chat message (not command)
   ]]
-end)
+end
 
 -- Private variables
 
