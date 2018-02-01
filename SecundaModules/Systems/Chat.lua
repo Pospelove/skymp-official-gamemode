@@ -15,7 +15,7 @@ function Chat.OnUserChatMessage(user, text)
 		for i = 0, GetMaxPlayers() do
 			local u = User.Lookup(i)
 			if u ~= nil and u:IsConnected() and u:IsSpawned() and u:GetVirtualWorld() == user:GetVirtualWorld() then
-				local distance = Math.GetDistance(usr, u)
+				local distance = Math.GetDistance(user, u)
 				local d = distance / 1400
 				if d < 0.0 then
 					print(user:GetName() .. "[" .. user:GetID() .. "] sent chat message with invalid distance")
