@@ -15,7 +15,7 @@ local function LoadingMsgStep(user)
     return
   end
 
-  local base = Theme.info .. ru "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
+  local base = Theme.info .. ru "Загрузка"
   local addiTxt = {"", ".", "..", "..."}
 
   user:ClearChat()
