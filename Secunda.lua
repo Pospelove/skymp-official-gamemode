@@ -16,7 +16,7 @@ dsres = require "data/dsres"
 
 Secunda = {}
 Secunda.sName = "Secunda"
-Secunda.sVersion = "0.2.2"
+Secunda.sVersion = "0.2.3"
 Secunda.sAuthor = "Pospelov"
 
 print ""
@@ -112,10 +112,6 @@ function Secunda.SetMeta()
 	setmetatable(Secunda, SecundaMeta)
 end
 
-function OnPlayerChatInput(pl, text)
-	pl:SendChatMessage(text)
-end
-
 function Secunda.Hook()
 	local tStandard = {
 		"OnServerInit",
@@ -126,7 +122,7 @@ function Secunda.Hook()
 		"OnPlayerUpdate",
 		"OnPlayerDying",
 		"OnPlayerDeath",
-		--"OnPlayerChatInput",
+		"OnPlayerChatInput",
 		"OnPlayerDialogResponse",
 		"OnPlayerCharacterCreated",
 		"OnPlayerActivateObject",
