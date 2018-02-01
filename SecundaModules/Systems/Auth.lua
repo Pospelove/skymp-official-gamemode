@@ -15,7 +15,7 @@ local function LoadingMsgStep(user)
     return
   end
 
-  local base = Theme.info .. ru "Загрузка"
+  local base = Theme.info .. ru "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
   local addiTxt = {"", ".", "..", "..."}
 
   user:ClearChat()
@@ -46,10 +46,10 @@ function Auth.OnUserConnect(user)
       StopLoadingMessage(user)
       user:ClearChat()
       if isLogged then
-        user:SendChatMessage(Theme.success .. ru "С возвращением, " .. user:GetName())
+        user:SendChatMessage(Theme.success .. ru "Добро пожаловать, " .. user:GetName())
         user:Load()
       else
-        user:SendChatMessage(Theme.error .. ru "Вы не были авторизированы")
+        user:SendChatMessage(Theme.error .. ru "Ошибка авторизации")
         user:Kick()
       end
     end)
@@ -58,15 +58,6 @@ end
 
 function Auth.OnUserLoad(user)
   print("Account loaded: " .. tostring(user))
-end
-
-function Auth.OnPlayerSpawn(pl)
-  local t = {
-    "Железные перчатки", "Железная броня", "Железные сапоги", "Железный шлем", "Железный щит", "Железный меч",
-  }
-  print ("suka blyad")
-  for i = 1, #t do pl:AddItem(ItemType.LookupByIdentifier(t[i]), 1) end
-  print ("suka blyad1")
 end
 
 function Auth.OnUserSave(user)
