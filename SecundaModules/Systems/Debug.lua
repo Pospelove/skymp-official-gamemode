@@ -64,16 +64,15 @@ function Debug.OnServerInit()
     return true
   end)
 
-  local val = Command("/val", "ssssf", "/val <userName> <section> <variableName> <set/get> <value> (/valhelp)", function(user, args)
+  local val = Command("/val", "ssssf", "/val <userName> <section> <variableName> <value> (/valhelp)", function(user, args)
     if not Debug.IsDeveloper(user) then
       return true
     end
     local userName = args[1]
     local section = args[2]
     local varName = args[3]
-    local action = args[4]
-    local value = args[5]
-    if type(userName) == "string" and type(section) == "string" and type(varName) == "string" and type(action) == "string" and type(value) == "number" then
+    local value = args[4]
+    if type(userName) == "string" and type(section) == "string" and type(varName) == "string"  and type(value) == "number" then
       local targets = {}
 
       -- Form targets
@@ -93,56 +92,33 @@ function Debug.OnServerInit()
           local target = targets[i]
           if target ~= nil then
             local set = nil
-            local get = nil
             if section == "av" then
               set = function(newVal)
                 target:SetBaseAV(varName, newVal)
-              end
-              get = function()
-                return target:GetBaseAV(varName)
               end
             elseif section == "avcurrent" then
               set = function(newVal)
                 target:SetCurrentAV(varName, newVal)
               end
-              get = function()
-                return target:GetCurrentAV(varName)
-              end
             elseif section == "skillexp" then
               set = function(newVal)
                 target:SetSkillExperience(varName, newVal)
-              end
-              get = function()
-                return target:GetSkillExperience(varName)
               end
             elseif section == "acc" then
               set = function(newVal)
                 target:SetAccountVar(varName, newVal)
               end
-              get = function()
-                return target:GetAccountVar(varName)
-              end
             end
-            if set == nil or get == nil then
+            if set == nil then
               user:SendChatMessage(Theme.error .. "Секция не найдена (" .. section .. ")")
               return true
             end
-            if action == "get" then
-              local res = get()
-              local del = Theme.info .. " -> " .. Theme.sel
-              local eq = Theme.info .. " = " .. Theme.sel
-              user:SendChatMessage(Theme.sel .. target:GetName() .. del .. section .. del .. varName .. eq .. tostring(res))
-            elseif action == "set" then
-              set(value)
-              local res = value
-              local del = Theme.info .. " -> " .. Theme.sel
-              local eq = Theme.info .. " теперь равно " .. Theme.sel
-              user:SendChatMessage(Theme.sel .. target:GetName() .. del .. section .. del .. varName .. eq .. tostring(res))
-              target:Save()
-            else
-              user:SendChatMessage(Theme.error .. "Операция не найдена (" .. action .. ")")
-              return true
-            end
+            set(value)
+            local res = value
+            local del = Theme.info .. " -> " .. Theme.sel
+            local eq = Theme.info .. " теперь равно " .. Theme.sel
+            user:SendChatMessage(Theme.sel .. target:GetName() .. del .. section .. del .. varName .. eq .. tostring(res))
+            target:Save()
           end
         end
       end
