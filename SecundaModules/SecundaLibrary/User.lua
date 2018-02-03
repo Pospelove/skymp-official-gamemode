@@ -200,7 +200,7 @@ function User:_SetActorValues(avs)
 		if key:gsub("_CURRENT", "") ~= key then
 			player:SetCurrentAV(key:gsub("_CURRENT", ""), value)
     elseif key:gsub("_EXP", "") ~= key then
-      player:SetSkillExperience(key:gsub("_CURRENT", ""), value)
+      player:SetSkillExperience(key:gsub("_EXP", ""), value)
 		else
 			player:SetBaseAV(key, value)
 		end
