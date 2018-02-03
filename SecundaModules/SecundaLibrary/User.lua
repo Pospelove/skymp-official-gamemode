@@ -189,7 +189,7 @@ function User:_GetActorValues()
 		"OneHanded", "TwoHanded", "Marksman", "Block", "Smithing", "HeavyArmor", "LightArmor", "Pickpocket", "Lockpicking", "Sneak",
 		"Alchemy", "Speechcraft", "Alteration", "Conjuration", "Destruction", "Illusion", "Restoration", "Enchanting",
 		"CarryWeight",
-    "Level", "PerkPoints"
+    "Level", "PerkPoints", "Experience"
 	}
   local skillNames = {
     "OneHanded", "TwoHanded", "Marksman", "Block", "Smithing", "HeavyArmor", "LightArmor", "Pickpocket", "Lockpicking", "Sneak",

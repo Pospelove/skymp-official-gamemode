@@ -53,6 +53,17 @@ function Debug.OnServerInit()
     return not Debug.IsDeveloper(user)
   end)
 
+  local incrskill = Command("/incrskill", "ss", "/incrskill <userName> <skillName>", function(user, args)
+    if type(args[1]) == "string" and type(args[2]) == "string" then
+      local target = User.Lookup(args[1])
+      if target ~= nil then
+        target:IncrementSkill(args[2])
+        target:Save()
+      end
+      return true
+    end
+    return false
+  end)
 
   local valhelp = Command("/valhelp", "", Debug.emptyTip, function(user)
     if not Debug.IsDeveloper(user) then
