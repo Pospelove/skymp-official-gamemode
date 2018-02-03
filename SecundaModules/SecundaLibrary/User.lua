@@ -290,8 +290,12 @@ function User:SetName(newName)
   self.pl:SetName(newName)
 end
 
+function User:SendChatMessage(text)
+  self.pl:SendChatMessage(ru(text))
+end
+
 function User.HasOverride(key)
-  return key == "GetID" or key == "GetName" or key == "SetName"
+  return key == "GetID" or key == "GetName" or key == "SetName" or key == "SendChatMessage"
 end
 
 function User.Index(self, key)
