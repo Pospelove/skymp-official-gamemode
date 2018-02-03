@@ -170,8 +170,13 @@ function User:_GetActorValues()
 		"HealRate", "MagickaRate", "StaminaRate",
 		"OneHanded", "TwoHanded", "Marksman", "Block", "Smithing", "HeavyArmor", "LightArmor", "Pickpocket", "Lockpicking", "Sneak",
 		"Alchemy", "Speechcraft", "Alteration", "Conjuration", "Destruction", "Illusion", "Restoration", "Enchanting",
-		"CarryWeight"
+		"CarryWeight",
+    "Level", "PerkPoints"
 	}
+  local skillNames = {
+    "OneHanded", "TwoHanded", "Marksman", "Block", "Smithing", "HeavyArmor", "LightArmor", "Pickpocket", "Lockpicking", "Sneak",
+		"Alchemy", "Speechcraft", "Alteration", "Conjuration", "Destruction", "Illusion", "Restoration", "Enchanting"
+  }
 
 	local avs = {}
 
@@ -179,6 +184,9 @@ function User:_GetActorValues()
 		avs[avNames[i]] = math.floor(player:GetBaseAV(avNames[i]))
 		avs[avNames[i] .. "_CURRENT"] = math.floor(player:GetCurrentAV(avNames[i]))
 	end
+  for i = 1, #skillNames do
+    avs[skillNames[i] .. "_EXP"] = player:GetSkillExperience(skillNames[i])
+  end
 
 	return avs
 end
@@ -191,6 +199,8 @@ function User:_SetActorValues(avs)
 	for key, value in pairs(avs) do
 		if key:gsub("_CURRENT", "") ~= key then
 			player:SetCurrentAV(key:gsub("_CURRENT", ""), value)
+    elseif key:gsub("_EXP", "") ~= key then
+      player:SetSkillExperience(key:gsub("_CURRENT", ""), value)
 		else
 			player:SetBaseAV(key, value)
 		end
