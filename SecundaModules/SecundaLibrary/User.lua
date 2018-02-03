@@ -79,6 +79,10 @@ function User:Load()
 end
 
 function User:Save()
+  local isTest = self.pl:IsNPC()
+  if isTest then
+    return
+  end
   if self.account == nil then
     error "user with account expected"
   end

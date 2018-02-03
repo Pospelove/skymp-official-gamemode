@@ -134,6 +134,7 @@ function Debug.OnServerInit()
               user:SendChatMessage(Theme.sel .. target:GetName() .. del .. section .. del .. varName .. eq .. tostring(res))
             elseif action == "set" then
               set(value)
+              local res = value
               local del = Theme.info .. " -> " .. Theme.sel
               local eq = Theme.info .. " теперь равно " .. Theme.sel
               user:SendChatMessage(Theme.sel .. target:GetName() .. del .. section .. del .. varName .. eq .. tostring(res))
