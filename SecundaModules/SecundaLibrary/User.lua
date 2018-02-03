@@ -375,7 +375,7 @@ function User.OnPlayerChatInput(pl, input)
   if pl:IsNPC() == false then
     if stringx.at(input, 1) ~= "/" then
       local user = User.Lookup(pl:GetName())
-      Secunda.OnUserChatMessage(user, input)
+      Secunda.OnUserChatMessage(user, deru(input))
     end
   end
   return true

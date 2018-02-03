@@ -97,8 +97,10 @@ end
 
 function Command:Call(uUser, tArguments)
   if not self.bIsDestroyed then
-    self.OnCall(uUser, tArguments)
+    return self.OnCall(uUser, tArguments)
   end
+  local noTip = true
+  return noTip
 end
 
 local function Parse(tTokens, sTempl)
@@ -130,6 +132,7 @@ local function Parse(tTokens, sTempl)
 end
 
 function ChatCommands.OnPlayerChatInput(uPl, sInputText)
+  sInputText = deru(sInputText)
   if stringx.startswith(sInputText, "/") then
     local tTokens = stringx.split(sInputText)
     local sCmdText = tTokens[1]
