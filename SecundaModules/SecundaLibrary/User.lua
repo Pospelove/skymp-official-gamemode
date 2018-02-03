@@ -4,6 +4,8 @@ function User.Docs()
   return [[
   -- Static methods:
   User.Lookup(key) -- Lookup user by key (ID or Name)
+  User.GetAllUsers() -- Get list of users
+  User.GetUsersMap() -- Get map-like table of users, faster than GetAllUsers() (example: user = User.GetUsersMap()["Pospelov"])
 
   -- Methods:
   tostring(user) -- Convert user to "<name>[<id>]" string (example: Pospelov[0])
@@ -35,6 +37,18 @@ local gUserTested = false
 
 function User.Lookup(key)
   return gUsersMap[key]
+end
+
+function User.GetAllUsers()
+  local res = {}
+  for k, v in pairs(gUsersMap) do
+    table.insert(res, v)
+  end
+  return res
+end
+
+function User.GetUsersMap()
+  return gUsersMap
 end
 
 function User:__tostring()
@@ -185,7 +199,7 @@ function User:_GetActorValues()
 		avs[avNames[i] .. "_CURRENT"] = math.floor(player:GetCurrentAV(avNames[i]))
 	end
   for i = 1, #skillNames do
-    avs[skillNames[i] .. "_EXP"] = player:GetSkillExperience(skillNames[i])
+    avs[skillNames[i] .. "_EXP"] = math.floor(player:GetSkillExperience(skillNames[i]))
   end
 
 	return avs
