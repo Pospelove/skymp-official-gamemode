@@ -370,10 +370,13 @@ function User.OnPlayerConnect(pl)
 end
 
 function User.OnPlayerDisconnect(pl)
-  if pl:IsNPC() == false then
-    Secunda.OnUserDisconnect(User.Lookup(pl:GetName()))
-    DeleteUser(pl)
-  end
+  --if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    if user ~= nil then
+      Secunda.OnUserDisconnect(user)
+      DeleteUser(pl)
+    end
+  --end
   return true
 end
 
