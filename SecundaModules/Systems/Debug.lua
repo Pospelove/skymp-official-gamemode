@@ -22,7 +22,7 @@ function Debug.OnServerInit()
         user:SendChatMessage(Theme.success .. "Режим разработчика деактивирован на вашем аккаунте")
         devMode = false
       end
-      print(tostring(user) " - developerMode = " .. tostring(devMode))
+      print(tostring(user) .. " - developerMode = " .. tostring(devMode))
       user:SetAccountVar("developerMode", devMode)
       user:Save()
     end
