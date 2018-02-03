@@ -3,6 +3,7 @@ Theme = {
   success = Colors.Get("LimeGreen"),
   notice = Colors.Get("Gold"),
   info = Colors.Get("SlateGray"),
+  sel = Colors.Get("LightBlue"),
   tip = Colors.Get("Silver")
 }
 
