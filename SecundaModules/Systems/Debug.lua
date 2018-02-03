@@ -64,7 +64,7 @@ function Debug.OnServerInit()
     return true
   end)
 
-  local val = Command("/val", "ssssf", "/val <userName> <section> <variableName> <value> (/valhelp)", function(user, args)
+  local val = Command("/val", "sssf", "/val <userName> <section> <variableName> <value> (/valhelp)", function(user, args)
     if not Debug.IsDeveloper(user) then
       return true
     end
