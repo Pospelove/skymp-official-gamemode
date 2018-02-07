@@ -46,6 +46,9 @@ function Debug.OnServerInit()
       return true
     end
     local perk = Perk.LookupByID(0xc07c8)
+    if perk == nil then
+      error("bad perk id")
+    end
     if args[1] == "rm" then
       user:RemovePerk(perk)
       user:SendChatMessage(Theme.info .. "Перк отнят")
