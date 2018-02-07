@@ -38,3 +38,5 @@ function Perks.OnServerInit()
   Perks.Require()
   return true
 end
+
+return Perks
