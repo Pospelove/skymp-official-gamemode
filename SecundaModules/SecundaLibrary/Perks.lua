@@ -27,10 +27,10 @@ function Perks.Init()
   print("Done in " .. (GetTickCount() - clock) .. "ms")
 end
 
-function Rerks.Require()
-  if not Rerks.inited then
-    Rerks.Init()
-    Rerks.inited = true
+function Perks.Require()
+  if not Perks.inited then
+    Perks.Init()
+    Perks.inited = true
   end
 end
 

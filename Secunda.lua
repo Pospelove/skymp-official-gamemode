@@ -16,7 +16,7 @@ dsres = require "data/dsres"
 
 Secunda = {}
 Secunda.sName = "Secunda"
-Secunda.sVersion = "0.5.0"
+Secunda.sVersion = "0.5.1"
 Secunda.sAuthor = "Pospelov"
 
 print ""
