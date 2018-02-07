@@ -166,19 +166,19 @@ SetTimer(1000, function()
 end)
 
 ru = function(str)
-	local cyr  = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
+	local cyr  = "йцукенгшщзхъфывапролджэячсмитьбюЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ"
 	for i = 1, string.len(cyr) do
 		str = string.gsub(str, stringx.at(cyr, i), "<cy:" .. tostring(i) .. ">")
 	end
 	return str
 end
-if ru "пїЅпїЅпїЅ" ~= "<cy:16><cy:31><cy:15>" then error("test failed - ru()") end
+if ru "абв" ~= "<cy:16><cy:31><cy:15>" then error("test failed - ru()") end
 
 deru = function(str)
-	local cyr  = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
+	local cyr  = "йцукенгшщзхъфывапролджэячсмитьбюЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ"
 	for i = 1, string.len(cyr) do
 		str = string.gsub(str, "<cy:" .. tostring(i) .. ">", stringx.at(cyr, i))
 	end
 	return str
 end
-if deru "<cy:16><cy:31><cy:15>" ~= "пїЅпїЅпїЅ" then error("test failed - deru()") end
+if deru "<cy:16><cy:31><cy:15>" ~= "абв" then error("test failed - deru()") end
