@@ -16,7 +16,7 @@ dsres = require "data/dsres"
 
 Secunda = {}
 Secunda.sName = "Secunda"
-Secunda.sVersion = "0.4.6"
+Secunda.sVersion = "0.5.0"
 Secunda.sAuthor = "Pospelov"
 
 print ""
@@ -166,19 +166,19 @@ SetTimer(1000, function()
 end)
 
 ru = function(str)
-	local cyr  = "éöóêåíãøùçõúôûâàïğîëäæıÿ÷ñìèòüáşÉÖÓÊÅÍÃØÙÇÕÚÔÛÂÀÏĞÎËÄÆİß×ÑÌÈÒÜÁŞ"
+	local cyr  = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
 	for i = 1, string.len(cyr) do
 		str = string.gsub(str, stringx.at(cyr, i), "<cy:" .. tostring(i) .. ">")
 	end
 	return str
 end
-if ru "àáâ" ~= "<cy:16><cy:31><cy:15>" then error("test failed - ru()") end
+if ru "ï¿½ï¿½ï¿½" ~= "<cy:16><cy:31><cy:15>" then error("test failed - ru()") end
 
 deru = function(str)
-	local cyr  = "éöóêåíãøùçõúôûâàïğîëäæıÿ÷ñìèòüáşÉÖÓÊÅÍÃØÙÇÕÚÔÛÂÀÏĞÎËÄÆİß×ÑÌÈÒÜÁŞ"
+	local cyr  = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
 	for i = 1, string.len(cyr) do
 		str = string.gsub(str, "<cy:" .. tostring(i) .. ">", stringx.at(cyr, i))
 	end
 	return str
 end
-if deru "<cy:16><cy:31><cy:15>" ~= "àáâ" then error("test failed - deru()") end
+if deru "<cy:16><cy:31><cy:15>" ~= "ï¿½ï¿½ï¿½" then error("test failed - deru()") end
