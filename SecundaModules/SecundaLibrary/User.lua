@@ -91,7 +91,14 @@ function User:Save()
   end
   self:_PrepareAccountToSave()
   local file = io.open("files/players/" .. self:GetName() .. ".json", "w")
-  file:write(json.encode(self.account))
+
+  local data = ""
+  local success, errc = pcall(function() data = json.encode(self.account) end)
+  if success then
+    file:write(data)
+  else
+    error (errc .. "\n\n" .. pretty.write(self.account))
+  end
   io.close(file)
   Secunda.OnUserSave(self)
 end
