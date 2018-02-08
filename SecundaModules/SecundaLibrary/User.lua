@@ -258,9 +258,14 @@ function User:_ApplyAccount()
     local account = tablex.deepcopy(self.account)
     player:SetSpawnPoint(Location(account.location), account.x, account.y, account.z, account.angle)
     player:Spawn()
-    pcall(function() self:_SetLook(json.decode(account.look)) end)
-    pcall(function() self:_SetActorValues(json.decode(account.avs)) end)
-    pcall(function() self:_SetPerks(json.decode(account.perks)) end)
+    local s = nil
+    local e = nil
+    s, e = pcall(function() self:_SetLook(json.decode(account.look)) end)
+    if not s then print(e) end
+    s, e = pcall(function() self:_SetActorValues(json.decode(account.avs)) end)
+    if not s then print(e) end
+    s, e = pcall(function() self:_SetPerks(json.decode(account.perks)) end)
+    if not s then print(e) end
   end)
   if not success then
     print(err)
