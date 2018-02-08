@@ -262,6 +262,7 @@ function User:_ApplyAccount()
     pcall(function() self:_SetLook(json.decode(account.look)) end)
     pcall(function() self:_SetActorValues(json.decode(account.avs)) end)
     pcall(function() self:_SetPerks(json.decode(account.perksIds)) end)
+    print(pretty.write(json.decode(account.perksIds)))---
   end)
   if not success then
     print(err)
@@ -284,6 +285,7 @@ function User:_PrepareAccountToSave()
   self.account.look = json.encode(self:_GetLook())
   self.account.avs = json.encode(self:_GetActorValues())
   self.account.perksIds = json.encode(self:_GetPerks())
+  print(pretty.write(self:_GetPerks()))---
 end
 
 -- ...
