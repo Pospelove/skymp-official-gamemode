@@ -247,6 +247,9 @@ function User:_GetPerks()
 end
 
 function User:_SetPerks(perksStr)
+  if type(perksStr) ~= "string" then
+    perksStr = ""
+  end
   for k, v in pairs(self.perks) do -- remove old perks
     self.pl:RemovePerk(k)
   end
@@ -289,7 +292,7 @@ function User:_PrepareAccountToSave()
   self.account.look = json.encode(self:_GetLook())
   self.account.avs = json.encode(self:_GetActorValues())
   self.account.perksStr = self:_GetPerks()
-  print(self:_GetPerks())---
+  print(tostring(self:_GetPerks()))---
 end
 
 -- ...
