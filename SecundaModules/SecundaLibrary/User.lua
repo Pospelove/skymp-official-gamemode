@@ -236,16 +236,24 @@ function User:_SetActorValues(avs)
 end
 
 function User:_GetPerks()
-  return self.perks
+  local res = ""
+  for k, v in pairs(self.perks) do
+    if res ~= "" then
+      res = res .. " "
+    end
+    res = res .. k
+  end
+  return res
 end
 
-function User:_SetPerks(perkIds)
+function User:_SetPerks(perksStr)
   for k, v in pairs(self.perks) do -- remove old perks
     self.pl:RemovePerk(k)
   end
   self.perks = {}
-  for k, v in pairs(perkIds) do -- remove old perks
-    self:AddPerk(Perk.LookupByID(k))
+  local t = stringx.split(perksStr)
+  for i = 1, #t do
+    self:AddPerk(t[i])
   end
 end
 
@@ -257,8 +265,8 @@ function User:_ApplyAccount()
     player:Spawn()
     pcall(function() self:_SetLook(json.decode(account.look)) end)
     pcall(function() self:_SetActorValues(json.decode(account.avs)) end)
-    pcall(function() self:_SetPerks(json.decode(account.perksIds)) end)
-    print(pretty.write(json.decode(account.perksIds)))---
+    pcall(function() self:_SetPerks(account.perksStr) end)
+    print(account.perksStr))---
   end)
   if not success then
     print(err)
@@ -280,8 +288,8 @@ function User:_PrepareAccountToSave()
   self.account.angle = math.floor(player:GetAngleZ())
   self.account.look = json.encode(self:_GetLook())
   self.account.avs = json.encode(self:_GetActorValues())
-  self.account.perksIds = json.encode(self:_GetPerks())
-  print(pretty.write(self:_GetPerks()))---
+  self.account.perksStr = self:_GetPerks()
+  print(self:_GetPerks())---
 end
 
 -- ...
