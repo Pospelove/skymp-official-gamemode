@@ -24,6 +24,7 @@ function User.Docs()
   OnUserSpawn(user) --
   OnUserCharacterCreated(user) --
   OnUserChatMessage(user, text) -- Called on chat message (not command)
+  OnUserLearnPerk(user, perk) --
   ]]
 end
 
@@ -234,6 +235,23 @@ function User:_SetActorValues(avs)
 	end
 end
 
+function User:_GetPerks()
+  local perks = self:GetPerks()
+  for i = 1, #perks do
+    perks[i] = perks[i]:GetID()
+  end
+  return perks
+end
+
+function User:_SetPerks(perkIds)
+  self:RemoveAllPerks()
+  if perkIds ~= nil then
+    for i = 1, #perkIds do
+      self:AddPerk(Perk.LookupByID(perkIds[i]))
+    end
+  end
+end
+
 function User:_ApplyAccount()
   local success, err = pcall(function()
     local player = self.pl
@@ -242,6 +260,7 @@ function User:_ApplyAccount()
     player:Spawn()
     pcall(function() self:_SetLook(json.decode(account.look)) end)
     pcall(function() self:_SetActorValues(json.decode(account.avs)) end)
+    pcall(function() self:_SetPerks(json.decode(account.perks)) end)
   end)
   if not success then
     print(err)
@@ -263,6 +282,7 @@ function User:_PrepareAccountToSave()
   self.account.angle = math.floor(player:GetAngleZ())
   self.account.look = json.encode(self:_GetLook())
   self.account.avs = json.encode(self:_GetActorValues())
+  self.account.perks = json.encode(self:_GetPerks())
 end
 
 -- ...
@@ -306,6 +326,7 @@ function User:_init(pl)
   self.pl = pl
   self.name = pl:GetName()
   self.id = pl:GetID()
+  self.perksMap = {}
 end
 
 function User:__index(key)
@@ -331,12 +352,44 @@ function User:SendChatMessage(text)
   self.pl:SendChatMessage(ru(text))
 end
 
+function User:AddPerk(perk)
+  self.pl:AddPerk(perk)
+  self.perksMap[perk:GetID()] = true
+end
+
+function User:RemovePerk(perk)
+  self.pl:RemovePerk(perk)
+  self.perksMap[perk:GetID()] = nil
+end
+
+function User:HasPerk(perk)
+  return self.perksMap[perk:GetID()] == true
+end
+
+function User:GetPerks()
+  local perks = {}
+  for k, v in pairs(self.perksMap) do
+    table.insert(perks, Perk.LookupByID(k))
+  end
+  return perks
+end
+
+function User:RemoveAllPerks()
+  local perks = self:GetPerks()
+  for i = 1, #perks do
+    self:RemovePerk(perks[i])
+  end
+end
+
 function User.HasOverride(key)
   local hasOverride = {
     GetID = true,
     GetName = true,
     SetName = true,
     SendChatMessage = true,
+    AddPerk = true,
+    RemovePerk = true,
+    HasPerk = true
   }
   return hasOverride[key]
 end
@@ -424,6 +477,16 @@ function User.OnPlayerChatInput(pl, input)
       Secunda.OnUserChatMessage(user, deru(input))
     end
   end
+  return true
+end
+
+function User.OnPlayerLearnPerk(pl, perk)
+  if perk:IsPlayable() == false then
+    error "non-playable perk"
+  end
+  local user = User.Lookup(pl:GetName())
+  user:AddPerk(perk)
+  Secunda.OnUserLearnPerk(user, perk)
   return true
 end
 
