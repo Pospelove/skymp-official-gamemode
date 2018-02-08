@@ -45,7 +45,7 @@ function Debug.OnServerInit()
     if not Debug.IsDeveloper(user) then
       return true
     end
-    local perk = Perk.LookupByID(0xc07c8)
+    local perk = Perk.LookupByID(0xbe126)
     if perk == nil then
       error("bad perk id")
     end
