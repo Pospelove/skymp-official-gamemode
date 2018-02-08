@@ -248,7 +248,7 @@ function User:_ApplyAccount()
     player:Spawn()
     pcall(function() self:_SetLook(json.decode(account.look)) end)
     pcall(function() self:_SetActorValues(json.decode(account.avs)) end)
-    --pcall(function() self:_SetPerks(json.decode(account.perks)) end)
+    pcall(function() self:_SetPerks(json.decode(account.perks)) end)
   end)
   if not success then
     print(err)
