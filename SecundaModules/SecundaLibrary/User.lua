@@ -341,6 +341,7 @@ function User:SendChatMessage(text)
 end
 
 function User:AddPerk(perk)
+  print("AddPerk " .. tostring(self))
   if perk ~= nil then
     local isPerk = (type(perk.IsPlayable) == "function")
     if isPerk then
@@ -351,6 +352,7 @@ function User:AddPerk(perk)
 end
 
 function User:RemovePerk(perk)
+  print("RemovePerk " .. tostring(self))
   if perk ~= nil then
     self.pl:RemovePerk(perk)
     self.perks[perk:GetID()] = nil
@@ -461,7 +463,10 @@ function User.OnPlayerChatInput(pl, input)
 end
 
 function User.OnPlayerLearnPerk(pl, perk)
-  if pl:IsNPC() == false and perk:IsPlayable() == true then
+  if perk:IsPlayable() == false then
+    erorr("non-playable perk")
+  end
+  if pl:IsNPC() == false then
     local user = User.Lookup(pl:GetName())
     user:AddPerk(perk)
     Secunda.OnUserLearnPerk(user, perk)
