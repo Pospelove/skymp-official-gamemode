@@ -236,11 +236,7 @@ function User:_SetActorValues(avs)
 end
 
 function User:_GetPerks()
-  local perks = {}
-  for k, v in pairs(self.perks) do
-    table.insert(perks, k)
-  end
-  return perks
+  return self.perks
 end
 
 function User:_SetPerks(perkIds)
@@ -248,8 +244,8 @@ function User:_SetPerks(perkIds)
     self.pl:RemovePerk(k)
   end
   self.perks = {}
-  for i = 1, #perksIds do
-    self:AddPerk(Perk.LookupByID(perksIds[i]))
+  for k, v in pairs(perkIds) do -- remove old perks
+    self:AddPerk(Perk.LookupByID(k))
   end
 end
 
