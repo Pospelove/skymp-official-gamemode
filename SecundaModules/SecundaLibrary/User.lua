@@ -24,7 +24,6 @@ function User.Docs()
   OnUserSpawn(user) --
   OnUserCharacterCreated(user) --
   OnUserChatMessage(user, text) -- Called on chat message (not command)
-  OnUserLearnPerk(user, perk) -- Called when user learns a perk
   ]]
 end
 
@@ -235,31 +234,6 @@ function User:_SetActorValues(avs)
 	end
 end
 
-function User:_GetPerks()
-  local res = ""
-  for k, v in pairs(self.perks) do
-    if res ~= "" then
-      res = res .. " "
-    end
-    res = res .. k
-  end
-  return res
-end
-
-function User:_SetPerks(perksStr)
-  if type(perksStr) ~= "string" then
-    perksStr = ""
-  end
-  for k, v in pairs(self.perks) do -- remove old perks
-    self.pl:RemovePerk(k)
-  end
-  self.perks = {}
-  local t = stringx.split(perksStr)
-  for i = 1, #t do
-    self:AddPerk(t[i])
-  end
-end
-
 function User:_ApplyAccount()
   local success, err = pcall(function()
     local player = self.pl
@@ -268,8 +242,6 @@ function User:_ApplyAccount()
     player:Spawn()
     pcall(function() self:_SetLook(json.decode(account.look)) end)
     pcall(function() self:_SetActorValues(json.decode(account.avs)) end)
-    pcall(function() self:_SetPerks(account.perksStr) end)
-    print(account.perksStr)---
   end)
   if not success then
     print(err)
@@ -291,8 +263,6 @@ function User:_PrepareAccountToSave()
   self.account.angle = math.floor(player:GetAngleZ())
   self.account.look = json.encode(self:_GetLook())
   self.account.avs = json.encode(self:_GetActorValues())
-  self.account.perksStr = self:_GetPerks()
-  print(tostring(self:_GetPerks()))---
 end
 
 -- ...
@@ -336,7 +306,6 @@ function User:_init(pl)
   self.pl = pl
   self.name = pl:GetName()
   self.id = pl:GetID()
-  self.perks = {}
 end
 
 function User:__index(key)
@@ -362,38 +331,12 @@ function User:SendChatMessage(text)
   self.pl:SendChatMessage(ru(text))
 end
 
-function User:AddPerk(perk)
-  print("AddPerk " .. tostring(self))
-  if perk ~= nil then
-    local isPerk = (type(perk.IsPlayable) == "function")
-    if isPerk then
-      self.pl:AddPerk(perk)
-      self.perks[perk:GetID()] = true
-    end
-  end
-end
-
-function User:RemovePerk(perk)
-  print("RemovePerk " .. tostring(self))
-  if perk ~= nil then
-    self.pl:RemovePerk(perk)
-    self.perks[perk:GetID()] = nil
-  end
-end
-
-function User:HasPerk(perk)
-  return self.perks[perk:GetID()] ~= nil
-end
-
 function User.HasOverride(key)
   local hasOverride = {
     GetID = true,
     GetName = true,
     SetName = true,
     SendChatMessage = true,
-    AddPerk = true,
-    RemovePerk = true,
-    HasPerk = true
   }
   return hasOverride[key]
 end
@@ -480,18 +423,6 @@ function User.OnPlayerChatInput(pl, input)
       local user = User.Lookup(pl:GetName())
       Secunda.OnUserChatMessage(user, deru(input))
     end
-  end
-  return true
-end
-
-function User.OnPlayerLearnPerk(pl, perk)
-  if perk:IsPlayable() == false then
-    erorr("non-playable perk")
-  end
-  if pl:IsNPC() == false then
-    local user = User.Lookup(pl:GetName())
-    user:AddPerk(perk)
-    Secunda.OnUserLearnPerk(user, perk)
   end
   return true
 end
