@@ -266,6 +266,7 @@ function User:_ApplyAccount()
     if not s then print(e) end
     s, e = pcall(function() self:_SetPerks(json.decode(account.perks)) end)
     if not s then print(e) end
+    print(pretty.write(account))
   end)
   if not success then
     print(err)
