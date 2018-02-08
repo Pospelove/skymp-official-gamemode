@@ -266,7 +266,7 @@ function User:_ApplyAccount()
     pcall(function() self:_SetLook(json.decode(account.look)) end)
     pcall(function() self:_SetActorValues(json.decode(account.avs)) end)
     pcall(function() self:_SetPerks(account.perksStr) end)
-    print(account.perksStr))---
+    print(account.perksStr)---
   end)
   if not success then
     print(err)
