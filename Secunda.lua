@@ -16,7 +16,7 @@ dsres = require "data/dsres"
 
 Secunda = {}
 Secunda.sName = "Secunda"
-Secunda.sVersion = "0.6.0"
+Secunda.sVersion = "0.6.1"
 Secunda.sAuthor = "Pospelov"
 
 print ""
@@ -131,7 +131,8 @@ function Secunda.Hook()
 		"OnPlayerHitPlayer",
 		"OnPlayerDataSearchResult",
 		"OnWayPointCreate",
-		"OnPlayerLearnEffect"
+		"OnPlayerLearnEffect",
+		"OnPlayerLearnPerk"
 	}
 	for i = 1, #tStandard do
 		_G[tStandard[i]] = Secunda[tStandard[i]]
