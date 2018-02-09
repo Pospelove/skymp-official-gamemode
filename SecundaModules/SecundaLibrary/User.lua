@@ -25,6 +25,7 @@ function User.Docs()
   OnUserCharacterCreated(user) --
   OnUserChatMessage(user, text) -- Called on chat message (not command)
   OnUserLearnPerk(user, perk) --
+  OnUserDying(user, killer) --
   ]]
 end
 
@@ -517,6 +518,18 @@ function User.OnPlayerLearnPerk(pl, perk)
   end
   for i = 1, #perks do
     self:Add(perks[i])
+  end
+  return true
+end
+
+function User.OnPlayerDying(pl, killer)
+  if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    local killerUser = nil
+    if killer:IsNPC() == false then
+      killerUser = User.Lookup(killer:GetName())
+    end
+    Secunda.OnUserDying(user, killerUser)
   end
   return true
 end
