@@ -212,7 +212,7 @@ function User:_GetActorValues()
 		avs[avNames[i]] = math.floor(player:GetBaseAV(avNames[i]))
     local v = math.floor(player:GetCurrentAV(avNames[i]))
     if v == 0 then
-      v = 1
+      v = 1 -- Zero values will break account
     end
 		avs[avNames[i] .. "_CURRENT"] = v
 	end
@@ -230,6 +230,9 @@ function User:_SetActorValues(avs)
 
 	for key, value in pairs(avs) do
 		if key:gsub("_CURRENT", "") ~= key then
+      if value == 1 and key == "Health_CURRENT" then
+        value = 0
+      end
 			player:SetCurrentAV(key:gsub("_CURRENT", ""), value)
     elseif key:gsub("_EXP", "") ~= key then
       player:SetSkillExperience(key:gsub("_EXP", ""), value)
