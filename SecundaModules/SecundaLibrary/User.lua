@@ -125,14 +125,7 @@ function User:ShowRaceMenu()
 end
 
 function User:AddTask(f)
-  local was = self.tasksOnSpawn
-  if was == nil then
-    was = function() end
-  end
-  self.tasksOnSpawn = function()
-    was()
-    f()
-  end
+  table.insert(self.tasksOnSpawn, f)
 end
 
 --[[ IMPLEMENTATION ]]--
@@ -351,6 +344,7 @@ function User:_init(pl)
   self.name = pl:GetName()
   self.id = pl:GetID()
   self.perksMap = {}
+  self.tasksOnSpawn = {}
 end
 
 function User:__index(key)
@@ -538,9 +532,13 @@ function User.OnPlayerUpdate(pl)
   local emptyFunc = function() end
   if pl:IsNPC() == false then
     local user = User.Lookup(pl:GetName())
-    if user:IsSpawned() and user.tasksOnSpawn ~= nil then
-      user.tasksOnSpawn()
-      user.tasksOnSpawn = emptyFunc
+    if user:IsSpawned() then
+      if #user.tasksOnSpawn > 0 then
+        for i = 1, #user.tasksOnSpawn do
+          user.tasksOnSpawn[i]()
+        end
+        user.tasksOnSpawn = {}
+      end
     end
   end
 end
