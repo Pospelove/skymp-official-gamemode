@@ -41,6 +41,17 @@ function Debug.OnServerInit()
     return not Debug.IsDeveloper(user)
   end)
 
+  local getav = Command("/getav", "s", "/getav <av>", function(user, args)
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    if type(args[1]) == "string" then
+      user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. args[1]:lower() .. Theme.info .. " равно " .. Theme.sel .. tostring(user:SetBaseAV(args[1])));
+      return true
+    end
+    return not Debug.IsDeveloper(user)
+  end)
+
   local perk = Command("/perk", "s", "/perk <add/rm>", function(user, args)
     if not Debug.IsDeveloper(user) then
       return true
