@@ -234,6 +234,9 @@ function User:_SetActorValues(avs)
   local player = self.pl
 
 	for key, value in pairs(avs) do
+    if key == "Level" then
+      player:ExecuteCommand("console", "player.setlevel " .. value)
+    end
 		if key:gsub("_CURRENT", "") ~= key then
       if value == 1 and key == "Health_CURRENT" then
         self:AddTask(function() player:SetCurrentAV("Health", 0) end)
