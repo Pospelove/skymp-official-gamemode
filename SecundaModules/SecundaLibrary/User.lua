@@ -516,7 +516,7 @@ function User.OnPlayerUpdate(pl)
   if pl:IsNPC() == false then
     local user = User.Lookup(pl:GetName())
     if user.tasks ~= nil then
-      local tasks = tablex.deepcopy(user.tasks)
+      local tasks = user.tasks
       local newTasks = nil
       for i = 1, #tasks do
         if user[tasks[i].cond]() then
