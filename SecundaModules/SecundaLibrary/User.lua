@@ -503,6 +503,9 @@ function User.OnPlayerLearnPerk(pl, perk)
     error "non-playable perk"
   end
   local user = User.Lookup(pl:GetName())
+  if user:HasPerk(perk) then
+    return true
+  end
   user:AddPerk(perk)
   Secunda.OnUserLearnPerk(user, perk)
   pl:SendChatMessage("Learn perk " .. perk:GetID())
