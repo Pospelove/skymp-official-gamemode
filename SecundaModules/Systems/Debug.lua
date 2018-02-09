@@ -52,6 +52,13 @@ function Debug.OnServerInit()
     return not Debug.IsDeveloper(user)
   end)
 
+  local incrskill = Command("/incrskill", "ss", "/incrskill <user name> <skill name>", function(user, args)
+    if args[1] == nil then args[1] = user:GetName() end
+    if args[2] == nil then args[2] = "Marksman" end
+    user:ShowSkillIncreaseNotification()
+    return true
+  end)
+
   local perk = Command("/perk", "s", "/perk <add/rm>", function(user, args)
     if not Debug.IsDeveloper(user) then
       return true
