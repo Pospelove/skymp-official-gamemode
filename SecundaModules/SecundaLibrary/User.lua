@@ -505,7 +505,6 @@ function User.OnPlayerLearnPerk(pl, perk)
   local user = User.Lookup(pl:GetName())
   user:AddPerk(perk)
   Secunda.OnUserLearnPerk(user, perk)
-  local user = self
   SetTimer(2000, function()
     -- Bug on client side: all perks will be removed after learning any perk
     local perks = user:GetPerks()
