@@ -526,7 +526,7 @@ function User.OnPlayerDying(pl, killer)
   if pl:IsNPC() == false then
     local user = User.Lookup(pl:GetName())
     local killerUser = nil
-    if killer:IsNPC() == false then
+    if killer ~= nil and killer:IsNPC() == false then
       killerUser = User.Lookup(killer:GetName())
     end
     Secunda.OnUserDying(user, killerUser)
