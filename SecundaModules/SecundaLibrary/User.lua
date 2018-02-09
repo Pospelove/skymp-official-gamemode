@@ -514,11 +514,12 @@ function User.OnPlayerLearnPerk(pl, perk)
 end
 
 function User.OnPlayerUpdate(pl)
+  local emptyFunc = function() end
   if pl:IsNPC() == false then
     local user = User.Lookup(pl:GetName())
     if user:IsSpawned() and user.tasksOnSpawn ~= nil then
       user.tasksOnSpawn()
-      user.tasksOnSpawn = nil
+      user.tasksOnSpawn = emptyFunc
     end
   end
 end
