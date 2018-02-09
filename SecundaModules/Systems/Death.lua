@@ -11,8 +11,8 @@ function Death.OnUserDying(user, killer)
 	for i = 1, n do
 		SetTimer((n * 1000) - (i * 1000), function()
       user:ClearChat()
-			user:SendChatMessage(Color.info .. "Вы будете перемещены на точку возрождения через 5 секунд")
-			user:SendChatMessage(Color.info .. "Осталось " .. i)
+			user:SendChatMessage(Theme.info .. "Вы будете перемещены на точку возрождения через 5 секунд")
+			user:SendChatMessage(Theme.info .. "Осталось " .. i)
 		end)
 	end
 	SetTimer(n * 1000, function()
