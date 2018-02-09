@@ -210,7 +210,11 @@ function User:_GetActorValues()
 
 	for i = 1, #avNames do
 		avs[avNames[i]] = math.floor(player:GetBaseAV(avNames[i]))
-		avs[avNames[i] .. "_CURRENT"] = math.floor(player:GetCurrentAV(avNames[i]))
+    local v = math.floor(player:GetCurrentAV(avNames[i]))
+    if v == 0 then
+      v = 1
+    end
+		avs[avNames[i] .. "_CURRENT"] = v
 	end
   for i = 1, #skillNames do
     avs[skillNames[i] .. "_EXP"] = math.floor(player:GetSkillExperience(skillNames[i]))
@@ -266,7 +270,6 @@ function User:_ApplyAccount()
     if not s then print(e) end
     s, e = pcall(function() self:_SetPerks(json.decode(account.perks)) end)
     if not s then print(e) end
-    self:SendChatMessage(pretty.write(account))
   end)
   if not success then
     print(err)
