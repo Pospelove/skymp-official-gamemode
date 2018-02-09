@@ -123,14 +123,15 @@ function User:ShowRaceMenu()
   self.pl:SetVirtualWorld(1000000)
 end
 
-function User:AddTask(conditionStr, f)
-  if self.tasks == nil then
-    self.tasks = {}
+function User:AddTask(f)
+  local was = self.tasksOnSpawn
+  if was == nil then
+    was = function() end
   end
-  local t = {}
-  t.cond = conditionStr
-  t.f = f
-  table.insert(self.tasks, t)
+  self.tasksOnSpawn = function()
+    was()
+    f()
+  end
 end
 
 --[[ IMPLEMENTATION ]]--
@@ -241,7 +242,7 @@ function User:_SetActorValues(avs)
 	for key, value in pairs(avs) do
 		if key:gsub("_CURRENT", "") ~= key then
       if value == 1 and key == "Health_CURRENT" then
-        self:AddTask("IsSpawned", function() player:SetCurrentAV("Health", 0) end)
+        self:AddTask(function() player:SetCurrentAV("Health", 0) end)
       end
 			player:SetCurrentAV(key:gsub("_CURRENT", ""), value)
     elseif key:gsub("_EXP", "") ~= key then
@@ -515,20 +516,9 @@ end
 function User.OnPlayerUpdate(pl)
   if pl:IsNPC() == false then
     local user = User.Lookup(pl:GetName())
-    if user.tasks ~= nil then
-      local tasks = user.tasks
-      local newTasks = nil
-      for i = 1, #tasks do
-        if user[tasks[i].cond]() then
-          tasks[i].f()
-        else
-          if newTasks == nil then
-            newTasks = {}
-          end
-          table.insert(newTasks, tasks[i])
-        end
-      end
-      user.tasks = newTasks
+    if user:IsSpawned() and user.tasksOnSpawn ~= nil then
+      user.tasksOnSpawn()
+      user.tasksOnSpawn = nil
     end
   end
 end
