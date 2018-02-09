@@ -55,7 +55,7 @@ function Debug.OnServerInit()
   local incrskill = Command("/incrskill", "ss", "/incrskill <user name> <skill name>", function(user, args)
     if args[1] == nil then args[1] = user:GetName() end
     if args[2] == nil then args[2] = "Marksman" end
-    User.Lookup(args[1]):ShowSkillIncreaseNotification(args[2])
+    User.Lookup(args[1]):IncrementSkill(args[2])
     return true
   end)
 
