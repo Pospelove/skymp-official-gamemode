@@ -34,9 +34,8 @@ function Debug.OnServerInit()
       return true
     end
     if type(args[1]) == "string" and type(args[2]) == "number" then
-      local v = user:GetBaseAV(args[1])
       user:SetBaseAV(args[1], args[2])
-      user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. args[1]:lower() .. Theme.info .. " теперь равно " .. Theme.sel .. tostring(args[2]) .. Theme.info .. " (было " Theme.sel .. tostring(v) .. Theme.info .. ")");
+      user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. args[1]:lower() .. Theme.info .. " теперь равно " .. Theme.sel .. tostring(args[2]));
       return true
     end
     return not Debug.IsDeveloper(user)
