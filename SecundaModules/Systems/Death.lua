@@ -1,7 +1,11 @@
 local Death = {}
 
+function Death.GetDelaySeconds()
+  return 10
+end
+
 function Death.OnUserDying(user, killer)
-	local n = 10
+	local n = Death.GetDelaySeconds()
 	SetTimer(n * 1000 + 100, function()
 		for i = 1, 20 do
 			user:SendChatMessage(Theme.info .. "")
@@ -11,7 +15,7 @@ function Death.OnUserDying(user, killer)
 	for i = 1, n do
 		SetTimer((n * 1000) - (i * 1000), function()
       user:ClearChat()
-			user:SendChatMessage(Theme.info .. "¬ы будете перемещены на точку возрождени€ через 5 секунд")
+			user:SendChatMessage(Theme.info .. "¬ы будете перемещены на точку возрождени€ через " .. n .. " секунд")
 			user:SendChatMessage(Theme.info .. "ќсталось " .. i)
 		end)
 	end
