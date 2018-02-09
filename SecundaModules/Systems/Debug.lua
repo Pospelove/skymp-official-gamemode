@@ -60,6 +60,14 @@ function Debug.OnServerInit()
     end
     return not Debug.IsDeveloper(user)
   end)
+
+  local kill = Command("/kill", "s", "/kill <user name>", function(user, args)
+    if args[1] == nil then
+      args[1] = user:GetName()
+    end
+    User.Lookup(args[1]):SetCurrentAV("Health", 0.0)
+    return true
+  end)
 end
 
 return Debug
