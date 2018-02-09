@@ -123,6 +123,16 @@ function User:ShowRaceMenu()
   self.pl:SetVirtualWorld(1000000)
 end
 
+function User:AddTask(conditionStr, f)
+  if self.tasks == nil then
+    self.tasks = {}
+  end
+  local t = {}
+  t.cond = conditionStr
+  t.f = f
+  table.insert(self.tasks, t)
+end
+
 --[[ IMPLEMENTATION ]]--
 
 -- Get/Set for save and load
@@ -231,7 +241,7 @@ function User:_SetActorValues(avs)
 	for key, value in pairs(avs) do
 		if key:gsub("_CURRENT", "") ~= key then
       if value == 1 and key == "Health_CURRENT" then
-        value = 0
+        self:AddTask("IsSpawned", function() player:SetCurrentAV("Health", 0) end)
       end
 			player:SetCurrentAV(key:gsub("_CURRENT", ""), value)
     elseif key:gsub("_EXP", "") ~= key then
@@ -500,6 +510,27 @@ function User.OnPlayerLearnPerk(pl, perk)
   user:AddPerk(perk)
   Secunda.OnUserLearnPerk(user, perk)
   return true
+end
+
+function User.OnPlayerUpdate(pl)
+  if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    if user.tasks ~= nil then
+      local tasks = tablex.deepcopy(user.tasks)
+      local newTasks = nil
+      for i = 1, #tasks do
+        if user[tasks[i].cond]() then
+          tasks[i].f()
+        else
+          if newTasks == nil then
+            newTasks = {}
+          end
+          table.insert(newTasks, tasks[i])
+        end
+      end
+      user.tasks = newTasks
+    end
+  end
 end
 
 function User.RunTests()
