@@ -512,7 +512,7 @@ function User.OnPlayerLearnPerk(pl, perk)
       user:RemovePerk(perks[i])
     end
     for i = 1, #perks do
-      user:Add(perks[i])
+      user:AddPerk(perks[i])
     end
   end)
   return true
