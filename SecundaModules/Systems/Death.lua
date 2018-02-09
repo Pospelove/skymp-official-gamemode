@@ -6,13 +6,13 @@ function Death.OnUserDying(user, killer)
 		for i = 1, 20 do
 			user:SendChatMessage(Theme.info .. "")
 		end
-		user:SendChatMessage(Theme.success .. "Р’С‹ Р±С‹Р»Рё РІРѕР·СЂРѕР¶РґРµРЅС‹")
+		user:SendChatMessage(Theme.success .. "Вы были возрождены")
 	end)
 	for i = 1, n do
 		SetTimer((n * 1000) - (i * 1000), function()
       user:ClearChat()
-			user:SendChatMessage(Theme.info .. "Р’С‹ Р±СѓРґРµС‚Рµ РїРµСЂРµРјРµС‰РµРЅС‹ РЅР° С‚РѕС‡РєСѓ РІРѕР·СЂРѕР¶РґРµРЅРёСЏ С‡РµСЂРµР· 5 СЃРµРєСѓРЅРґ")
-			user:SendChatMessage(Theme.info .. "РћСЃС‚Р°Р»РѕСЃСЊ " .. i)
+			user:SendChatMessage(Theme.info .. "Вы будете перемещены на точку возрождения через 5 секунд")
+			user:SendChatMessage(Theme.info .. "Осталось " .. i)
 		end)
 	end
 	SetTimer(n * 1000, function()
