@@ -231,8 +231,7 @@ function User:_SetActorValues(avs)
 	for key, value in pairs(avs) do
 		if key:gsub("_CURRENT", "") ~= key then
       if value == 1 and key == "Health_CURRENT" then
-        value = 2
-        self:SendChatMessage("not bad")
+        value = 0
       end
 			player:SetCurrentAV(key:gsub("_CURRENT", ""), value)
     elseif key:gsub("_EXP", "") ~= key then
