@@ -24,6 +24,7 @@ function User.Docs()
   OnUserSpawn(user) --
   OnUserCharacterCreated(user) --
   OnUserChatMessage(user, text) -- Called on chat message (not command)
+  OnUserChatCommand(user, cmdtext) -- Called on chat command
   OnUserLearnPerk(user, perk) --
   OnUserDying(user, killer) --
   OnUserDataSearchResult(user, opcode, result) --
@@ -494,9 +495,11 @@ end
 
 function User.OnPlayerChatInput(pl, input)
   if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
     if stringx.at(input, 1) ~= "/" then
-      local user = User.Lookup(pl:GetName())
       Secunda.OnUserChatMessage(user, deru(input))
+    else
+      Secunda.OnUserChatCommand(user, deru(input))
     end
   end
   return true

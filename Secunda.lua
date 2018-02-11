@@ -15,6 +15,8 @@ sha256 = require "sha256/sha256"
 
 dsres = require "data/dsres"
 
+stringx.import()
+
 Secunda = {}
 Secunda.sName = "Secunda"
 Secunda.sVersion = "0.10.0"

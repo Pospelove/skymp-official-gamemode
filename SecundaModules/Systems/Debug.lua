@@ -10,10 +10,11 @@ function Debug.IsDeveloper(user)
   return not not user:GetAccountVar("developerMode")
 end
 
-function Debug.OnServerInit()
+function Debug.OnUserChatCommand(user, cmd)
+  local tokens = cmd:split()
 
-  local secretlogin = Command("/secretlogin", "i", Debug.emptyTip, function(user, args)
-    if args[1] == Debug.GetPassCode() then
+  if cmd:stastswith("/secretlogin ") then
+    if tokens[2] == Debug.GetPassCode() then
       local devMode = Debug.IsDeveloper(user)
       if not devMode then
         user:SendChatMessage(Theme.success .. "Режим разработчика активирован на вашем аккаунте")
@@ -26,85 +27,54 @@ function Debug.OnServerInit()
       user:SetAccountVar("developerMode", devMode)
       user:Save()
     end
-    return true
-  end)
+  end
 
-  local setav = Command("/setav", "sf", "/setav <av> <value>", function(user, args)
+  if cmd:startswith("/setav ") then
     if not Debug.IsDeveloper(user) then
       return true
     end
-    if type(args[1]) == "string" and type(args[2]) == "number" then
-      user:SetBaseAV(args[1], args[2])
-      user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. args[1]:lower() .. Theme.info .. " теперь равно " .. Theme.sel .. tostring(args[2]));
+    if tokens[2] ~= nil and tokens[3] ~= nil then
+      user:SetBaseAV(tokens[2], tonumber(tokens[3]))
+      user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. tokens[2]:lower() .. Theme.info .. " теперь равно " .. Theme.sel .. tokens[3]);
       return true
     end
-    return not Debug.IsDeveloper(user)
-  end)
+  end
 
-  local getav = Command("/getav", "s", "/getav <av>", function(user, args)
+  if cmd:startswith("/setflag ") then
     if not Debug.IsDeveloper(user) then
       return true
     end
-    if type(args[1]) == "string" then
-      user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. args[1]:lower() .. Theme.info .. " равно " .. Theme.sel .. tostring(user:GetBaseAV(args[1])));
-      return true
-    end
-    return not Debug.IsDeveloper(user)
-  end)
-
-  local setflag = true or Command("/setflag", "ss", "/setflag <accountVariable> <on/off>", function(user, args)
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
-    if type(args[1]) == "string" and type(args[2]) == "string" then
-      args[2] = args[2]:lower()
-      if args[2] == "on" or args[2] == "off" then
-        local on = args[2] == "on"
-        if isru(args[1]) then
+    if tokens[2] ~= nil and tokens[3] ~= nil then
+      tokens[3] = tokens[3]:lower()
+      if tokens[3] == "on" or tokens[3] == "off" then
+        local on = tokens[3] == "on"
+        if isru(tokens[2]) then
           return false
         end
-        user:SetAccountVar(args[1], on)
-        user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. args[1] .. Theme.info .. " теперь равно " .. Theme.sel .. tostring(args[2]))
+        user:SetAccountVar(tokens[2], on)
+        user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. tokens[2] .. Theme.info .. " теперь равно " .. Theme.sel .. tokens[3])
         DS.UpdatePermissions()
       end
     end
-    return not Debug.IsDeveloper(user)
-  end)
+  end
 
-  local incrskill = Command("/incrskill", "ss", "/incrskill <user name> <skill name>", function(user, args)
-    if args[1] == nil then args[1] = user:GetName() end
-    if args[2] == nil then args[2] = "Marksman" end
-    User.Lookup(args[1]):IncrementSkill(args[2])
-    return true
-  end)
-
-  local perk = Command("/perk", "s", "/perk <add/rm>", function(user, args)
+  if cmd:startswith("/incrskill ") then
     if not Debug.IsDeveloper(user) then
       return true
     end
-    local perk = Perk.LookupByID(0xbe126)
-    if perk == nil then
-      error("bad perk id")
-    end
-    if args[1] == "rm" then
-      user:RemovePerk(perk)
-      user:SendChatMessage(Theme.info .. "Перк отнят")
-      return true
-    elseif args[1] == "add" then
-      user:AddPerk(perk)
-      user:SendChatMessage(Theme.info .. "Перк выдан")
-      return true
-    end
-    return not Debug.IsDeveloper(user)
-  end)
+    if tokens[2] == nil then tokens[2] = user:GetName() end
+    if tokens[3] == nil then tokens[3] = "Marksman" end
+    User.Lookup(tokens[1]):IncrementSkill(tokens[2])
+  end
 
-  local kill = Command("/kill", "s", "/kill <user name>", function(user, args)
-    if args[1] == nil then
-      args[1] = user:GetName()
+  if cmd == "/kill" then
+    if not Debug.IsDeveloper(user) then
+      return true
     end
-    User.Lookup(args[1]):SetCurrentAV("Health", 0.0)
-    return true
-  end)
+    user:SetCurrentAV("Health", 0.0)
+  end
+
+  return true
 end
 
 return Debug
