@@ -16,7 +16,7 @@ function DS.OnUserDisconnect(user)
   return true
 end
 
-function DS.UpdatePermsissions(user)
+function DS.UpdatePermissions(user)
   local ds = (not not user:GetAccountVar("ds"))
   if ds then
     DS.Start(user)
