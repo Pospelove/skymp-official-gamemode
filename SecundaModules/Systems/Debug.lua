@@ -64,7 +64,7 @@ function Debug.OnServerInit()
           return false
         end
         user:SetAccountVar(args[1], on)
-        user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. args[1] .. Theme.info .. " теперь равно " .. Theme.sel .. tostring(args[2]);
+        user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. args[1] .. Theme.info .. " теперь равно " .. Theme.sel .. tostring(args[2]))
         DS.UpdatePermissions()
       end
     end

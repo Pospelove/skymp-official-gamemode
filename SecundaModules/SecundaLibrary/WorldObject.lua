@@ -145,7 +145,7 @@ end
 
 function WorldObject._SaveFileNames()
   local fileNames = {}
-  for i = 1, to #gWos do
+  for i = 1, #gWos do
     local wo = gWos[i]
     if wo ~= nil then
       local fileName = wo:GetFileName()
