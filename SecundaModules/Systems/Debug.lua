@@ -53,7 +53,7 @@ function Debug.OnUserChatCommand(user, cmd)
         end
         user:SetAccountVar(tokens[2], on)
         user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. tokens[2] .. Theme.info .. " теперь равно " .. Theme.sel .. tokens[3])
-        DS.UpdatePermissions()
+        DS.UpdatePermissions(user)
       end
     end
   end
