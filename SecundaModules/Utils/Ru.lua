@@ -16,4 +16,12 @@ deru = function(str)
 end
 if deru "<cy:16><cy:31><cy:15>" ~= "абв" then error("test failed - deru()") end
 
+isru = function(str)
+	return ru(str) ~= deru(str)
+end
+if not isru "скай-много-игра" then error("test failed - isru()") end
+if isru "yamashi for president" then error("test failed - isru()") end
+if not isru "Kekъ" then error("test failed - isru()") end
+
+
 return {}

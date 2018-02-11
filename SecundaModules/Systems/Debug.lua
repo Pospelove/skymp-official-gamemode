@@ -1,4 +1,4 @@
-local Debug = {}
+Debug = {}
 
 Debug.emptyTip = ""
 
@@ -48,6 +48,25 @@ function Debug.OnServerInit()
     if type(args[1]) == "string" then
       user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. args[1]:lower() .. Theme.info .. " равно " .. Theme.sel .. tostring(user:GetBaseAV(args[1])));
       return true
+    end
+    return not Debug.IsDeveloper(user)
+  end)
+
+  local setflag = Command("/setflag", "ss", "/setflag <accountVariable> <on/off>", function(user, args)
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    if type(args[1]) == "string" and type(args[2]) == "string" then
+      args[2] = args[2]:lower()
+      if args[2] == "on" or args[2] == "off" then
+        local on = args[2] == "on"
+        if isru(args[1]) then
+          return false
+        end
+        user:SetAccountVar(args[1], on)
+        user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. args[1] .. Theme.info .. " теперь равно " .. Theme.sel .. tostring(args[2]);
+        DS.UpdatePermissions()
+      end
     end
     return not Debug.IsDeveloper(user)
   end)

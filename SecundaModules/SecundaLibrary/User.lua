@@ -26,6 +26,7 @@ function User.Docs()
   OnUserChatMessage(user, text) -- Called on chat message (not command)
   OnUserLearnPerk(user, perk) --
   OnUserDying(user, killer) --
+  OnUserDataSearchResult(user, opcode, result) --
   ]]
 end
 
@@ -535,6 +536,11 @@ function User.OnPlayerDying(pl, killer)
     Secunda.OnUserDying(user, killerUser)
   end
   return true
+end
+
+function User.OnPlayerDataSearchResult(pl, opcode, res)
+  local user = User.Lookup(pl:GetName())
+  Secunda.OnUserDataSearchResult(user, opcode, res)
 end
 
 function User.OnPlayerUpdate(pl)
