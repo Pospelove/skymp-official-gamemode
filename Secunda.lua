@@ -9,6 +9,7 @@ stringx = require "pl/stringx"
 pretty = require "pl/pretty"
 url = require "pl/url"
 tablex = require "pl/tablex"
+Set = require "pl.Set"
 json = require "json/json"
 sha256 = require "sha256/sha256"
 
