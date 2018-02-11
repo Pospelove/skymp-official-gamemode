@@ -11,6 +11,11 @@ function DS.Start(user)
   end
 end
 
+function DS.EnableOpcode(user, opcode, v)
+  local pl = Player.LookupByName(user:GetName())
+  pl:EnableDataSearchOpcode(opcode, v)
+end
+
 function DS.OnUserDisconnect(user)
   DS.users = Set(DS.users) - Set({ user })
   return true
@@ -24,7 +29,7 @@ function DS.UpdatePermissions(user)
   for i = 1, #DS.opcodes do
     local opcode = DS.opcodes[i]
     local enable = (not not user:GetAccountVar("ds_" .. opcode))
-    user:EnableDataSearchOpcode(opcode, ds and enable)
+    DS.EnableOpcode(user, opcode, ds and enable)
   end
 end
 
