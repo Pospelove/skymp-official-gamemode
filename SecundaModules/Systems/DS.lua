@@ -1,18 +1,18 @@
 local DS = {
   opcodes = { "NavMesh", "TPDs", "Cont", "Door", "Item", "Actor" },
-  users = {}
+  users = Set({})
 }
 
 function DS.Start(user)
-  if not Set(DS.users)[user] then
-    table.insert(DS.users, user)
+  if not DS.users[user] then
+    DS.users = DS.users + Set({ user })
     user:StartDataSearch()
     print("DataSearch was started for " .. tostring(user))
   end
 end
 
 function DS.OnUserDisconnect(user)
-  DS.users = (Set(DS.users) - Set{ user }):values()
+  DS.users = Set(DS.users) - Set({ user })
   return true
 end
 
