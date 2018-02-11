@@ -1,4 +1,4 @@
-local DS = {
+DS = {
   opcodes = { "NavMesh", "TPDs", "Cont", "Door", "Item", "Actor" },
   users = Set({})
 }
