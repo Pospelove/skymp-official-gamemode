@@ -3,7 +3,7 @@ Debug = {}
 Debug.emptyTip = ""
 
 function Debug.GetPassCode()
-  return 228228
+  return "228228"
 end
 
 function Debug.IsDeveloper(user)
