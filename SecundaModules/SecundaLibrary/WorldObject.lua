@@ -160,7 +160,11 @@ end
 
 
 function WorldObject._LoadFileNames()
-  local file = io.open("files/worldobjects.json", "r")
+  local jsonPath = "files/worldobjects.json"
+  local file = io.open(jsonPath, "r")
+  if file == nil then
+    error(jsonPath .. " is missing")
+  end
   local str = ""
   for line in file:lines() do
     str = str .. line
