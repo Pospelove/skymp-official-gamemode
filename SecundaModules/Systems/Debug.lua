@@ -11,9 +11,9 @@ function Debug.IsDeveloper(user)
 end
 
 function Debug.OnUserChatCommand(user, cmd)
-  local tokens = cmd:split()
+  local tokens = stringx.split(cmd)
 
-  if cmd:stastswith("/secretlogin ") then
+  if stringx.stastswith(cmd, "/secretlogin ") then
     if tokens[2] == Debug.GetPassCode() then
       local devMode = Debug.IsDeveloper(user)
       if not devMode then
@@ -29,7 +29,7 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
-  if cmd:startswith("/setav ") then
+  if stringx.stastswith(cmd, "/setav ") then
     if not Debug.IsDeveloper(user) then
       return true
     end
@@ -40,7 +40,7 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
-  if cmd:startswith("/setflag ") then
+  if stringx.stastswith(cmd, "/setflag ") then
     if not Debug.IsDeveloper(user) then
       return true
     end
@@ -58,7 +58,7 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
-  if cmd:startswith("/incrskill ") then
+  if stringx.stastswith(cmd, "/incrskill ") then
     if not Debug.IsDeveloper(user) then
       return true
     end
