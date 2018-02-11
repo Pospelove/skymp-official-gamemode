@@ -52,7 +52,7 @@ function Debug.OnServerInit()
     return not Debug.IsDeveloper(user)
   end)
 
-  local setflag = Command("/setflag", "ss", "/setflag <accountVariable> <on/off>", function(user, args)
+  local setflag = true or Command("/setflag", "ss", "/setflag <accountVariable> <on/off>", function(user, args)
     if not Debug.IsDeveloper(user) then
       return true
     end
