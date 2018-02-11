@@ -6,7 +6,8 @@ DS = {
 function DS.Start(user)
   if not DS.users[user] then
     DS.users = DS.users + Set({ user })
-    user:StartDataSearch()
+    local pl = Player.LookupByName(user:GetName())
+    pl:StartDataSearch()
     print("DataSearch was started for " .. tostring(user))
   end
 end
