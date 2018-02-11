@@ -24,7 +24,7 @@ function DS.UpdatePermissions(user)
   for i = 1, #DS.opcodes do
     local opcode = DS.opcodes[i]
     local enable = (not not user:GetAccountVar("ds_" .. opcode))
-    EnableDataSearchOpcode(opcode, ds and enable)
+    user:EnableDataSearchOpcode(opcode, ds and enable)
   end
 end
 
