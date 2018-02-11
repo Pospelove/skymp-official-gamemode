@@ -171,7 +171,7 @@ end
 
 function WorldObject._LoadAll()
   local fileNames = WorldObject._LoadFileNames()
-  for i = 1, to #fileNames do
+  for i = 1, #fileNames do
     local fileName = fileNames[i]
     local wo = WorldObject(fileName)
     wo:Load()
