@@ -28,6 +28,7 @@ function User.Docs()
   OnUserLearnPerk(user, perk) --
   OnUserDying(user, killer) --
   OnUserDataSearchResult(user, opcode, result) --
+  OnHit(user, target) --
   ]]
 end
 
@@ -544,6 +545,18 @@ end
 function User.OnPlayerDataSearchResult(pl, opcode, res)
   local user = User.Lookup(pl:GetName())
   Secunda.OnUserDataSearchResult(user, opcode, res)
+  return true
+end
+
+function User.OnPlayerHitObject(pl, object, weap, ammo, spell)
+  if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    local wo = WorldObject.Lookup(object:GetID())
+    if wo ~= nil then
+      Secunda.OnHit(user, wo)
+    end
+    return true
+  end
 end
 
 function User.OnPlayerUpdate(pl)

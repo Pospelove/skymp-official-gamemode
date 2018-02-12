@@ -92,6 +92,39 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if tokens[1] == "/hittask" then
+    if tokens[2] ~= nil then
+      local i = 2
+      local str = ""
+      while tokens[i] ~= nil then
+        str = str .. tokens[i]
+        i = i + 1
+      end
+      user:SetAccountVar("hittask", str)
+      user:SendChatMessage(Theme.info .. str)
+      user:SendChatMessage(Theme.success .. "Сохранено")
+    else
+      user:SendChatMessage(Theme.error .. "Вы не ввели строку на Lua")
+    end
+  end
+
+  return true
+end
+
+function Debug.OnHit(source, target)
+  if source:is_a(User) then
+    local hittask = source:GetAccountVar("hittask")
+    if hittask == nil or hittask == "" then
+      return true
+    end
+    if target:is_a(WorldObject) then
+      local f = load(hittask)
+      local res = f()
+      if res ~= nil then
+        user:SendChatMessage(Theme.info .. "Возвращено значение " .. Theme.sel .. tostring(res))
+      end
+    end
+  end
   return true
 end
 
