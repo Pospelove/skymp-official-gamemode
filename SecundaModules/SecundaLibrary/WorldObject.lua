@@ -255,7 +255,7 @@ function WorldObject.OnServerInit()
 end
 
 function WorldObject.OnPlayerDisconnect(pl)
-  if pl:GetID() == Player.GetInvalidPlayerID() then
+  if pl:GetID() == Player.InvalidID then
     error "bad player ID"
   end
   if gSaveOnExitTasks[pl:GetID()] ~= nil then
