@@ -123,7 +123,8 @@ local function NewData()
     locationID = 0,
     virtualWorld = 0,
     lockLevel = 0,
-    isOpen = 0
+    isOpen = 0,
+    type = "Static"
   }
 end
 
@@ -150,6 +151,21 @@ function WorldObject:_ApplyData()
     self.obj = Object.Create(self.data.refID < 0xFF000000 and self.data.refID or 0, self.data.baseID, Location(self.data.locationID), self.data.x, self.data.y, self.data.z)
   end
   if self.obj ~= nil then
+    if self.data.type == "Static" then
+      -- Do nothing
+    elseif self.data.type == "Door" then
+      self.obj:RegisterAsDoor()
+    elseif self.data.type == "TeleportDoor" then
+      -- ...
+    elseif self.data.type == "Activator" then
+      self.obj:RegisterAsActivator()
+    elseif self.data.type == "Container" then
+      self.obj:RegisterAsContainer()
+    elseif self.data.type == "Furniture" then
+      self.obj:RegisterAsFurniture()
+    elseif self.data.type == "Item" then
+      -- ...
+    end
     self.obj:SetPos(self.data.x, self.data.y, self.data.z)
     self.obj:SetAngle(self.data.angleX, self.data.angleY, self.data.angleZ)
     self.obj:SetLocation(Location(self.data.locationID))
@@ -168,6 +184,7 @@ function WorldObject:_PrepareDataToSave()
   end
   self.data.baseID = self.obj:GetBaseID()
   self.data.refID = self.obj:GetID()
+  self.data.type = self.obj:GetType()
   self.data.x = self.obj:GetX()
   self.data.y = self.obj:GetY()
   self.data.z = self.obj:GetZ()
