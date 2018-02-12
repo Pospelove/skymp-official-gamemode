@@ -120,6 +120,21 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if tokens[1] == "/additem" then
+    local i = 2
+    local str = ""
+    while tokens[i] ~= nil do
+      if str:len() == 0 then str = tokens[i] else str = str .. " " .. tokens[i] end
+      i = i + 1
+    end
+    local itemType = ItemTypes.Lookup(str)
+    if itemType == nil then
+      user:SendChatMessage(Theme.error .. "Тип предмета не найден (" .. tostring(str) .. ")")
+    else
+      user:AddItem(itemType, 1)
+    end
+  end
+
   return true
 end
 

@@ -24,7 +24,6 @@ function Effects.Init()
       if gNumIdensUse[iden] ~= nil and gNumIdensUse[iden] > 0 then
         iden_ = iden .. tostring(gNumIdensUse[iden])
       end
-      print("Creating effect " .. formID)
       local mgef = Effect.Create(iden_, archetype, formID, castingType, delivery)
       if mgef ~= nil then
         if gNumIdensUse[iden] == nil then gNumIdensUse[iden] = 0 end
