@@ -74,6 +74,24 @@ function Debug.OnUserChatCommand(user, cmd)
     user:SetCurrentAV("Health", 0.0)
   end
 
+  if cmd == "/drop " then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    if tokens[2] == "worldobject" then
+      local n = #WorldObject.GetAllWorldObjects()
+      WorldObject.DeleteAll()
+      user:SendChatMessage(Theme.success .. "Удалено " .. n .. " экземпляров")
+    else
+      if tokens[2] ~= nil then
+        user:SendChatMessage(Theme.error .. "Неизвестный раздел")
+      else
+        user:SendChatMessage(Theme.error .. "Вы не ввели название раздела")
+      end
+      return true
+    end
+  end
+
   return true
 end
 

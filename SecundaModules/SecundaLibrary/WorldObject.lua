@@ -12,9 +12,7 @@ end
 
 -- Private variables
 
-local gKeys = {}
 local gWos = {}
-local gFilenames = {}
 
 -- Public
 
@@ -75,6 +73,11 @@ function WorldObject:Save()
   io.close(file)
 end
 
+function WorldObject:Unload()
+  self.obj:Delete()
+  self.obj = nil
+end
+
 function WorldObject:SetValue(varName, newValue)
   self:_PrepareDataToSave()
   self.data[varName] = newValue
@@ -90,6 +93,19 @@ function WorldObject.Create(fileName, optionalRawObject)
   local wo = WorldObject(fileName, optionalRawObject)
   WorldObject._SaveFileNames()
   return wo
+end
+
+function WorldObject.DeleteAll() -- Soft
+  -- Unload (destroy) all
+  for i = 1, #gWos do
+    local wo = gWos[i]
+    if wo ~= nil then
+      wo:Unload()
+    end
+  end
+  -- Rewrite worldobjects.json with empty file
+  gWos = {}
+  WorldObject._SaveFileNames()
 end
 
 -- IMPLEMENTATION
