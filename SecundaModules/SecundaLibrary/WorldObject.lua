@@ -59,7 +59,11 @@ end
 
 function WorldObject:Save()
   self:_PrepareDataToSave()
-  local file = io.open("files/worldobjects/" .. self:GetFileName() .. ".json", "w")
+  local filePath = "files/worldobjects/" .. self:GetFileName() .. ".json"
+  local file = io.open(filePath, "w")
+  if file == nil then
+    error("unable to open file " .. filePath .. " for writing")
+  end
 
   local data = ""
   local success, errc = pcall(function() data = json.encode(self.data) end)
