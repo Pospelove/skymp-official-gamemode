@@ -271,6 +271,7 @@ end
 
 function WorldObject.OnPlayerActivateObject(pl, obj)
   local wo = WorldObject.Lookup(obj:GetID())
+  if wo == nil then return true end
   if type(wo.data.numActivates) == "number" then
     wo.data.numActivates = wo.data.numActivates + 1
   else
