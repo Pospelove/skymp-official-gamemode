@@ -135,14 +135,14 @@ function Debug.OnHit(source, target)
       local suc, errstr = pcall(function()
         local f = loadstring(hittask)
         local res = f()
+        if res ~= nil then
+          user:SendChatMessage(Theme.info .. "Возвращено значение " .. Theme.sel .. tostring(res))
+        end
       end)
       if not suc then
         user:SendChatMessage(Theme.error .. errstr)
       end
       self = nil
-      if res ~= nil then
-        user:SendChatMessage(Theme.info .. "Возвращено значение " .. Theme.sel .. tostring(res))
-      end
     end
   end
   return true
