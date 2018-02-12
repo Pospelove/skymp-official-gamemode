@@ -158,7 +158,11 @@ function WorldObject:_ApplyData()
     elseif self.data.type == "Door" then
       self.obj:RegisterAsDoor()
     elseif self.data.type == "TeleportDoor" then
-      -- ...
+      local target = Object.LookupByID(self.data.teleportTarget)
+      if target ~= nil then
+        self.obj:RegisterAsTeleportDoor(target)
+        target:RegisterAsTeleportDoor(self.obj)
+      end
     elseif self.data.type == "Activator" then
       self.obj:RegisterAsActivator()
     elseif self.data.type == "Container" then
@@ -177,7 +181,6 @@ function WorldObject:_ApplyData()
     self.obj:SetLockLevel(self.data.lockLevel)
     local isOpen = self.data.isOpen
     SetTimer(1000, function() self.obj:SetOpen(isOpen) end)
-    print("Load: " .. tostring(self.data.numActivates))
   end
   self:_PrepareDataToSave()
 end
@@ -199,7 +202,9 @@ function WorldObject:_PrepareDataToSave()
   self.data.virtualWorld = self.obj:GetVirtualWorld()
   self.data.lockLevel = self.obj:GetLockLevel()
   self.data.isOpen = self.obj:IsOpen()
-  print("Save: " .. tostring(self.data.numActivates))
+  if self.obj:GetTeleportTarget() ~= nil then
+    self.data.teleportTarget = self.obj:GetTeleportTarget():GetID()
+  end
 end
 
 function WorldObject._SaveFileNames()
