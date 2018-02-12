@@ -102,9 +102,21 @@ function Debug.OnUserChatCommand(user, cmd)
       end
       user:SetAccountVar("hittask", str)
       user:SendChatMessage(Theme.info .. str)
-      user:SendChatMessage(Theme.success .. "Сохранено")
     else
       user:SendChatMessage(Theme.error .. "Вы не ввели строку на Lua")
+    end
+  end
+
+  if tokens[1] == "/cmd" then
+    if tokens[2] ~= nil and tokens[3] ~= nil then
+      local i = 3
+      local str = ""
+      while tokens[i] ~= nil do
+        if str:len() == 0 then str = tokens[i] else str = str .. " " .. tokens[i] end
+        i = i + 1
+      end
+      user:SendChatMessage(Theme.sel .. tokens[2] .. Theme.info .. ": " .. str)
+      user:ExecuteCommand(tokens[2], str)
     end
   end
 
