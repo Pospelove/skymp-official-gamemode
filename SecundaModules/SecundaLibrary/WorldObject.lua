@@ -266,6 +266,7 @@ function WorldObject.OnPlayerDisconnect(pl)
 end
 
 function WorldObject.OnPlayerActivateObject(pl, obj)
+  pl:SendChatMessage("OnPlayerActivateObject")
   local wo = WorldObject.Lookup(obj:GetID())
   wo:_SaveOnDisconnect(pl:GetID())
   return true
