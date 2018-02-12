@@ -1,6 +1,6 @@
 Effects = {}
 
-local gRaw = dsres.itemTypes
+local gRaw = dsres.effects
 local gNumIdensUse = {}
 
 function Effects.Init()
