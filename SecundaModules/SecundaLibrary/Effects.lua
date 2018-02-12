@@ -1,18 +1,17 @@
 Effects = {}
 
-local gRaw = dsres.effects
 local gNumIdensUse = {}
 
 function Effects.Init()
 
-  local numItemTypes = #gRaw
+  local numItemTypes = #dsres.effects
   print("")
   print("Creating " .. numItemTypes .. " effects")
 
   local clock = GetTickCount()
 
   for i = 1, numItemTypes do
-    local t = gRaw[i]
+    local t = dsres.effects[i]
     if t ~= nil then
       local iden = t[1]
       local archetype = t[2]
