@@ -97,7 +97,7 @@ function Debug.OnUserChatCommand(user, cmd)
       local i = 2
       local str = ""
       while tokens[i] ~= nil do
-        str = str .. tokens[i]
+        str = str .. " " .. tokens[i]
         i = i + 1
       end
       user:SetAccountVar("hittask", str)
