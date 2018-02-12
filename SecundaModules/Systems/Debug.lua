@@ -125,6 +125,7 @@ end
 
 function Debug.OnHit(source, target)
   if source:is_a(User) then
+    local user = source
     local hittask = source:GetAccountVar("hittask")
     if hittask == nil or hittask == "" then
       return true
