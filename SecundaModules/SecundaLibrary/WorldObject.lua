@@ -175,7 +175,7 @@ function WorldObject:_ApplyData()
     end
     self.obj:SetLockLevel(self.data.lockLevel)
     local isOpen = self.data.isOpen
-    SetTimer(1000, self.obj:SetOpen(isOpen) function() end)
+    SetTimer(1000, function() self.obj:SetOpen(isOpen) end)
     print("Load: " .. tostring(self.data.isOpen))
   end
   self:_PrepareDataToSave()
