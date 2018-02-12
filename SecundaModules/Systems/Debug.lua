@@ -130,7 +130,7 @@ function Debug.OnHit(source, target)
       return true
     end
     if target:is_a(WorldObject) then
-      local f = load(hittask)
+      local f = loadstring(hittask)
       local res = f()
       if res ~= nil then
         user:SendChatMessage(Theme.info .. "Возвращено значение " .. Theme.sel .. tostring(res))
