@@ -62,7 +62,7 @@ function WorldObject:Save()
   local filePath = "files/worldobjects/" .. self:GetFileName() .. ".json"
   local file = io.open(filePath, "w")
   if file == nil then
-    error("unable to open file " .. filePath .. " for writing")
+    error("files/worldobjects/" .. " directory not found")
   end
 
   local data = ""
@@ -194,11 +194,15 @@ end
 
 function WorldObject._LoadAll()
   local fileNames = WorldObject._LoadFileNames()
+  print("")
+  print("Loading " .. #fileNames .. " objects")
+  local clock = GetTickCount()
   for i = 1, #fileNames do
     local fileName = fileNames[i]
     local wo = WorldObject(fileName)
     wo:Load()
   end
+  print("Done in " .. (GetTickCount() - clock) .. "ms")
 end
 
 function WorldObject.OnServerInit()
