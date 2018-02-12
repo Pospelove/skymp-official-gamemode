@@ -175,6 +175,7 @@ function WorldObject:_ApplyData()
     end
     self.obj:SetLockLevel(self.data.lockLevel)
     self.obj:SetOpen(self.data.isOpen)
+    print("Load: " .. tostring(self.data.isOpen))
   end
   self:_PrepareDataToSave()
 end
@@ -196,6 +197,7 @@ function WorldObject:_PrepareDataToSave()
   self.data.virtualWorld = self.obj:GetVirtualWorld()
   self.data.lockLevel = self.obj:GetLockLevel()
   self.data.isOpen = self.obj:IsOpen()
+  print("Save:" .. tostring(self.data.isOpen))
 end
 
 function WorldObject._SaveFileNames()
