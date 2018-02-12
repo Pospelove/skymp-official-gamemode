@@ -75,8 +75,6 @@ function WorldObject:Save()
 end
 
 function WorldObject:Unload()
-  self.obj:Disable()
-  self.obj:SetLocation(0x00000001)
   self.obj:Delete()
   self.obj = nil
 end
