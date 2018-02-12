@@ -39,7 +39,7 @@ local function CreateItemType(inf)
   local classPlusSubclass = ""
   classPlusSubclass = classPlusSubclass .. inf.class
   if inf.subClass:len() > 0 then
-    classPlusSubclass .. "." .. inf.subClass
+    classPlusSubclass = classPlusSubclass .. "." .. inf.subClass
   end
   local infJson = json.encode(inf)
   if gItemTypeByJson[infJson] ~= nil then

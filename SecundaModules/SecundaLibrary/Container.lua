@@ -81,6 +81,9 @@ end
 function Container.RunTests()
   local cont = Container()
   local itemType = ItemTypes.Get("Полоски кожи")
+  if itemType == nil then
+    return error("bad test")
+  end
   cont:AddItem(itemType, 32)
   local removed16 = cont:RemoveItem(itemType, 16)
   cont:AddItem(itemType, 1)
