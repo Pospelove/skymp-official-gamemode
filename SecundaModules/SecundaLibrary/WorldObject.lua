@@ -22,7 +22,7 @@ function WorldObject.Lookup(id)
   for i = 1, #gWos do
     local wo = gWos[i]
     if wo ~= nil then
-      if wo:GetID() == id then
+      if wo:GetValue("refID") == id then
         return wo
       end
     end
