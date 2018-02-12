@@ -133,7 +133,7 @@ function Debug.OnUserChatCommand(user, cmd)
     else
       local pl = Player.LookupByName(user:GetName())
       pl:AddItem(itemType, 5)
-      user:SendChatMessage(Theme.success .. "Предметы выданы")
+      user:SendChatMessage(Theme.success .. "Предметы выданы (теперь у Вас " .. tostring(pl:GetItemCount(itemType)) .. ")")
     end
   end
 
