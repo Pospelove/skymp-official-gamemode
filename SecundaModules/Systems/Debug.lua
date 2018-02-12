@@ -127,7 +127,15 @@ function Debug.OnUserChatCommand(user, cmd)
       if str:len() == 0 then str = tokens[i] else str = str .. " " .. tokens[i] end
       i = i + 1
     end
-    local itemType = ItemType.LookupByIdentifier(str)
+    local itemTs = {
+    --	Identifier				Class					FormID			Weight			Price		Damage/Armor/etc		Skill
+      {"IronSword",			"Weapon.Sword",			0x00012EB7,		8.0,			30,			7.0,					"OneHanded"}
+    }
+    for i = 1, #itemTs do
+      local item = ItemType.Create(itemTs[i][1], itemTs[i][2], itemTs[i][3], itemTs[i][4], itemTs[i][5], itemTs[i][6], itemTs[i][7])
+    end
+
+    local itemType = ItemType.LookupByIdentifier("IronSword")
     if itemType == nil then
       user:SendChatMessage(Theme.error .. "Тип предмета не найден (" .. tostring(str) .. ")")
     else
