@@ -74,7 +74,7 @@ function Debug.OnUserChatCommand(user, cmd)
     user:SetCurrentAV("Health", 0.0)
   end
 
-  if cmd == "/drop " then
+  if tokens[1] == "/drop" then
     if not Debug.IsDeveloper(user) then
       return true
     end
