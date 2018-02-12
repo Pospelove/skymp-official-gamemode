@@ -132,8 +132,13 @@ function Debug.OnHit(source, target)
     end
     if target:is_a(WorldObject) then
       self = target -- global
-      local f = loadstring(hittask)
-      local res = f()
+      local suc, errstr = pcall(function()
+        local f = loadstring(hittask)
+        local res = f()
+      end)
+      if not suc then
+        user:SendChatMessage(Theme.error .. errstr)
+      end
       self = nil
       if res ~= nil then
         user:SendChatMessage(Theme.info .. "Возвращено значение " .. Theme.sel .. tostring(res))
