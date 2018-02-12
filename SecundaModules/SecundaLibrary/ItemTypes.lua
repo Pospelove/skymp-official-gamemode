@@ -4,12 +4,36 @@ local gRaw = dsres.itemTypes
 local gNumIdensUse = {}
 local gItemTypesByID = {}
 
+function ItemTypes.GetAllItemTypes()
+  local t = {}
+  for k, v in pairs(gItemTypesByID) do
+    table.insert(t, v)
+  end
+  return t
+end
+
+function ItemTypes.IsFromDS(itemType)
+  if itemType == nil then
+    error "nil passed as itemType parameter"
+  end
+  local set = Set(ItemTypes.GetAllItemTypes())
+  return not not set[itemType]
+end
+
 function ItemTypes.Get(iden)
   return ItemType.LookupByIdentifier(iden)
 end
 
 function ItemTypes.LookupByID(id)
   return gItemTypesByID[id]
+end
+
+function ItemTypes.Lookup(key)
+  if type(key) == "number" then
+    return ItemTypes.LookupByID(key)
+  elseif type(key) == "string" then
+    return ItemTypes.Get(key)
+  end
 end
 
 function ItemTypes.Init()
@@ -58,6 +82,13 @@ function ItemTypes.Init()
         if itemType == nil then
           print ("Unable to create " .. iden_)
         else
+          for i = 1, #effectItems do
+            local iden = effectItems[i][1]
+            local mag = effectItems[i][2]
+            local dur = effectItems[i][3]
+            local area = effectItems[i][4]
+            itemType:AddEffect(Effect.LookupByIdentifier(iden), mag, dur, area)
+          end
           gItemTypesByID[formID] = itemType
         end
         gNumIdensUse[iden] = gNumIdensUse[iden] + 1
@@ -100,6 +131,7 @@ function ItemTypes.RunTests()
 end
 
 function ItemTypes.OnServerInit()
+  Effects.Require()
   ItemTypes.Require()
   return true
 end
