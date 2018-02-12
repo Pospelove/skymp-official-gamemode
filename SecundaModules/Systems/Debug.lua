@@ -127,7 +127,7 @@ function Debug.OnUserChatCommand(user, cmd)
       if str:len() == 0 then str = tokens[i] else str = str .. " " .. tokens[i] end
       i = i + 1
     end
-    local itemType = ItemTypes.Lookup(str)
+    local itemType = ItemType.LookupByIdentifier(str)
     if itemType == nil then
       user:SendChatMessage(Theme.error .. "Тип предмета не найден (" .. tostring(str) .. ")")
     else
