@@ -132,7 +132,9 @@ function Debug.OnUserChatCommand(user, cmd)
       user:SendChatMessage(Theme.error .. "Тип предмета не найден (" .. tostring(str) .. ")")
     else
       local pl = Player.LookupByName(user:GetName())
-      pl:AddItem(itemType, 5)
+      pl:AddItem(itemType, 1)
+      pl:AddItem(itemType, 1)
+      pl:AddItem(itemType, 1)
       user:SendChatMessage(Theme.success .. "Предметы выданы (теперь у Вас " .. tostring(pl:GetItemCount(itemType)) .. ")")
     end
   end
