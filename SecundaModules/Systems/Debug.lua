@@ -96,7 +96,7 @@ function Debug.OnUserChatCommand(user, cmd)
     if tokens[2] ~= nil then
       local i = 2
       local str = ""
-      while tokens[i] ~= nil then
+      while tokens[i] ~= nil do
         str = str .. tokens[i]
         i = i + 1
       end
