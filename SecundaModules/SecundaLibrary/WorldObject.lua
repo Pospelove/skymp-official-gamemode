@@ -18,6 +18,18 @@ local gFilenames = {}
 
 -- Public
 
+function WorldObject.Lookup(id)
+  for i = 1, #gWos do
+    local wo = gWos[i]
+    if wo ~= nil then
+      if wo:GetID() == id then
+        return wo
+      end
+    end
+  end
+  return nil
+end
+
 function WorldObject.GetAllWorldObjects()
   return gWos
 end
@@ -70,8 +82,8 @@ function WorldObject:GetValue(varName)
   return self.data[varName]
 end
 
-function WorldObject.Create(fileName)
-  local wo = WorldObject(fileName)
+function WorldObject.Create(fileName, optionalRawObject)
+  local wo = WorldObject(fileName, optionalRawObject)
   WorldObject._SaveFileNames()
   return wo
 end
@@ -95,12 +107,15 @@ local function NewData()
   }
 end
 
-function WorldObject:_init(fileName)
+function WorldObject:_init(fileName, optionalRawObject)
   if type(fileName) ~= "string" then
     erorr("filename is " .. type(filename) .. ", not string")
   end
   self.data = NewData()
-  self.obj = nil
+  self.obj = optionalRawObject
+  if self.obj ~= nil then
+    self:_PrepareDataToSave()
+  end
   self.fileName = fileName
   table.insert(gWos, self)
 end
