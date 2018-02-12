@@ -249,7 +249,7 @@ end
 function WorldObject.OnPlayerActivateObject(pl, obj)
   pl:SendChatMessage("OnPlayerActivateObject")
   local wo = WorldObject.Lookup(obj:GetID())
-  wo:Save()
+  SetTimer(100, function() wo:Save() end)
   return true
 end
 
