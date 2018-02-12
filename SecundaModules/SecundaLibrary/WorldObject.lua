@@ -40,7 +40,7 @@ end
 
 function WorldObject:Load()
   local file = nil
-  local suc = pcall(function()
+  local suc, errstr = pcall(function()
     file = io.open("files/worldobjects/" .. self:GetFileName() .. ".json", "r")
     local str = ""
     for line in file:lines() do
@@ -53,7 +53,7 @@ function WorldObject:Load()
     io.close(file)
   end
   if not suc then
-    print("unable to load data for " .. self:GetFileName())
+    print("error while loading data for WorldObject " .. self:GetFileName() .. ".json: " .. errstr)
   end
 end
 
