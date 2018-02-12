@@ -139,6 +139,22 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if tokens[1] == "/countitem" then
+    local i = 2
+    local str = ""
+    while tokens[i] ~= nil do
+      if str:len() == 0 then str = tokens[i] else str = str .. " " .. tokens[i] end
+      i = i + 1
+    end
+    local itemType = ItemType.LookupByIdentifier(str)
+    if itemType == nil then
+      user:SendChatMessage(Theme.error .. "Тип предмета не найден (" .. tostring(str) .. ")")
+    else
+      local pl = Player.LookupByName(user:GetName())
+      local v = (pl:GetItemCount(itemType))
+      user:SendChatMessage(Theme.success .. "у Вас " .. tostring(pl:GetItemCount(itemType)))
+    end
+  end
   return true
 end
 
