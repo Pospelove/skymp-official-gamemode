@@ -125,7 +125,8 @@ local function NewData()
     virtualWorld = 0,
     lockLevel = 0,
     isOpen = 0,
-    type = "Static"
+    type = "Static",
+    numActivates = 0
   }
 end
 
@@ -176,7 +177,7 @@ function WorldObject:_ApplyData()
     self.obj:SetLockLevel(self.data.lockLevel)
     local isOpen = self.data.isOpen
     SetTimer(1000, function() self.obj:SetOpen(isOpen) end)
-    print("Load: " .. tostring(self.data.isOpen))
+    print("Load: " .. tostring(self.data.numActivates))
   end
   self:_PrepareDataToSave()
 end
@@ -198,7 +199,7 @@ function WorldObject:_PrepareDataToSave()
   self.data.virtualWorld = self.obj:GetVirtualWorld()
   self.data.lockLevel = self.obj:GetLockLevel()
   self.data.isOpen = self.obj:IsOpen()
-  print("Save:" .. tostring(self.data.isOpen))
+  print("Save: " .. tostring(self.data.numActivates))
 end
 
 function WorldObject._SaveFileNames()
@@ -250,9 +251,9 @@ function WorldObject.OnServerInit()
 end
 
 function WorldObject.OnPlayerActivateObject(pl, obj)
-  pl:SendChatMessage("OnPlayerActivateObject")
   local wo = WorldObject.Lookup(obj:GetID())
-  SetTimer(100, function() wo:Save() end)
+  wo.data.numActivates = wo.data.numActivates + 1
+  wo:Save()
   return true
 end
 
