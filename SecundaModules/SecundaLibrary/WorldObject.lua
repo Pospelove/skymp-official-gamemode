@@ -13,7 +13,6 @@ end
 -- Private variables
 
 local gWos = {}
-local gSaveOnExitTasks = {}
 
 -- Public
 
@@ -242,33 +241,15 @@ function WorldObject._LoadAll()
   print("Done in " .. (GetTickCount() - clock) .. "ms")
 end
 
-function WorldObject._SaveOnDisconnect(plId)
-  if gSaveOnExitTasks[plId] ~= nil then
-    gSaveOnExitTasks[plId]:Save()
-    gSaveOnExitTasks[plId] = nil
-  end
-  gSaveOnExitTasks[plId] = self
-end
-
 function WorldObject.OnServerInit()
   WorldObject._LoadAll()
   return true
 end
 
-function WorldObject.OnPlayerDisconnect(pl)
-  if pl:GetID() == Player.InvalidID then
-    error "bad player ID"
-  end
-  if gSaveOnExitTasks[pl:GetID()] ~= nil then
-    gSaveOnExitTasks[pl:GetID()]:Save()
-    gSaveOnExitTasks[pl:GetID()] = nil
-  end
-end
-
 function WorldObject.OnPlayerActivateObject(pl, obj)
   pl:SendChatMessage("OnPlayerActivateObject")
   local wo = WorldObject.Lookup(obj:GetID())
-  wo:_SaveOnDisconnect(pl:GetID())
+  wo:Save()
   return true
 end
 
