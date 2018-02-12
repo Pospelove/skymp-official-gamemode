@@ -68,6 +68,7 @@ function WorldObject:Save()
   local success, errc = pcall(function() data = json.encode(self.data) end)
   if success then
     file:write(data)
+    print("saving worldobject " .. self:GetFileName() .. ".json")
   else
     error (errc .. "\n\n" .. pretty.write(self.data))
   end
