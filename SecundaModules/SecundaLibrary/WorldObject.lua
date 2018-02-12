@@ -137,7 +137,9 @@ function WorldObject:_ApplyData()
     self.obj:SetPos(self.data.x, self.data.y, self.data.z)
     self.obj:SetAngle(self.data.angleX, self.data.angleY, self.data.angleZ)
     self.obj:SetLocation(Location(self.data.locationID))
-    self.obj:SetVirtualWorld(self.data.virtualWorld)
+    if self.data.virtualWorld ~= nil then -- virtualWorld is nil for native objects
+      self.obj:SetVirtualWorld(self.data.virtualWorld)
+    end
     self.obj:SetLockLevel(self.data.lockLevel)
     self.obj:SetOpen(self.data.isOpen)
   end
