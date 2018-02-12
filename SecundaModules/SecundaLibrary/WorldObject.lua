@@ -174,7 +174,8 @@ function WorldObject:_ApplyData()
       self.obj:SetVirtualWorld(self.data.virtualWorld)
     end
     self.obj:SetLockLevel(self.data.lockLevel)
-    self.obj:SetOpen(self.data.isOpen)
+    local isOpen = self.data.isOpen
+    SetTimer(1000, self.obj:SetOpen(isOpen) function() end)
     print("Load: " .. tostring(self.data.isOpen))
   end
   self:_PrepareDataToSave()
