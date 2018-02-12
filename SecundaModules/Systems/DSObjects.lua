@@ -9,6 +9,7 @@ function DSObjects.OnUserDataSearchResult(user, opcode, rawRes)
       wo:Save()
     end
   else
+    user:SendChatMessage("Неправильный опкод ".. opcode)
     pcall(function()
       rawRes:Delete()
     end)
