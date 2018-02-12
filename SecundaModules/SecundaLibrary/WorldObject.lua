@@ -96,6 +96,20 @@ function WorldObject.Create(fileName, optionalRawObject)
   return wo
 end
 
+function WorldObject:Delete()
+  local newWos = {}
+  for i = 1, #gWos do
+    if gWos[i] ~= self then
+      table.insert(newWos, gWos[i])
+    else
+      self:Save()
+      self:Unload()
+    end
+  end
+  gWos = newWos
+  WorldObject._SaveFileNames()
+end
+
 function WorldObject.DeleteAll() -- Soft
   -- Unload (destroy) all
   for i = 1, #gWos do
