@@ -286,7 +286,7 @@ end
 
 function User:_SetLearnedEffects(learnedEffects)
   self.learnedEffects = learnedEffects
-  for baseID, t do
+  for baseID, t in learnedEffects do
     local itemType = ItemTypes.Lookup(baseID)
     for i = 1, #t do
       local n = t[i]
