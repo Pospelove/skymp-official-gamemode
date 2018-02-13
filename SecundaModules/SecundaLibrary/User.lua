@@ -276,7 +276,7 @@ function User:_GetInventoryStr()
 end
 
 function User:_SetInventoryStr(inventoryStr)
-  local cont = ContainerSerializer.Deserialize(inventoryStr)
+  local cont = type(inventoryStr) == "string" and ContainerSerializer.Deserialize(inventoryStr) or Container()
   cont:ApplyTo(self)
 end
 
