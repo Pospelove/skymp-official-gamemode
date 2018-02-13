@@ -270,12 +270,36 @@ function User:_SetPerks(perkIds)
   end
 end
 
+function User:_GetInventoryStr()
+  local cont = Container(self)
+  return ContainerSerializer.Serialize(cont)
+end
+
+function User:_SetInventoryStr(inventoryStr)
+  local cont = ContainerSerializer.Deserialize(inventoryStr)
+  cont:ApplyTo(self)
+end
+
+function User:_GetLearnedEffects()
+  return self.learnedEffects
+end
+
+function User:_SetLearnedEffects(learnedEffects)
+  self.learnedEffects = learnedEffects
+  for baseID, t do
+    local itemType = ItemTypes.Lookup(baseID)
+    for i = 1, #t do
+      local n = t[i]
+      self.pl:SetEffectLearned(itemType, n, true)
+    end
+  end
+end
+
 function User:_ApplyAccount()
   local success, err = pcall(function()
-    local player = self.pl
     local account = tablex.deepcopy(self.account)
-    player:SetSpawnPoint(Location(account.location), account.x, account.y, account.z, account.angle)
-    player:Spawn()
+    self.pl:SetSpawnPoint(Location(account.location), account.x, account.y, account.z, account.angle)
+    self.pl:Spawn()
     local s = nil
     local e = nil
     s, e = pcall(function() self:_SetLook(json.decode(account.look)) end)
@@ -283,6 +307,10 @@ function User:_ApplyAccount()
     s, e = pcall(function() self:_SetActorValues(json.decode(account.avs)) end)
     if not s then print(e) end
     s, e = pcall(function() self:_SetPerks(json.decode(account.perks)) end)
+    if not s then print(e) end
+    s, e = pcall(function() self:_SetInventoryStr(account.inventoryStr) end)
+    if not s then print(e) end
+    s, e = pcall(function() self:_SetLearnedEffects(json.decode(account.learnedEffects)) end)
     if not s then print(e) end
   end)
   if not success then
@@ -306,6 +334,8 @@ function User:_PrepareAccountToSave()
   self.account.look = json.encode(self:_GetLook())
   self.account.avs = json.encode(self:_GetActorValues())
   self.account.perks = json.encode(self:_GetPerks())
+  self.account.inventoryStr = self:_GetInventoryStr()
+  self.account.learnedEffects = json.encode(self:_GetLearnedEffects())
 end
 
 -- ...
@@ -351,6 +381,7 @@ function User:_init(pl)
   self.id = pl:GetID()
   self.perksMap = {}
   self.tasksOnSpawn = {}
+  self.learnedEffects = {}
 end
 
 function User:__index(key)
@@ -557,6 +588,21 @@ function User.OnPlayerHitObject(pl, object, weap, ammo, spell)
     end
     return true
   end
+end
+
+function User.OnPlayerLearnEffect(pl, itemType, n)
+  if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    Secunda.OnUserLearnEffect(user, itemType, n)
+    if ItemTypes.IsFromDS(itemType) then -- Learning effects on custom ItemType is not implemented
+      local baseID = itemType:GetBaseID()
+      if user.learnedEffects[baseID] == nil then
+        user.learnedEffects[baseID] = {}
+      end
+      table.insert(user.learnedEffects[baseID], n)
+    end
+  end
+  return true
 end
 
 function User.OnPlayerUpdate(pl)
