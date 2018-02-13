@@ -271,13 +271,13 @@ function User:_SetPerks(perkIds)
 end
 
 function User:_GetInventoryStr()
-  local cont = Container(self)
+  local cont = Container(self.pl)
   return ContainerSerializer.Serialize(cont)
 end
 
 function User:_SetInventoryStr(inventoryStr)
   local cont = type(inventoryStr) == "string" and ContainerSerializer.Deserialize(inventoryStr) or Container()
-  cont:ApplyTo(self)
+  cont:ApplyTo(self.pl)
 end
 
 function User:_GetLearnedEffects()
