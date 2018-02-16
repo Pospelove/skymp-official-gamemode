@@ -16,6 +16,21 @@ local gWos = {}
 
 -- Public
 
+function WorldObject.IsFileNameInUse(fileName)
+  if type(fileName) ~= "string" then
+    error("fileName is " .. type(fileName))
+  end
+  for i = 1, #gWos do
+    local wo = gWos[i]
+    if wo ~= nil then
+      if wo:GetFileName() == fileName then
+        return true
+      end
+    end
+  end
+  return false
+end
+
 function WorldObject.Lookup(id)
   for i = 1, #gWos do
     local wo = gWos[i]
@@ -52,6 +67,8 @@ function WorldObject:Load()
   end
   if not suc then
     print("error while loading data for WorldObject " .. self:GetFileName() .. ".json: " .. errstr)
+    print("instance will be deleted")
+    self:Delete()
   end
 end
 
@@ -75,19 +92,52 @@ function WorldObject:Save()
 end
 
 function WorldObject:Unload()
-  self.obj:Delete()
-  self.obj = nil
+  if self.obj ~= nil then
+    self.obj:Delete()
+    self.obj = nil
+  end
+end
+
+local function SetHarvestedForPlayer(obj, pl, isHarvested)
+  if isHarvested then
+    pl:ExecuteCommand("Skymp", "Activate(" .. obj:GetID() .. ")")
+  else
+  end
 end
 
 function WorldObject:SetValue(varName, newValue)
   self:_PrepareDataToSave()
   self.data[varName] = newValue
   self:_ApplyData()
+  if varName == "isHarvested" and self.obj ~= nil then
+    for i = 0, GetMaxPlayers() do
+      local pl = Player.LookupByID(i)
+      if pl ~= nil then
+        SetHarvestedForPlayer(self.obj, pl, not not newValue)
+      end
+    end
+  end
 end
 
 function WorldObject:GetValue(varName)
   self:_PrepareDataToSave()
   return self.data[varName]
+end
+
+function WorldObject:GetData()
+  self:_PrepareDataToSave()
+  return tablex.deepcopy(self.data)
+end
+
+function WorldObject:SetData(data)
+  self.data = tablex.deepcopy(data)
+  self:_ApplyData()
+end
+
+function WorldObject:ResetFor(user)
+  if self.obj ~= nil then
+    self.obj:ResetFor(user.pl)
+  end
 end
 
 function WorldObject.Create(fileName, optionalRawObject)
@@ -138,9 +188,11 @@ local function NewData()
     locationID = 0,
     virtualWorld = 0,
     lockLevel = 0,
-    isOpen = 0,
+    isOpen = false,
     type = "Static",
-    numActivates = 0
+    numActivates = 0,
+    isDisabled = false,
+    isHarvested = false
   }
 end
 
@@ -177,14 +229,12 @@ function WorldObject:_ApplyData()
         self.obj:RegisterAsTeleportDoor(target)
         target:RegisterAsTeleportDoor(self.obj)
       end
-    elseif self.data.type == "Activator" then
+    elseif self.data.type == "Activator" or self.data.type == "Item" then
       self.obj:RegisterAsActivator()
     elseif self.data.type == "Container" then
       self.obj:RegisterAsContainer()
     elseif self.data.type == "Furniture" then
       self.obj:RegisterAsFurniture()
-    elseif self.data.type == "Item" then
-      -- ...
     end
     self.obj:SetPos(self.data.x, self.data.y, self.data.z)
     self.obj:SetAngle(self.data.angleX, self.data.angleY, self.data.angleZ)
@@ -193,8 +243,14 @@ function WorldObject:_ApplyData()
       self.obj:SetVirtualWorld(self.data.virtualWorld)
     end
     self.obj:SetLockLevel(self.data.lockLevel)
-    local isOpen = self.data.isOpen
-    SetTimer(1000, function() self.obj:SetOpen(isOpen) end)
+    self.obj:SetOpen(self.data.isOpen)
+    self.obj:SetDisabled(self.data.isDisabled)
+    local s, errorStr = pcall(function()
+      if self.data.inventoryStr ~= nil then
+        ContainerSerializer.Deserialize(self.data.inventoryStr):ApplyTo(self.obj)
+      end
+    end)
+    if not s then print("Error while loading container: " .. errorStr) end
   end
   self:_PrepareDataToSave()
 end
@@ -206,19 +262,21 @@ function WorldObject:_PrepareDataToSave()
   self.data.baseID = self.obj:GetBaseID()
   self.data.refID = self.obj:GetID()
   self.data.type = self.obj:GetType()
-  self.data.x = self.obj:GetX()
-  self.data.y = self.obj:GetY()
-  self.data.z = self.obj:GetZ()
-  self.data.angleX = self.obj:GetAngleX()
-  self.data.angleY = self.obj:GetAngleY()
-  self.data.angleZ = self.obj:GetAngleZ()
+  self.data.x = math.floor(self.obj:GetX())
+  self.data.y = math.floor(self.obj:GetY())
+  self.data.z = math.floor(self.obj:GetZ())
+  self.data.angleX = math.floor(self.obj:GetAngleX())
+  self.data.angleY = math.floor(self.obj:GetAngleY())
+  self.data.angleZ = math.floor(self.obj:GetAngleZ())
   self.data.locationID = self.obj:GetLocation() and self.obj:GetLocation():GetID() or 0
   self.data.virtualWorld = self.obj:GetVirtualWorld()
   self.data.lockLevel = self.obj:GetLockLevel()
   self.data.isOpen = self.obj:IsOpen()
+  self.data.isDisabled = self.obj:IsDisabled()
   if self.obj:GetTeleportTarget() ~= nil then
     self.data.teleportTarget = self.obj:GetTeleportTarget():GetID()
   end
+  self.data.inventoryStr = ContainerSerializer.Serialize(Container(self.obj))
 end
 
 function WorldObject._SaveFileNames()
@@ -258,8 +316,10 @@ function WorldObject._LoadAll()
   local clock = GetTickCount()
   for i = 1, #fileNames do
     local fileName = fileNames[i]
-    local wo = WorldObject(fileName)
-    wo:Load()
+    if fileName ~= "dummy" then
+      local wo = WorldObject(fileName)
+      wo:Load()
+    end
   end
   print("Done in " .. (GetTickCount() - clock) .. "ms")
 end
@@ -278,6 +338,18 @@ function WorldObject.OnPlayerActivateObject(pl, obj)
     wo.data.numActivates = 1
   end
   wo:Save()
+  return true
+end
+
+function WorldObject.OnPlayerStreamInObject(pl, obj)
+  local wo = WorldObject.Lookup(obj:GetID())
+  if wo ~= nil then
+    SetTimer(500, function() SetHarvestedForPlayer(obj, pl, wo:GetValue("isHarvested")) end)
+  end
+  return true
+end
+
+function WorldObject.OnPlayerStreamOutObject(pl, obj)
   return true
 end
 

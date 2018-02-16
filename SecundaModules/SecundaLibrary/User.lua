@@ -13,8 +13,9 @@ function User.Docs()
   user:Save() -- Save account
   user:CheckAuth(callback) -- Async check if user is logged. Calls callback(true) if is logged or callback(false) if not
   user:GetAccountVar(varName) -- Get value of account variable with specified name
-  user:SetAccountVar(varName, newValue) -- Change account var value. It's OK to use in OnUserLoad
+  user:SetAccountVar(varName, newValue, forceChanges) -- Change account var value. It's OK to use in OnUserLoad
   user:ShowRaceMenu() -- Show the character editor
+  user:UnequipAll() -- Unequip all items
 
   -- Callbacks:
   OnUserLoad(user) -- Called from user:Load() when loading account
@@ -29,6 +30,7 @@ function User.Docs()
   OnUserDying(user, killer) --
   OnUserDataSearchResult(user, opcode, result) --
   OnHit(user, target) --
+  OnActivate(user, target) --
   ]]
 end
 
@@ -117,14 +119,27 @@ function User:GetAccountVar(varName)
   return self.account[varName]
 end
 
-function User:SetAccountVar(varName, newValue)
+function User:SetAccountVar(varName, newValue, forceChanges)
   if self.account == nil then return nil end
+  if forceChanges then
+    self:_PrepareAccountToSave()
+  end
   self.account[varName] = newValue
+  if forceChanges then
+    self:_ApplyAccount()
+  end
 end
 
 function User:ShowRaceMenu()
   self.pl:ShowMenu("RaceSex Menu")
   self.pl:SetVirtualWorld(1000000)
+end
+
+function User:UnequipAll()
+  for i = 1, self.pl:GetNumInventorySlots() do
+    local itemType = self.pl:GetItemTypeInSlot(i)
+    for handID = -1, 1 do self.pl:UnequipItem(itemType, handID) end
+  end
 end
 
 function User:AddTask(f)
@@ -280,14 +295,65 @@ function User:_SetInventoryStr(inventoryStr)
   cont:ApplyTo(self.pl)
 end
 
+function User:_GetEquipment()
+  local armor = {}
+  local leftHand = -1
+  local rightHand = -1
+  for i = 1, self.pl:GetNumInventorySlots() do
+    local itemType = self.pl:GetItemTypeInSlot(i)
+    if itemType ~= nil and self.pl:IsEquipped(itemType) then
+      if itemType:GetClass() == "Weapon" then
+        if self.pl:GetEquippedWeapon(0) == itemType then
+          rightHand = i
+        end
+        if self.pl:GetEquippedWeapon(1) == itemType then
+          leftHand = i
+        end
+      elseif itemType:GetClass() == "Armor" then
+        table.insert(armor, i)
+      end
+    end
+  end
+  local eq = {}
+  table.insert(eq, rightHand)
+  table.insert(eq, leftHand)
+  for i = 1, #armor do
+    table.insert(eq, armor[i])
+  end
+  return eq
+end
+
+function User:_SetEquipment(eq)
+  self:UnequipAll()
+  for i = 1, #eq do
+    local slot = eq[i]
+    if slot ~= -1 then
+      local itemType = self.pl:GetItemTypeInSlot(slot)
+      if i == 1 then
+        self.pl:EquipItem(itemType, 0)
+      elseif i == 2 then
+        self.pl:EquipItem(itemType, 1)
+      else
+        self.pl:EquipItem(itemType, -1)
+      end
+    end
+  end
+end
+
 function User:_GetLearnedEffects()
   return self.learnedEffects
 end
 
 function User:_SetLearnedEffects(learnedEffects)
+  if learnedEffects == nil then
+    learnedEffects = {}
+  end
   self.learnedEffects = learnedEffects
-  for baseID, t in learnedEffects do
-    local itemType = ItemTypes.Lookup(baseID)
+  for baseID, t in pairs(learnedEffects) do
+    local itemType = ItemTypes.Lookup(tonumber(baseID))
+    if itemType == nil then
+      error("bad itemType")
+    end
     for i = 1, #t do
       local n = t[i]
       self.pl:SetEffectLearned(itemType, n, true)
@@ -300,18 +366,21 @@ function User:_ApplyAccount()
     local account = tablex.deepcopy(self.account)
     self.pl:SetSpawnPoint(Location(account.location), account.x, account.y, account.z, account.angle)
     self.pl:Spawn()
+    self.pl:SetWerewolf(not not account.isWerewolf and account.isWerewolf ~= 0)
     local s = nil
     local e = nil
     s, e = pcall(function() self:_SetLook(json.decode(account.look)) end)
-    if not s then print(e) end
+    if not s then print("Error while loading look: " .. e) end
     s, e = pcall(function() self:_SetActorValues(json.decode(account.avs)) end)
-    if not s then print(e) end
+    if not s then print("Error while loading avs: " .. e) end
     s, e = pcall(function() self:_SetPerks(json.decode(account.perks)) end)
-    if not s then print(e) end
+    if not s then print("Error while loading perks: " .. e) end
     s, e = pcall(function() self:_SetInventoryStr(account.inventoryStr) end)
-    if not s then print(e) end
-    s, e = pcall(function() self:_SetLearnedEffects(json.decode(account.learnedEffects)) end)
-    if not s then print(e) end
+    if not s then print("Error while loading inventory: " .. e) end
+    s, e = pcall(function() self:_SetLearnedEffects(pretty.read(account.learnedEffects)) end)
+    if not s then print("Error while loading learned effects: " .. e) end
+    s, e = pcall(function() self:_SetEquipment(json.decode(account.equipment)) end)
+    if not s then print("Error while loading equipment: " .. e) end
   end)
   if not success then
     print(err)
@@ -335,7 +404,16 @@ function User:_PrepareAccountToSave()
   self.account.avs = json.encode(self:_GetActorValues())
   self.account.perks = json.encode(self:_GetPerks())
   self.account.inventoryStr = self:_GetInventoryStr()
-  self.account.learnedEffects = json.encode(self:_GetLearnedEffects())
+  self.account.learnedEffects = pretty.write(self:_GetLearnedEffects())
+  self.account.equipment = json.encode(self:_GetEquipment())
+end
+
+function User:_UpdateDisplayGold()
+  if User.gGold == nil then
+    local idGold001 = 0x0000000F
+    User.gGold = ItemTypes.Lookup(idGold001)
+  end
+  self.pl:SetDisplayGold(self.pl:GetItemCount(User.gGold))
 end
 
 -- ...
@@ -421,6 +499,22 @@ function User:HasPerk(perk)
   return self.perksMap[perk:GetID()] == true
 end
 
+function User:AddItem(itemType, count)
+  self.pl:AddItem(itemType, count)
+  self:_UpdateDisplayGold()
+end
+
+function User:RemoveItem(itemType, count)
+  local res = self.pl:RemoveItem(itemType, count)
+  self:_UpdateDisplayGold()
+  return res
+end
+
+function User:RemoveAllItems()
+  self.pl:RemoveAllItems()
+  self:_UpdateDisplayGold()
+end
+
 function User:GetPerks()
   local perks = {}
   for k, v in pairs(self.perksMap) do
@@ -444,7 +538,10 @@ function User.HasOverride(key)
     SendChatMessage = true,
     AddPerk = true,
     RemovePerk = true,
-    HasPerk = true
+    HasPerk = true,
+    AddItem = true,
+    RemoveItem = true,
+    RemoveAllItems = true
   }
   return hasOverride[key]
 end
@@ -586,8 +683,30 @@ function User.OnPlayerHitObject(pl, object, weap, ammo, spell)
     if wo ~= nil then
       Secunda.OnHit(user, wo)
     end
-    return true
   end
+  return true
+end
+
+function User.OnPlayerActivateObject(pl, object)
+  if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    --user:_UpdateDisplayGold()
+    local wo = WorldObject.Lookup(object:GetID())
+    if wo ~= nil then
+      return Secunda.OnActivate(user, wo)
+    end
+  end
+  return true
+end
+
+function User.OnPlayerDropObject(pl, object)
+  if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    local wo = WorldObject.Create("dummy", object)
+    SetTimer(1, function() user:_UpdateDisplayGold() end)
+    object:SetPos(pl:GetX(), pl:GetY(), pl:GetZ() + 12.0) -- Change default dropped item offset from player to {0,0,0}
+  end
+  return true
 end
 
 function User.OnPlayerLearnEffect(pl, itemType, n)
@@ -602,6 +721,10 @@ function User.OnPlayerLearnEffect(pl, itemType, n)
       table.insert(user.learnedEffects[baseID], n)
     end
   end
+  return true
+end
+
+function User.OnPlayerEatItem(pl, itemType)
   return true
 end
 

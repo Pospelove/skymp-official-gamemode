@@ -16,8 +16,13 @@ function ItemTypes.IsFromDS(itemType)
   if itemType == nil then
     error "nil passed as itemType parameter"
   end
-  local set = Set(ItemTypes.GetAllItemTypes())
-  return not not set[itemType]
+  local all = ItemTypes.GetAllItemTypes()
+  for i = 1, #all do
+    if all[i] == itemType then
+      return true
+    end
+  end
+  return false
 end
 
 function ItemTypes.Get(iden)
@@ -87,7 +92,12 @@ function ItemTypes.Init()
             local mag = effectItems[i][2]
             local dur = effectItems[i][3]
             local area = effectItems[i][4]
-            itemType:AddEffect(Effect.LookupByIdentifier(iden), mag, dur, area)
+            local mgef = Effect.LookupByIdentifier(iden)
+            if mgef == nil then
+              -- ...
+            else
+              itemType:AddEffect(mgef, mag, dur, area)
+            end
           end
           gItemTypesByID[formID] = itemType
         end
@@ -110,12 +120,13 @@ function ItemTypes.TestPerfomance()
   local clock = GetTickCount()
   local numCalls = 10000
   for i = 1, numCalls do
-    local itemType = ItemType.LookupByIdentifier("РљРѕСЂР·РёРЅР°")
+    local itemType = ItemType.LookupByIdentifier("Корзина")
   end
   print("ItemType.LookupByIdentifier() = " .. FormatTime(clock, numCalls))
 end
 
 function ItemTypes.Require()
+  Effects.Require()
   if not ItemTypes.inited then
     ItemTypes.Init()
     ItemTypes.inited = true
@@ -128,10 +139,17 @@ function ItemTypes.RunTests()
   if ItemType.LookupByIdentifier(iden) == nil then
     error("test failed")
   end
+
+  if ItemTypes.IsFromDS(ItemType.LookupByIdentifier(iden)) then
+    error("test failed")
+  end
+
+  if not ItemTypes.IsFromDS(ItemTypes.Lookup("Корзина")) then
+    error("test failed")
+  end
 end
 
 function ItemTypes.OnServerInit()
-  Effects.Require()
   ItemTypes.Require()
   return true
 end

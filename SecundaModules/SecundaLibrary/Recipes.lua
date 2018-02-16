@@ -38,6 +38,7 @@ function Recipes.Init()
 end
 
 function Recipes.Require()
+  ItemTypes.Require()
   if not Recipes.inited then
     Recipes.Init()
     Recipes.inited = true
@@ -45,7 +46,6 @@ function Recipes.Require()
 end
 
 function Recipes.OnServerInit()
-  ItemTypes.Require()
   Recipes.Require()
   return true
 end
