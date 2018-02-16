@@ -1,4 +1,4 @@
-local Recipes = {}
+Recipes = {}
 
 local gRaw = dsres.recipes
 local gRecipes = {}
@@ -50,8 +50,16 @@ function Recipes.OnServerInit()
   return true
 end
 
-function Recipes.OnPlayerSpawn(player)
-  if true then return true end
+function Recipes.OnUserSpawn(user)
+  SetTimer(6000, function()
+    user:AddTask(function()
+      --Recipes.SendTo(user.pl)
+    end)
+  end)
+  return true
+end
+
+function Recipes.SendTo(player)
 
   if gHasRecipes[player:GetID()] == true then return end
 

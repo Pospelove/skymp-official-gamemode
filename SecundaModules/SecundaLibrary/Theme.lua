@@ -13,4 +13,11 @@ function Theme.RunTests()
   end
 end
 
+Color = {
+	green =		"#1edb6d",
+	red =		"#db271e",
+	grey =		"#bebebe",
+	gold =		"#f4e241",
+}
+
 return Theme

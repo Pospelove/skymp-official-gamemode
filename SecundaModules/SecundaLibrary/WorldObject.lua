@@ -342,9 +342,39 @@ function WorldObject.OnPlayerActivateObject(pl, obj)
 end
 
 function WorldObject.OnPlayerStreamInObject(pl, obj)
-  local wo = WorldObject.Lookup(obj:GetID())
-  if wo ~= nil then
-    SetTimer(500, function() SetHarvestedForPlayer(obj, pl, wo:GetValue("isHarvested")) end)
+  --[[if obj:GetBaseID() == 0x000bad0c then
+    local alchWorkbench = obj
+    print("Register Alch")
+    alchWorkbench:AddKeyword("FurnitureForce3rdPerson")
+		alchWorkbench:AddKeyword("FurnitureSpecial")
+		alchWorkbench:AddKeyword("isAlchemy")
+		alchWorkbench:AddKeyword("RaceToScale")
+		alchWorkbench:AddKeyword("WICraftingAlchemy")
+  end
+  if obj:GetBaseID() == 0x000D5501 then
+    local enchWorkbench = obj
+    print("Register Ench")
+    enchWorkbench:AddKeyword("FurnitureForce3rdPerson")
+		enchWorkbench:AddKeyword("FurnitureSpecial")
+		enchWorkbench:AddKeyword("isEnchanting")
+		enchWorkbench:AddKeyword("RaceToScale")
+		enchWorkbench:AddKeyword("WICraftingEnchanting")
+  end
+  if obj:GetBaseID() == 0x000CAE0B then
+    local smithForge = obj
+    print("Register Smith")
+    smithForge:AddKeyword("isBlacksmithForge")
+		smithForge:AddKeyword("CraftingSmithingForge")
+		smithForge:AddKeyword("FurnitureForce3rdPerson")
+		smithForge:AddKeyword("FurnitureSpecial")
+		smithForge:AddKeyword("RaceToScale")
+		smithForge:AddKeyword("WICraftingSmithing")
+  end]]
+  if pl:IsNPC() == false then
+    local wo = WorldObject.Lookup(obj:GetID())
+    if wo ~= nil then
+      SetTimer(500, function() SetHarvestedForPlayer(obj, pl, wo:GetValue("isHarvested")) end)
+    end
   end
   return true
 end

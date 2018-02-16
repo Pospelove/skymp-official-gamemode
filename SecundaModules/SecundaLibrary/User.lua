@@ -485,6 +485,10 @@ function User:SendChatMessage(text)
   self.pl:SendChatMessage(ru(text))
 end
 
+function User:SetChatBubble(text, time)
+  self.pl:SetChatBubble(ru(text), time)
+end
+
 function User:AddPerk(perk)
   self.pl:AddPerk(perk)
   self.perksMap[perk:GetID()] = true
@@ -536,6 +540,7 @@ function User.HasOverride(key)
     GetName = true,
     SetName = true,
     SendChatMessage = true,
+    SetChatBubble = true,
     AddPerk = true,
     RemovePerk = true,
     HasPerk = true,
