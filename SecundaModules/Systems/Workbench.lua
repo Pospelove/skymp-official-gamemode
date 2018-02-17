@@ -61,17 +61,17 @@ function Workbench.OnActivate(source, target)
 		local showSelf = true
 
 		if furn:GetBaseID() == 0x000CAE0B then
-			player:SetChatBubble(Color.gold .. "Использует кузницу", 60000, showSelf)
+			player:SetChatBubble(Color.gold .. ru("Использует кузницу"), 60000, showSelf)
 			bubble[player:GetName()] = true
 		end
 
 		if furn:GetBaseID() == 0x000bad0c then
-			player:SetChatBubble(Color.green .. "Использует алхимический стол", 60000, showSelf)
+			player:SetChatBubble(Color.green .. ru("Использует алхимический стол"), 60000, showSelf)
 			bubble[player:GetName()] = true
 		end
 
 		if furn:GetBaseID() == 0x000D5501 then
-			player:SetChatBubble("#f442f4" .. "Использует зачаровательный стол", 60000, showSelf)
+			player:SetChatBubble("#f442f4" .. ru("Использует зачаровательный стол"), 60000, showSelf)
 			bubble[player:GetName()] = true
 		end
 	end)
