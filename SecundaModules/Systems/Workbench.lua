@@ -39,7 +39,7 @@ local acti = {}
 bubble = {}
 local dis = {}
 
-function Workbench.OnActivate_DISABLED(source, target)
+function Workbench.OnActivate(source, target)
   if not source:is_a(User) or not target:is_a(WorldObject) then
     return true
   end

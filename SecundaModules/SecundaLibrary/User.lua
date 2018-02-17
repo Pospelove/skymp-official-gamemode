@@ -256,10 +256,11 @@ function User:_SetActorValues(avs)
       player:ExecuteCommand("console", "player.setlevel " .. value)
     end
 		if key:gsub("_CURRENT", "") ~= key then
-      if value == 1 and key == "Health_CURRENT" then
-        self:AddTask(function() player:SetCurrentAV("Health", 0) end)
+      if (value == 1 or value == 0) and key == "Health_CURRENT" then
+        self:AddTask(function() player:SetCurrentAV("Health", 1) end)
+      else
+			     player:SetCurrentAV(key:gsub("_CURRENT", ""), value)
       end
-			player:SetCurrentAV(key:gsub("_CURRENT", ""), value)
     elseif key:gsub("_EXP", "") ~= key then
       player:SetSkillExperience(key:gsub("_EXP", ""), value)
 		else
