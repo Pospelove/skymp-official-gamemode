@@ -19,7 +19,7 @@ stringx.import()
 
 Secunda = {}
 Secunda.sName = "Secunda"
-Secunda.sVersion = "0.13.0"
+Secunda.sVersion = "0.13.1"
 Secunda.sAuthor = "Pospelov"
 
 print ""
@@ -141,7 +141,8 @@ function Secunda.Hook()
 		"OnPlayerStreamInPlayer",
 		"OnPlayerStreamOutPlayer",
 		"OnPlayerStreamInObject",
-		"OnPlayerStreamOutObject"
+		"OnPlayerStreamOutObject",
+		"OnPlayerBowShot"
 	}
 	for i = 1, #tStandard do
 		_G[tStandard[i]] = Secunda[tStandard[i]]

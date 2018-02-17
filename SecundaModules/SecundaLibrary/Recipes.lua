@@ -53,7 +53,7 @@ end
 function Recipes.OnUserSpawn(user)
   SetTimer(6000, function()
     user:AddTask(function()
-      Recipes.SendTo(user.pl)
+      --Recipes.SendTo(user.pl)
     end)
   end)
   return true

@@ -13,6 +13,7 @@ end
 -- Private variables
 
 local gWos = {}
+local gWosByRefID = {}
 
 -- Public
 
@@ -32,7 +33,8 @@ function WorldObject.IsFileNameInUse(fileName)
 end
 
 function WorldObject.Lookup(id)
-  for i = 1, #gWos do
+  return gWosByRefID[id]
+  --[[for i = 1, #gWos do
     local wo = gWos[i]
     if wo ~= nil then
       if wo:GetValue("refID") == id then
@@ -40,7 +42,7 @@ function WorldObject.Lookup(id)
       end
     end
   end
-  return nil
+  return nil--]]
 end
 
 function WorldObject.GetAllWorldObjects()
@@ -140,9 +142,26 @@ function WorldObject:ResetFor(user)
   end
 end
 
+function WorldObject._TaskSaveFileNames()
+  WorldObject._SaveFileNamesTask = function()
+    WorldObject._SaveFileNames()
+    print("WorldObject filenames saved")
+  end
+  if WorldObject._Every4000ms == nil then
+    WorldObject._Every4000ms = function()
+      if WorldObject._SaveFileNamesTask ~= nil then
+        WorldObject._SaveFileNamesTask()
+        WorldObject._SaveFileNamesTask = nil
+      end
+      SetTimer(4000, WorldObject._Every4000ms)
+    end
+    WorldObject._Every4000ms()
+  end
+end
+
 function WorldObject.Create(fileName, optionalRawObject)
   local wo = WorldObject(fileName, optionalRawObject)
-  WorldObject._SaveFileNames()
+  WorldObject._TaskSaveFileNames()
   return wo
 end
 
@@ -236,7 +255,11 @@ function WorldObject:_ApplyData()
     elseif self.data.type == "Furniture" then
       self.obj:RegisterAsFurniture()
     end
-    self.obj:SetPos(self.data.x, self.data.y, self.data.z)
+    if self.data.isDisabled then
+      self.obj:SetPos(self.data.x, self.data.y, self.data.z - 2048)
+    else
+      self.obj:SetPos(self.data.x, self.data.y, self.data.z)
+    end
     self.obj:SetAngle(self.data.angleX, self.data.angleY, self.data.angleZ)
     self.obj:SetLocation(Location(self.data.locationID))
     if self.data.virtualWorld ~= nil then -- virtualWorld is nil for native objects
@@ -261,10 +284,13 @@ function WorldObject:_PrepareDataToSave()
   end
   self.data.baseID = self.obj:GetBaseID()
   self.data.refID = self.obj:GetID()
+  gWosByRefID[self.data.refID] = self
   self.data.type = self.obj:GetType()
-  self.data.x = math.floor(self.obj:GetX())
-  self.data.y = math.floor(self.obj:GetY())
-  self.data.z = math.floor(self.obj:GetZ())
+  if self.obj:IsDisabled() == false then
+    self.data.x = math.floor(self.obj:GetX())
+    self.data.y = math.floor(self.obj:GetY())
+    self.data.z = math.floor(self.obj:GetZ())
+  end
   self.data.angleX = math.floor(self.obj:GetAngleX())
   self.data.angleY = math.floor(self.obj:GetAngleY())
   self.data.angleZ = math.floor(self.obj:GetAngleZ())

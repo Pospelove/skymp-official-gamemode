@@ -120,7 +120,7 @@ function ItemTypes.TestPerfomance()
   local clock = GetTickCount()
   local numCalls = 10000
   for i = 1, numCalls do
-    local itemType = ItemType.LookupByIdentifier("Корзина")
+    local itemType = ItemType.LookupByIdentifier("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ")
   end
   print("ItemType.LookupByIdentifier() = " .. FormatTime(clock, numCalls))
 end
@@ -144,7 +144,7 @@ function ItemTypes.RunTests()
     error("test failed")
   end
 
-  if not ItemTypes.IsFromDS(ItemTypes.Lookup("Корзина")) then
+  if not ItemTypes.IsFromDS(ItemTypes.Lookup("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ")) then
     error("test failed")
   end
 end

@@ -749,6 +749,10 @@ function User.OnPlayerUpdate(pl)
   end
 end
 
+function User.OnPlayerBowShot(pl, power)
+  return true
+end
+
 function User.RunTests()
 
   local Test_SetUserCtorEnabled = function()
