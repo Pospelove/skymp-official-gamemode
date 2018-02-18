@@ -236,6 +236,14 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if tokens[1] == "/abort" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    user:SendChatMessage(Theme.error .. "Сервер будет уничтожен. Зачем вы это сделали?")
+    Terminate()
+  end
+
   return true
 end
 

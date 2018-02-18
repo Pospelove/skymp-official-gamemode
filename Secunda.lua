@@ -19,7 +19,7 @@ stringx.import()
 
 Secunda = {}
 Secunda.sName = "Secunda"
-Secunda.sVersion = "0.13.1"
+Secunda.sVersion = "0.14.0"
 Secunda.sAuthor = "Pospelov"
 
 print ""
