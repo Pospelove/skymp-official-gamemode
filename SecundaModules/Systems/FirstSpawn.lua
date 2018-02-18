@@ -15,7 +15,7 @@ function FirstSpawn.OnUserLoad(user)
 end
 
 function FirstSpawn.OnUserSpawn(user)
-  if user:GetTintmaskCount() == 0 then
+  if user:GetTintmaskCount() == 0 and not stringx.startswith(user:GetName(), "layner") then
     SetTimer(500, function() user:ShowRaceMenu() end)
   end
   return true
