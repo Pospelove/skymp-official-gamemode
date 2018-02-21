@@ -34,15 +34,6 @@ end
 
 function WorldObject.Lookup(id)
   return gWosByRefID[id]
-  --[[for i = 1, #gWos do
-    local wo = gWos[i]
-    if wo ~= nil then
-      if wo:GetValue("refID") == id then
-        return wo
-      end
-    end
-  end
-  return nil--]]
 end
 
 function WorldObject.GetAllWorldObjects()
@@ -54,43 +45,11 @@ function WorldObject:GetFileName()
 end
 
 function WorldObject:Load()
-  local file = nil
-  local suc, errstr = pcall(function()
-    file = io.open("files/worldobjects/" .. self:GetFileName() .. ".json", "r")
-    local str = ""
-    for line in file:lines() do
-      str = str .. line
-    end
-    self.data = json.decode(str)
-    self:_ApplyData()
-  end)
-  if file ~= nil then
-    io.close(file)
-  end
-  if not suc then
-    print("error while loading data for WorldObject " .. self:GetFileName() .. ".json: " .. errstr)
-    print("instance will be deleted")
-    self:Delete()
-  end
+  return Loadable.Load(self, "worldobjects")
 end
 
 function WorldObject:Save()
-  self:_PrepareDataToSave()
-  local filePath = "files/worldobjects/" .. self:GetFileName() .. ".json"
-  local file = io.open(filePath, "w")
-  if file == nil then
-    error("files/worldobjects/" .. " directory not found")
-  end
-
-  local data = ""
-  local success, errc = pcall(function() data = json.encode(self.data) end)
-  if success then
-    file:write(data)
-    print("saving worldobject " .. self:GetFileName() .. ".json")
-  else
-    error (errc .. "\n\n" .. pretty.write(self.data))
-  end
-  io.close(file)
+  return Loadable.Save(self, "worldobjects")
 end
 
 function WorldObject:Unload()
@@ -139,23 +98,6 @@ end
 function WorldObject:ResetFor(user)
   if self.obj ~= nil then
     self.obj:ResetFor(user.pl)
-  end
-end
-
-function WorldObject._TaskSaveFileNames()
-  WorldObject._SaveFileNamesTask = function()
-    WorldObject._SaveFileNames()
-    print("WorldObject filenames saved")
-  end
-  if WorldObject._Every4000ms == nil then
-    WorldObject._Every4000ms = function()
-      if WorldObject._SaveFileNamesTask ~= nil then
-        WorldObject._SaveFileNamesTask()
-        WorldObject._SaveFileNamesTask = nil
-      end
-      SetTimer(4000, WorldObject._Every4000ms)
-    end
-    WorldObject._Every4000ms()
   end
 end
 
@@ -213,6 +155,23 @@ local function NewData()
     isDisabled = false,
     isHarvested = false
   }
+end
+
+function WorldObject._TaskSaveFileNames()
+  WorldObject._SaveFileNamesTask = function()
+    WorldObject._SaveFileNames()
+    print("WorldObject filenames saved")
+  end
+  if WorldObject._Every4000ms == nil then
+    WorldObject._Every4000ms = function()
+      if WorldObject._SaveFileNamesTask ~= nil then
+        WorldObject._SaveFileNamesTask()
+        WorldObject._SaveFileNamesTask = nil
+      end
+      SetTimer(4000, WorldObject._Every4000ms)
+    end
+    WorldObject._Every4000ms()
+  end
 end
 
 function WorldObject:_init(fileName, optionalRawObject)
@@ -306,33 +265,12 @@ function WorldObject:_PrepareDataToSave()
 end
 
 function WorldObject._SaveFileNames()
-  local fileNames = {}
-  for i = 1, #gWos do
-    local wo = gWos[i]
-    if wo ~= nil then
-      local fileName = wo:GetFileName()
-      table.insert(fileNames, fileName)
-    end
-  end
-  local str = json.encode(fileNames)
-  local file = io.open("files/worldobjects.json", "w")
-  file:write(str)
-  io.close(file)
+  return FilesList.SaveFileNames(gWos, "worldobjects")
 end
 
 
 function WorldObject._LoadFileNames()
-  local jsonPath = "files/worldobjects.json"
-  local file = io.open(jsonPath, "r")
-  if file == nil then
-    error(jsonPath .. " is missing")
-  end
-  local str = ""
-  for line in file:lines() do
-    str = str .. line
-  end
-  io.close(file)
-  return json.decode(str)
+  return FilesList.LoadFileNames("worldobjects")
 end
 
 function WorldObject._LoadAll()
@@ -368,34 +306,6 @@ function WorldObject.OnPlayerActivateObject(pl, obj)
 end
 
 function WorldObject.OnPlayerStreamInObject(pl, obj)
-  --[[if obj:GetBaseID() == 0x000bad0c then
-    local alchWorkbench = obj
-    print("Register Alch")
-    alchWorkbench:AddKeyword("FurnitureForce3rdPerson")
-		alchWorkbench:AddKeyword("FurnitureSpecial")
-		alchWorkbench:AddKeyword("isAlchemy")
-		alchWorkbench:AddKeyword("RaceToScale")
-		alchWorkbench:AddKeyword("WICraftingAlchemy")
-  end
-  if obj:GetBaseID() == 0x000D5501 then
-    local enchWorkbench = obj
-    print("Register Ench")
-    enchWorkbench:AddKeyword("FurnitureForce3rdPerson")
-		enchWorkbench:AddKeyword("FurnitureSpecial")
-		enchWorkbench:AddKeyword("isEnchanting")
-		enchWorkbench:AddKeyword("RaceToScale")
-		enchWorkbench:AddKeyword("WICraftingEnchanting")
-  end
-  if obj:GetBaseID() == 0x000CAE0B then
-    local smithForge = obj
-    print("Register Smith")
-    smithForge:AddKeyword("isBlacksmithForge")
-		smithForge:AddKeyword("CraftingSmithingForge")
-		smithForge:AddKeyword("FurnitureForce3rdPerson")
-		smithForge:AddKeyword("FurnitureSpecial")
-		smithForge:AddKeyword("RaceToScale")
-		smithForge:AddKeyword("WICraftingSmithing")
-  end]]
   if pl:IsNPC() == false then
     local wo = WorldObject.Lookup(obj:GetID())
     if wo ~= nil then

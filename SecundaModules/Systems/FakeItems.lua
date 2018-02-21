@@ -4,7 +4,7 @@ FakeItems = {}
 local gFlora = dsres.flora
 
 function FakeItems.OnActivate(source, target)
-  if source:is_a(User) and target:is_a(WorldObject) then
+  if (source:is_a(User) or source:is_a(NPC)) and target:is_a(WorldObject) then
     if target:GetValue("type") == "Activator" then
       local base = target:GetValue("baseID")
       local itemType = ItemTypes.Lookup(base)
@@ -16,6 +16,9 @@ function FakeItems.OnActivate(source, target)
       end
       if itemType ~= nil and ItemTypes.IsFromDS(itemType) and not target:GetValue("isCollectedItem") then
         source:AddItem(itemType, 1)
+        if source:is_a(NPC) then
+          source:EquipItem(itemType, 0)
+        end
         target:SetValue("isDisabled", true)
         target:SetValue("isCollectedItem", true)
         target:Save()

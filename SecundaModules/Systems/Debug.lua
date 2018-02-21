@@ -82,6 +82,10 @@ function Debug.OnUserChatCommand(user, cmd)
       local n = #WorldObject.GetAllWorldObjects()
       WorldObject.DeleteAll()
       user:SendChatMessage(Theme.success .. "Удалено " .. n .. " экземпляров")
+    elseif tokens[2] == "npc" then
+      local n = #NPC.GetAllNPCs()
+      NPC.DeleteAll()
+      user:SendChatMessage(Theme.success .. "Удалено " .. n .. " экземпляров")
     else
       if tokens[2] ~= nil then
         user:SendChatMessage(Theme.error .. "Неизвестный раздел")
@@ -242,6 +246,24 @@ function Debug.OnUserChatCommand(user, cmd)
     end
     user:SendChatMessage(Theme.error .. "Сервер будет уничтожен. Зачем вы это сделали?")
     Terminate()
+  end
+
+  if tokens[1] == "/overdose" and tokens[2] == "npc" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    if tonumber(tokens[3]) == nil then
+      user:SendChatMessage(Theme.error .. "Некорректное количество")
+    else
+      user:SendChatMessage(Theme.info .. "Подключение " .. tokens[3] .. " npc...")
+      for i = 1, tonumber(tokens[3]) do
+        local npc = Player.CreateNPC(1)
+        npc:SetSpawnPoint(Location(60), 0, 0, 0, 0)
+        npc:Spawn()
+        npc:SetVirtualWorld(1000000)
+      end
+      user:SendChatMessage(Theme.success .. "Готово")
+    end
   end
 
   return true

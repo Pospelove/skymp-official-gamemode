@@ -23,6 +23,7 @@ function User.Docs()
   OnUserConnect(user) --
   OnUserDisconnect(user) --
   OnUserSpawn(user) --
+  OnUserUpdate(user) --
   OnUserCharacterCreated(user) --
   OnUserChatMessage(user, text) -- Called on chat message (not command)
   OnUserChatCommand(user, cmdtext) -- Called on chat command
@@ -592,6 +593,7 @@ function User.OnServerInit()
 end
 
 function User.OnPlayerConnect(pl)
+  pl:SetSoulSize(0)
   if pl:IsNPC() == false then
     local user = NewUser(pl)
     Secunda.OnUserConnect(user)
@@ -739,6 +741,7 @@ function User.OnPlayerUpdate(pl)
   if pl:IsNPC() == false then
     local user = User.Lookup(pl:GetName())
     if user:IsSpawned() then
+      Secunda.OnUserUpdate(user)
       if #user.tasksOnSpawn > 0 then
         for i = 1, #user.tasksOnSpawn do
           user.tasksOnSpawn[i]()

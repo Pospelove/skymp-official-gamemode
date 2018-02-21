@@ -21,19 +21,23 @@ function DSObjects.OnUserDataSearchResult(user, opcode, rawRes)
       local wo = WorldObject.Create(fileName, rawRes)
       wo:Save()
     end
-  elseif opcode == "Item" then -- deprecated
-    if WorldObject.Lookup(rawRes:GetID()) == nil then
-      local woTemp = WorldObject.Create("dummy", rawRes)
-      local data = woTemp:GetData()
-      data.type = "Activator"
-      woTemp:Delete()
-      local fileName = "Runtime" .. math.floor(data.x) .. "-" .. math.floor(data.y) .. "-" .. math.floor(data.z)
-      if not WorldObject.IsFileNameInUse(fileName) then
-        local wo = WorldObject.Create(fileName, nil)
-        wo:SetData(data)
-        wo:Save()
-        user:SendChatMessage(Theme.info .. "DS загрузил экземпляр " .. Theme.sel ..  opcode .. "-" .. string.format("%X",wo:GetValue("refID")))
+  elseif opcode == "Actor" then
+    local fileName = "Native" .. tostring(rawRes:GetRefID())
+    if NPC.IsFileNameInUse(fileName) == false then
+      local npc = NPC.Create(fileName)
+      npc:SetValue("baseID", rawRes:GetBaseID())
+      npc:SetValue("x", rawRes:GetX())
+      npc:SetValue("y", rawRes:GetY())
+      npc:SetValue("z", rawRes:GetZ())
+      npc:SetValue("angleZ", rawRes:GetAngleZ())
+      if rawRes:GetLocation() == nil then
+        error("bad actor locaiton")
       end
+      npc:SetValue("locationID", rawRes:GetLocation():GetID())
+      npc:SetValue("virtualWorld", rawRes:GetVirtualWorld())
+      npc:Save()
+      user:SendChatMessage(Theme.info .. "DS загрузил экземпляр " .. Theme.sel ..  opcode .. "-" .. string.format("%X",rawRes:GetRefID()))
+      rawRes:Kick()
     end
   else
     user:SendChatMessage(Theme.error .. "Неправильный opcode ".. opcode)
