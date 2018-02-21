@@ -83,12 +83,12 @@ function NavMesh.OnPlayerActivatePlayer(pl, target)
 	return true
 end
 
-hasTarget = {}
+--hasTarget = {}
 function NavMesh.OnPlayerHitPlayer(pl, target)
-  if not hasTarget[target:GetID()] then
+  --if not hasTarget[target:GetID()] then
     target:SetCombatTarget(pl)
-    hasTarget[target:GetID()] = true
-  end
+    --hasTarget[target:GetID()] = true
+  --end
   return true
 end
 
