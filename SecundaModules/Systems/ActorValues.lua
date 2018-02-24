@@ -1,6 +1,6 @@
 local ActorValues = {}
 
-local lastMsg = {}
+local timerStarted = {}
 
 function ActorValues.OnUserConnect(user)
   user:AddTask(function()
@@ -9,20 +9,19 @@ function ActorValues.OnUserConnect(user)
 end
 
 function ActorValues.OnUserUpdate(user)
-  local jumpTarget = "высоту"
-  local mult = 0.90
-  if user:IsRunning() then jumpTarget = "длину"; mult = 0.875 end
   if user:IsJumping() then
     local stamina = user:GetCurrentAV("Stamina")
-    user:SetCurrentAV("Stamina", stamina * mult)
-    if stamina < 10 then
-      local health = user:GetCurrentAV("Health")
-      user:SetCurrentAV("Health", health - (1 + 0.25 * mult))
-      local lastMsgMoment = lastMsg[user:GetID()]
-      if lastMsgMoment == nil or GetTickCount() - lastMsgMoment > 2500 then
-        user:SendChatMessage(Theme.info .. "Вы измождены бесконечными прыжками в " .. tostring(jumpTarget) .. "")
-        lastMsg[user:GetID()] = GetTickCount()
-      end
+    user:SetCurrentAV("Stamina", stamina - 25)
+  end
+  if user:IsJumping() or user:IsFalling() then
+    user:SetBaseAV("StaminaRateMult", 0)
+  else
+    if user:GetBaseAV("StaminaRateMult") == 0 and not timerStarted[user:GetID()] then
+      timerStarted[user:GetID()] = true
+      SetTimer(3000, function()
+        user:SetBaseAV("StaminaRateMult", 100)
+        timerStarted[user:GetID()] = nil
+      end)
     end
   end
   return true
