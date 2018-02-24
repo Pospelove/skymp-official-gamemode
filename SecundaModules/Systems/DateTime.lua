@@ -12,7 +12,7 @@ local knownHour = {}
 function DateTime.OnUserUpdate(user)
   local date = os.date("*t")
   if knownHour[user:GetID()] ~= date.hour then
-    user:SetGlobal(gameHour, 12)--date.hour)
+    user:SetGlobal(gameHour, date.hour)
     knownHour[user:GetID()] = date.hour
   end
   return true

@@ -67,6 +67,21 @@ function Debug.OnUserChatCommand(user, cmd)
     User.Lookup(tokens[1]):IncrementSkill(tokens[2])
   end
 
+  if tokens[1] == "/tp" then
+    if not Debug.IsDeveloper(user) then return true end
+    local u1 = User.Lookup(tokens[2])
+    local u2 = User.Lookup(tokens[3])
+    if u1 and not u2 then
+      u2 = u1
+      u1 = user
+    end
+    if u1 and u2 then
+      u1:SetSpawnPoint(u2:GetLocation(), u2:GetX(), u2:GetY(), u2:GetZ(), u2:GetAngleZ())
+      u1:Spawn()
+      user:SendChatMessage(Theme.success .. "Игрок " .. tostring(u1) .. " будет телепортирован к " .. tostring(u2))
+    end
+  end
+
   if cmd == "/kill" then
     if not Debug.IsDeveloper(user) then
       return true
