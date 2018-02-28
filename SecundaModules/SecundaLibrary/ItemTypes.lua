@@ -85,14 +85,14 @@ function ItemTypes.Init()
         end
         local itemType = ItemType.Create(iden_, class, formID, weight, goldValue, damageArmorPoints, skill)
         if itemType == nil then
-          print ("Unable to create " .. iden_)
+          print ("Unable to create " .. tostring(formID))
         else
           for i = 1, #effectItems do
-            local iden = effectItems[i][1]
+            local formID = effectItems[i][1]
             local mag = effectItems[i][2]
             local dur = effectItems[i][3]
             local area = effectItems[i][4]
-            local mgef = Effect.LookupByIdentifier(iden)
+            local mgef = Effects.Lookup(formID)
             if mgef == nil then
               -- ...
             else
@@ -127,6 +127,7 @@ end
 
 function ItemTypes.Require()
   Effects.Require()
+  Magic2.Require()
   if not ItemTypes.inited then
     ItemTypes.Init()
     ItemTypes.inited = true

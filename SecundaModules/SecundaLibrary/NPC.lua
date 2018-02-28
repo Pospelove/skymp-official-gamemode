@@ -36,6 +36,7 @@ end
 -- Private variables
 
 local gNpcs = {}
+local gInvisibleChests = {}
 
 -- Public
 
@@ -282,6 +283,68 @@ function NPC.OnPlayerActivateObject(pl, object)
         return Secunda.OnActivate(npc, wo)
       end
     end
+  end
+  return true
+end
+
+function NPC.OnPlayerActivatePlayer(pl, targetPl)
+  if not pl:IsNPC() and targetPl:IsNPC() then
+    local npc = NPC.Lookup(targetPl:GetID())
+    local user = User.Lookup(pl:GetID())
+    if npc and user then
+      if npc:GetCurrentAV("health") == 0 then
+        local loot = gInvisibleChests[npc:GetID()]
+        loot:SetPos(user:GetX(), user:GetY(), user:GetZ() - 128)
+        loot:Activate(pl)
+      end
+      return Secunda.OnActivate(user, npc)
+    end
+  end
+  return true
+end
+
+function NPC.OnPlayerDying(pl, killer)
+  if pl:IsNPC() then
+    local npc = NPC.Lookup(pl:GetID())
+    if npc ~= nil then
+      local obj = Object.Create(0, 0xaf6ae, pl:GetLocation(), pl:GetX(), pl:GetY(), pl:GetZ() - 1024)
+      if obj == nil then
+        error("unable to create invisible chest")
+      end
+      obj:RegisterAsContainer()
+      obj:SetName(pl:GetName())
+      SetTimer(1000, function() Container(pl):ApplyTo(obj) end) -- Prevents doubling items
+      if gInvisibleChests[pl:GetID()] ~= nil then
+        gInvisibleChests[pl:GetID()]:Delete()
+        gInvisibleChests[pl:GetID()] = nil
+      end
+      gInvisibleChests[pl:GetID()] = obj
+    end
+  end
+  return true
+end
+
+function NPC.OnPlayerChangeContainer(pl, cont, itemType, count, isAdd)
+  if not isAdd and (itemType:GetClass() == "Weapon" or itemType:GetClass() == "Armor") then
+    for ownerNpcID, loot in pairs(gInvisibleChests) do
+      if loot:GetID() == cont:GetID() then
+        local npcRaw = Player.LookupByID(ownerNpcID)
+        if npcRaw and npcRaw:IsNPC() then
+          if npcRaw:IsEquipped(itemType) then
+            for handID = -1, 1 do npcRaw:UnequipItem(itemType, handID) end
+          end
+        end
+        break
+      end
+    end
+  end
+  return true
+end
+
+function NPC.OnPlayerDisconnect(pl)
+  if gInvisibleChests[pl:GetID()] ~= nil then
+    gInvisibleChests[pl:GetID()]:Delete()
+    gInvisibleChests[pl:GetID()] = nil
   end
   return true
 end

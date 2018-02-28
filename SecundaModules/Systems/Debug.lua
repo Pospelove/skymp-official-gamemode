@@ -34,8 +34,13 @@ function Debug.OnUserChatCommand(user, cmd)
       return true
     end
     if tokens[2] ~= nil and tokens[3] ~= nil then
-      user:SetBaseAV(tokens[2], tonumber(tokens[3]))
-      user:SendChatMessage(Theme.info .. "Значение " .. Theme.sel .. tokens[2]:lower() .. Theme.info .. " теперь равно " .. Theme.sel .. tokens[3]);
+      if(tokens[4] == "current") then
+        user:SetCurrentAV(tokens[2], tonumber(tokens[3]))
+        user:SendChatMessage(Theme.info .. "Текущее значение " .. Theme.sel .. tokens[2]:lower() .. Theme.info .. " теперь равно " .. Theme.sel .. tokens[3]);
+      else
+        user:SetBaseAV(tokens[2], tonumber(tokens[3]))
+        user:SendChatMessage(Theme.info .. "Базовое значение " .. Theme.sel .. tokens[2]:lower() .. Theme.info .. " теперь равно " .. Theme.sel .. tokens[3]);
+      end
       return true
     end
   end
@@ -184,6 +189,52 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if tokens[1] == "/addspell" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    local i = 2
+    local str = ""
+    while tokens[i] ~= nil do
+      if str:len() == 0 then str = tokens[i] else str = str .. " " .. tokens[i] end
+      i = i + 1
+    end
+    local magic = Magic2.Lookup(str)
+    if magic == nil then
+      user:SendChatMessage(Theme.error .. "Заклинание не найдено (" .. tostring(str) .. ")")
+    else
+      if user:HasMagic(magic) then
+        user:SendChatMessage(Theme.error .. "Вы уже знаете это заклинание (" .. tostring(str) .. ")")
+        return true
+      end
+      user:AddMagic(magic)
+      user:SendChatMessage(Theme.success .. "Заклинание выдано (" .. tostring(str) .. ")")
+    end
+  end
+
+  if tokens[1] == "/rmspell" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    local i = 2
+    local str = ""
+    while tokens[i] ~= nil do
+      if str:len() == 0 then str = tokens[i] else str = str .. " " .. tokens[i] end
+      i = i + 1
+    end
+    local magic = Magic2.Lookup(str)
+    if magic == nil then
+      user:SendChatMessage(Theme.error .. "Заклинание не найдено (" .. tostring(str) .. ")")
+    else
+      if not user:HasMagic(magic) then
+        user:SendChatMessage(Theme.error .. "Вы не знаете это заклинание (" .. tostring(str) .. ")")
+        return true
+      end
+      user:RemoveMagic(magic)
+      user:SendChatMessage(Theme.success .. "Заклинание удалено (" .. tostring(str) .. ")")
+    end
+  end
+
   if tokens[1] == "/setval" then
     if not Debug.IsDeveloper(user) then
       return true
@@ -279,6 +330,37 @@ function Debug.OnUserChatCommand(user, cmd)
       end
       user:SendChatMessage(Theme.success .. "Готово")
     end
+  end
+
+  if tokens[1] == "/chest" then
+    local pl = user.pl
+    Object.Create(0, 0x23a6d, pl:GetLocation(), pl:GetX(), pl:GetY(), pl:GetZ() + 16):RegisterAsContainer()
+  end
+
+  if tokens[1] == "/dummy" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    local npc = NPC.Create("dummy")
+    local rawRes = user
+    npc:SetValue("baseID", 1)
+    npc:SetValue("x", rawRes:GetX())
+    npc:SetValue("y", rawRes:GetY())
+    npc:SetValue("z", rawRes:GetZ())
+    npc:SetValue("angleZ", rawRes:GetAngleZ())
+    npc.pl:SetName(ru "Васёк Вася")
+    if rawRes:GetLocation() == nil then
+      error("bad actor locaiton")
+    end
+    npc:SetValue("locationID", rawRes:GetLocation():GetID())
+    npc:SetValue("virtualWorld", rawRes:GetVirtualWorld())
+    npc:AddItem(ItemTypes.Lookup("Железный меч"), 1)
+    npc:EquipItem(ItemTypes.Lookup("Железный меч"), 0)
+    npc:AddItem(ItemTypes.Lookup("Железная броня"), 1)
+    npc:EquipItem(ItemTypes.Lookup("Железная броня"), -1)
+    npc:AddItem(ItemTypes.Lookup("Железные сапоги"), 1)
+    npc:EquipItem(ItemTypes.Lookup("Железные сапоги"), -1)
+    npc:Save()
   end
 
   return true

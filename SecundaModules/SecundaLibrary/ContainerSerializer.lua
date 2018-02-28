@@ -15,27 +15,30 @@ local function GetItemTypeInfo(itemType)
   inf.class = itemType:GetClass()
   inf.subClass = itemType:GetSubclass()
   inf.formID = itemType:GetBaseID()
-  inf.weight = itemType:GetWeight()
+  inf.weight = packfloat(itemType:GetWeight())
   inf.goldValue = itemType:GetGoldValue()
-  inf.damage = itemType:GetDamage()
-  inf.armorRating = itemType:GetArmorRating()
+  inf.damage = packfloat(itemType:GetDamage())
+  inf.armorRating = packfloat(itemType:GetArmorRating())
   inf.soulSize = itemType:GetSoulSize()
   inf.gemSize = itemType:GetCapacity()
-  inf.health = itemType:GetHealth()
+  inf.health = packfloat(itemType:GetHealth())
   inf.skillName = itemType:GetSkillName()
   inf.effects = {}
   for i = 1, itemType:GetNumEffects() do
     local entry = {}
     entry.iden = itemType:GetNthEffectIdentifier(i)
-    entry.mag = itemType:GetNthEffectMagnitude(i)
-    entry.dur = itemType:GetNthEffectDuration(i)
-    entry.area = itemType:GetNthEffectArea(i)
-    table.insert(effects, entry)
+    entry.mag = packfloat(itemType:GetNthEffectMagnitude(i))
+    entry.dur = packfloat(itemType:GetNthEffectDuration(i))
+    entry.area = packfloat(itemType:GetNthEffectArea(i))
+    table.insert(inf.effects, entry)
   end
+  inf.effects = pretty.write(inf.effects)
   return inf
 end
 
 local function CreateItemType(inf)
+  inf = tablex.deepcopy(inf)
+  inf.effects = pretty.read(inf.effects)
   local classPlusSubclass = ""
   classPlusSubclass = classPlusSubclass .. inf.class
   if inf.subClass:len() > 0 then
@@ -45,17 +48,17 @@ local function CreateItemType(inf)
   if gItemTypeByJson[infJson] ~= nil then
     return gItemTypeByJson[infJson]
   end
-  local itemType = ItemType.Create(GetNewIden(), classPlusSubclass, inf.formID, inf.weight, inf.goldValue, 1.0, inf.skillName)
-  itemType:SetWeight(inf.weight)
+  local itemType = ItemType.Create(GetNewIden(), classPlusSubclass, inf.formID, unpackfloat(inf.weight), inf.goldValue, 1.0, inf.skillName)
+  itemType:SetWeight(unpackfloat(inf.weight))
   itemType:SetGoldValue(inf.goldValue)
-  itemType:SetDamage(inf.damage)
-  itemType:SetArmorRating(inf.armorRating)
+  itemType:SetDamage(unpackfloat(inf.damage))
+  itemType:SetArmorRating(unpackfloat(inf.armorRating))
   itemType:SetSoulSize(inf.soulSize)
   itemType:SetCapacity(inf.soulSize)
-  itemType:SetHealth(inf.heatlh)
+  pcall(function() itemType:SetHealth(unpackfloat(inf.heatlh)) end)
   for i = 1, #inf.effects do
     local entry = inf.effects[i]
-    itemType:AddEffect(Effect.LookupByIdentifier(entry.iden), entry.mag, entry.dur, entry.area)
+    itemType:AddEffect(Effect.LookupByIdentifier(entry.iden), unpackfloat(entry.mag), unpackfloat(entry.dur), unpackfloat(entry.area))
   end
   gItemTypeByJson[infJson] = itemType
   return itemType

@@ -7,6 +7,7 @@ function WorldObject.Docs()
   -- Methods:
 
   -- Callbacks:
+  OnWorldObjectRender(wo) --
   ]]
 end
 
@@ -59,11 +60,8 @@ function WorldObject:Unload()
   end
 end
 
-local function SetHarvestedForPlayer(obj, pl, isHarvested)
-  if isHarvested then
-    pl:ExecuteCommand("Skymp", "Activate(" .. obj:GetID() .. ")")
-  else
-  end
+local function SetHarvestedForPlayer(obj, pl)
+  pl:ExecuteCommand("Skymp", "Activate(" .. obj:GetID() .. ")")
 end
 
 function WorldObject:SetValue(varName, newValue)
@@ -73,8 +71,8 @@ function WorldObject:SetValue(varName, newValue)
   if varName == "isHarvested" and self.obj ~= nil then
     for i = 0, GetMaxPlayers() do
       local pl = Player.LookupByID(i)
-      if pl ~= nil then
-        SetHarvestedForPlayer(self.obj, pl, not not newValue)
+      if pl ~= nil and newValue then
+        SetHarvestedForPlayer(self.obj, pl)
       end
     end
   end
@@ -132,6 +130,22 @@ function WorldObject.DeleteAll() -- Soft
   -- Rewrite worldobjects.json with empty file
   gWos = {}
   WorldObject._SaveFileNames()
+end
+
+function WorldObject:IsBlacksmithForge()
+  return self.data.baseID == 0x000D932F
+end
+
+function WorldObject:IsAlchemy()
+  return self.data.baseID == 0x000BAD0C or self.data.baseID == 0x000D54FF
+end
+
+function WorldObject:IsEnchanting()
+  return self.data.baseID == 0x000BAD0D or self.data.baseID == 0x000D5501
+end
+
+function WorldObject:IsCooking()
+  return self.data.baseID == 0x00068ADB or self.data.baseID == 0x0010BFE3 or self.data.baseID == 0x00104110 or self.data.baseID == 0x001010B3 or self.data.baseID == 0x00108203
 end
 
 -- IMPLEMENTATION
@@ -195,6 +209,39 @@ function WorldObject:_ApplyData()
       self.obj = nil
     end
     self.obj = Object.Create(self.data.refID < 0xFF000000 and self.data.refID or 0, self.data.baseID, Location(self.data.locationID), self.data.x, self.data.y, self.data.z)
+    if self:IsBlacksmithForge() then
+      self.data.type = "Furniture"
+      self.obj:AddKeyword("isBlacksmithForge")
+  		self.obj:AddKeyword("CraftingSmithingForge")
+  		self.obj:AddKeyword("FurnitureForce3rdPerson")
+  		self.obj:AddKeyword("FurnitureSpecial")
+  		self.obj:AddKeyword("RaceToScale")
+  		self.obj:AddKeyword("WICraftingSmithing")
+    end
+    if self:IsAlchemy() then
+      self.data.type = "Furniture"
+      self.obj:AddKeyword("FurnitureForce3rdPerson")
+  		self.obj:AddKeyword("FurnitureSpecial")
+  		self.obj:AddKeyword("isAlchemy")
+  		self.obj:AddKeyword("RaceToScale")
+  		self.obj:AddKeyword("WICraftingAlchemy")
+    end
+    if self:IsEnchanting() then
+      self.data.type = "Furniture"
+      self.obj:AddKeyword("FurnitureForce3rdPerson")
+  		self.obj:AddKeyword("FurnitureSpecial")
+  		self.obj:AddKeyword("isEnchanting")
+  		self.obj:AddKeyword("RaceToScale")
+  		self.obj:AddKeyword("WICraftingEnchanting")
+    end
+    if self:IsCooking() then
+      self.data.type = "Furniture"
+      self.obj:AddKeyword("CraftingCookpot")
+      self.obj:AddKeyword("FurnitureForce3rdPerson")
+  		self.obj:AddKeyword("FurnitureSpecial")
+  		self.obj:AddKeyword("isCookingSpit")
+  		self.obj:AddKeyword("RaceToScale")
+    end
   end
   if self.obj ~= nil then
     if self.data.type == "Static" then
@@ -309,7 +356,21 @@ function WorldObject.OnPlayerStreamInObject(pl, obj)
   if pl:IsNPC() == false then
     local wo = WorldObject.Lookup(obj:GetID())
     if wo ~= nil then
-      SetTimer(500, function() SetHarvestedForPlayer(obj, pl, wo:GetValue("isHarvested")) end)
+      if wo:GetValue("isHarvested") then
+        SetTimer(500, function() SetHarvestedForPlayer(obj, pl) end)
+      end
+      if wo:IsBlacksmithForge() then
+        local user = User.Lookup(pl:GetID())
+        if user ~= nil then
+          SetTimer(100, function() user:AddTask(function() Recipes.SendTo(pl, "CraftingSmithingForge") end) end)
+        end
+      end
+      if wo:IsCooking() then
+        local user = User.Lookup(pl:GetID())
+        if user ~= nil then
+          SetTimer(100, function() user:AddTask(function() Recipes.SendTo(pl, "isCookingSpit"); Recipes.SendTo(pl, "CraftingCookpot"); print("send cookpot recipes") end) end)
+        end
+      end
     end
   end
   return true

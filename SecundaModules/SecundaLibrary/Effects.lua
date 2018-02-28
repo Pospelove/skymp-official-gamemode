@@ -1,6 +1,7 @@
 Effects = {}
 
 local gNumIdensUse = {}
+local gMgefByFormID = {}
 
 function Effects.Init()
 
@@ -25,7 +26,9 @@ function Effects.Init()
         iden_ = iden .. tostring(gNumIdensUse[iden])
       end
       local mgef = Effect.Create(iden_, archetype, formID, castingType, delivery)
+      gMgefByFormID[formID] = mgef
       if mgef ~= nil then
+        mgef:SetActorValues(av1, av2)
         if gNumIdensUse[iden] == nil then gNumIdensUse[iden] = 0 end
         gNumIdensUse[iden] = gNumIdensUse[iden] + 1
       else
@@ -35,6 +38,16 @@ function Effects.Init()
   end
 
   print("Done in " .. (GetTickCount() - clock) .. "ms")
+end
+
+function Effects.Lookup(key)
+  if type(key) == "string" then
+    return Effect.LookupByIdentifier(key)
+  end
+  if type(key) == "number" then
+    return gMgefByFormID[key]
+  end
+  return nil
 end
 
 function Effects.Require()

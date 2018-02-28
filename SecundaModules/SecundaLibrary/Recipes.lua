@@ -3,6 +3,7 @@ Recipes = {}
 local gRaw = dsres.recipes
 local gRecipes = {}
 local gHasRecipes = {}
+local gKeywordFilters = {}
 
 function Recipes.Init()
   local count = #gRaw
@@ -59,14 +60,19 @@ function Recipes.OnUserSpawn(user)
   return true
 end
 
-function Recipes.SendTo(player)
-
-  if gHasRecipes[player:GetID()] == true then return end
+function Recipes.SendTo(player, keywordFilter)
+  if type(keywordFilter) ~= "string" then
+    error("expected string keyword filter")
+  end
+  gKeywordFilters[keywordFilter] = true
+  local k = tostring(keywordFilter) .. tostring(player:GetID())
+  if gHasRecipes[k] == true then return end
 
   SetTimer(1000, function()
     local clock = GetTickCount()
     print ("Sending recipes to " .. tostring(User.Lookup(player:GetID())))
     local numParts = 20
+    if keywordFilter == "CraftingCookpot" or keywordFilter == "isCookingSpit" then numParts = 2 end
     local onePartDelayMs = 200
     local ranges = {}
     for part = 1, numParts do
@@ -78,18 +84,21 @@ function Recipes.SendTo(player)
       SetTimer(part * onePartDelayMs, function()
         for i = math.floor(ranges[part].first), math.floor(ranges[part].second) + 1 do
           local r = gRecipes[i]
-          if r ~= nil then
+          if r ~= nil and r:GetWorkbenchKeyword() == keywordFilter then
             player:UpdateRecipeInfo(r)
           end
         end
       end)
     end
-    gHasRecipes[player:GetID()] = true
+    gHasRecipes[k] = true
   end)
 end
 
 function Recipes.OnPlayerDisconnect(player)
-  gHasRecipes[player:GetID()] = false
+  for k, v in pairs(gKeywordFilters) do
+    local k = tostring(keywordFilter) .. tostring(player:GetID())
+    gHasRecipes[k] = nil
+  end
 end
 
 return Recipes

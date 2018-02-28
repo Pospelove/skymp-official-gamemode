@@ -4,6 +4,7 @@ Copyright (C) 2018, Sirius
 All rights reserved.
 --]]
 
+
 class = require "pl/class"
 stringx = require "pl/stringx"
 pretty = require "pl/pretty"
@@ -19,7 +20,7 @@ stringx.import()
 
 Secunda = {}
 Secunda.sName = "Secunda"
-Secunda.sVersion = "0.15.1"
+Secunda.sVersion = "0.0"
 Secunda.sAuthor = "Pospelov"
 
 print ""
@@ -142,7 +143,8 @@ function Secunda.Hook()
 		"OnPlayerStreamOutPlayer",
 		"OnPlayerStreamInObject",
 		"OnPlayerStreamOutObject",
-		"OnPlayerBowShot"
+		"OnPlayerBowShot",
+		"OnPlayerChangeContainer"
 	}
 	for i = 1, #tStandard do
 		_G[tStandard[i]] = Secunda[tStandard[i]]

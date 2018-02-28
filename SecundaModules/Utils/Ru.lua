@@ -1,5 +1,5 @@
 ru = function(str)
-	local cyr  = "יצףךוםדרשחץתפûגאןנמכהז‎ÿקסלטעüב‏ÉÖÓÊÅÍÃØÙÇÕÚÔÛÂÀÏÐÎËÄÆÝ‗×ÑÌÈÒÜÁÞ"
+	local cyr  = "יצףךוםדרשחץתפûגאןנמכהז‎ÿקסלטעüב‏ÉÖÓÊÅÍÃØÙÇÕÚÔÛÂÀÏÐÎËÄÆÝ‗×ÑÌÈÒÜÁÞ¸¨"
 	for i = 1, string.len(cyr) do
 		str = string.gsub(str, stringx.at(cyr, i), "<cy:" .. tostring(i) .. ">")
 	end
@@ -8,7 +8,7 @@ end
 if ru "אבג" ~= "<cy:16><cy:31><cy:15>" then error("test failed - ru()") end
 
 deru = function(str)
-	local cyr  = "יצףךוםדרשחץתפûגאןנמכהז‎ÿקסלטעüב‏ÉÖÓÊÅÍÃØÙÇÕÚÔÛÂÀÏÐÎËÄÆÝ‗×ÑÌÈÒÜÁÞ"
+	local cyr  = "יצףךוםדרשחץתפûגאןנמכהז‎ÿקסלטעüב‏ÉÖÓÊÅÍÃØÙÇÕÚÔÛÂÀÏÐÎËÄÆÝ‗×ÑÌÈÒÜÁÞ¸¨"
 	for i = 1, string.len(cyr) do
 		str = string.gsub(str, "<cy:" .. tostring(i) .. ">", stringx.at(cyr, i))
 	end

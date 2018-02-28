@@ -6,13 +6,18 @@ function NpcTest.OnUserChatCommand(user, cmd)
 	local hasExtraPermission = Debug.IsDeveloper(user)
   local player = user.pl
 
-	if tokens[1] == "/tpnpc" then
+	if tokens[1] == "/demotpnpc" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
 		player:SetPos(lastNpc:GetX(), lastNpc:GetY(), lastNpc:GetZ())
 		player:SendChatMessage(lastNpc:GetX() .. " " ..  lastNpc:GetY() .. " " .. lastNpc:GetZ())
 	end
 
-	if tokens[1] == "/npc" then
-
+	if tokens[1] == "/demonpc" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
 		NavMesh.tempBase = nil
 
 		blet = 0
@@ -48,14 +53,14 @@ function NpcTest.OnUserChatCommand(user, cmd)
 			if NavMesh.tempBase == 0x00013387 then
 				SetTimer(10000, function()
 					npc:SetWerewolf(true)
-          local numi = Player.LookupByName("Numi")
-          npc:SetCombatTarget(numi)
-          if not numi then npc:SetCombatTarget(player) end
+          --local numi = Player.LookupByName("Numi")
+          --npc:SetCombatTarget(numi)
+          --if not numi then npc:SetCombatTarget(player) end
 				end)
 			end
 			if npcNase == "" or blet == 1 then
-				npc:AddItem(ItemTypes.Lookup("Железный меч"), 1)
-				npc:EquipItem(ItemTypes.Lookup("Железный меч"), 0)
+				npc:AddItem(ItemTypes.Lookup("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ"), 1)
+				npc:EquipItem(ItemTypes.Lookup("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ"), 0)
 			end
 		end)
 
@@ -67,26 +72,26 @@ function NavMesh.OnPlayerDying(player, killer)
 
 	if not player:IsNPC() then
 	else
-		SetTimer(2500, function() player:Kick() end)
+		--SetTimer(2500, function() player:Kick() end)
 	end
   return true
 end
 
 function NavMesh.OnPlayerActivatePlayer(pl, target)
-  print("OnPlayerActivatePlayer(" .. pl:GetName() .. "," .. target:GetName())
-	if target:GetRider() == pl then
-		pl:Dismount()
-	else
-		pl:Mount(target)
-		target:SetCombatTarget(nil)
-	end
+  --print("OnPlayerActivatePlayer(" .. pl:GetName() .. "," .. target:GetName())
+	--if target:GetRider() == pl then
+	--	pl:Dismount()
+	--else
+	--	pl:Mount(target)
+		--target:SetCombatTarget(nil)
+	--end
 	return true
 end
 
 --hasTarget = {}
 function NavMesh.OnPlayerHitPlayer(pl, target)
   --if not hasTarget[target:GetID()] then
-    target:SetCombatTarget(pl)
+    --target:SetCombatTarget(pl)
     --hasTarget[target:GetID()] = true
   --end
   return true
