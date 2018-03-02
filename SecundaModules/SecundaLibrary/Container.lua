@@ -80,16 +80,22 @@ end
 
 function Container.RunTests()
   local cont = Container()
-  local itemType = ItemTypes.Get("Полоски кожи")
+  local iden = "FDJFDLADSFASDIUASDFDAFEYTEERFERTSDACXBCUTDFGISDAGAYSUHSDagagfdsadkugadssadjksfgduyihasduasahisdguadshiadftfadhadsguadadsftgdasidhaurue6teq6627367236723723"
+  local itemType = ItemType.Create(iden, "Weapon.Sword", 0x00012EB7, 8.0, 30, 7.0, "OneHanded")
   if itemType == nil then
     return error("bad test")
   end
-  cont:AddItem(itemType, 32)
-  local removed16 = cont:RemoveItem(itemType, 16)
-  cont:AddItem(itemType, 1)
-  local removed17 = cont:RemoveItem(itemType, 64)
-  if removed16 ~= 16 or removed17 ~= 17 then
-    error("test failed " .. removed16 .. " " .. removed17)
+  local success, errorString = pcall(function()
+    cont:AddItem(itemType, 32)
+    local removed16 = cont:RemoveItem(itemType, 16)
+    cont:AddItem(itemType, 1)
+    local removed17 = cont:RemoveItem(itemType, 64)
+    if removed16 ~= 16 or removed17 ~= 17 then
+      error("test failed " .. removed16 .. " " .. removed17)
+    end
+  end)
+  if not success then
+    error("test failed with exception: " .. errorString)
   end
 end
 

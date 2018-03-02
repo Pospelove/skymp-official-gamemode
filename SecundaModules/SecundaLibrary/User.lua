@@ -443,9 +443,13 @@ function User:_PrepareAccountToSave()
   else
     self.account.location = 60
   end
+  local x, y, z = self.account.x, self.account.y, self.account.z
   self.account.x = math.floor(player:GetX())
   self.account.y = math.floor(player:GetY())
   self.account.z = math.floor(player:GetZ())
+  if self.account.x == 0 then self.account.x = x; print("would break spawnpoint") end
+  if self.account.y == 0 then self.account.y = y; print("would break spawnpoint") end
+  if self.account.z == 0 then self.account.z = z; print("would break spawnpoint") end
   self.account.angle = math.floor(player:GetAngleZ())
   self.account.look = json.encode(self:_GetLook())
   self.account.avs = json.encode(self:_GetActorValues())
@@ -760,12 +764,22 @@ function User.OnPlayerActivateObject(pl, object)
   return true
 end
 
+local droppedObjectsQueue = {}
+
 function User.OnPlayerDropObject(pl, object)
   if pl:IsNPC() == false then
     local user = User.Lookup(pl:GetName())
     local wo = WorldObject.Create("dummy", object)
     SetTimer(1, function() user:_UpdateDisplayGold() end)
-    object:SetPos(pl:GetX(), pl:GetY(), pl:GetZ() + 12.0) -- Change default dropped item offset from player to {0,0,0}
+    object:SetPos(pl:GetX() + 8.0, pl:GetY() + 9.0, pl:GetZ() + 12.0) -- Change default dropped item offset from player
+
+    if droppedObjectsQueue[pl:GetID()] == nil then droppedObjectsQueue[pl:GetID()] = {} end
+    table.insert(droppedObjectsQueue[pl:GetID()], object)
+    if #droppedObjectsQueue[pl:GetID()] > 11 then
+      local toFreeze = droppedObjectsQueue[pl:GetID()][1]
+      toFreeze:SetHostable(false)
+      table.remove(droppedObjectsQueue[pl:GetID()], 1)
+    end
   end
   return true
 end

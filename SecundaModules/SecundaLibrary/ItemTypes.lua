@@ -14,7 +14,7 @@ end
 
 function ItemTypes.IsFromDS(itemType)
   if itemType == nil then
-    error "nil passed as itemType parameter"
+    error "ItemTypes.IsFromDS() nil passed as itemType parameter"
   end
   local all = ItemTypes.GetAllItemTypes()
   for i = 1, #all do
@@ -59,7 +59,7 @@ function ItemTypes.Init()
       local goldValue = t[5]
       local damageArmorPoints = t[6]
       local skill = t[7]
-      local enchIden = t[8]
+      local enchID = t[8]
       local soulSize = t[9]
       local gemSize = t[10]
       local effectItems = {}
@@ -87,6 +87,10 @@ function ItemTypes.Init()
         if itemType == nil then
           print ("Unable to create " .. tostring(formID))
         else
+          if class ~= itemType:GetClass() .. "." .. itemType:GetSubclass() and class ~= itemType:GetClass() then
+            error(class .. " ~= " .. itemType:GetClass() .. "." .. itemType:GetSubclass())
+          end
+          itemType:SetEnchantment(Magic2.Lookup(enchID))
           for i = 1, #effectItems do
             local formID = effectItems[i][1]
             local mag = effectItems[i][2]
@@ -119,8 +123,9 @@ function ItemTypes.TestPerfomance()
 
   local clock = GetTickCount()
   local numCalls = 10000
+  local anyIden = ItemTypes.GetAny():GetIdentifier()
   for i = 1, numCalls do
-    local itemType = ItemType.LookupByIdentifier("�������")
+    local itemType = ItemType.LookupByIdentifier(anyIden)
   end
   print("ItemType.LookupByIdentifier() = " .. FormatTime(clock, numCalls))
 end
@@ -134,6 +139,10 @@ function ItemTypes.Require()
   end
 end
 
+function ItemTypes.GetAny()
+  for k, v in pairs(gItemTypesByID) do return v end
+end
+
 function ItemTypes.RunTests()
   local iden = "KVGUFTJOUFUIADSGADSYHWTETLQHWQOWLMWADDAJUGJASDTDASDSGADSYHWTETLQHWTETFBVSDASD"
   ItemType.Create(iden, "Weapon.Sword", 0x00012EB7, 8.0, 30, 7.0, "OneHanded")
@@ -145,7 +154,7 @@ function ItemTypes.RunTests()
     error("test failed")
   end
 
-  if not ItemTypes.IsFromDS(ItemTypes.Lookup("�������")) then
+  if not ItemTypes.IsFromDS(ItemTypes.GetAny()) then
     error("test failed")
   end
 end

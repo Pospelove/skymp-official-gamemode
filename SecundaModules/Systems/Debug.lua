@@ -337,6 +337,27 @@ function Debug.OnUserChatCommand(user, cmd)
     Object.Create(0, 0x23a6d, pl:GetLocation(), pl:GetX(), pl:GetY(), pl:GetZ() + 16):RegisterAsContainer()
   end
 
+  if tokens[1] == "/horse" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    local npc = NPC.Create("dummy")
+    npc:SetValue("baseID", 0x0009CCD7)
+    local rawRes = user
+    npc:SetValue("x", rawRes:GetX())
+    npc:SetValue("y", rawRes:GetY())
+    npc:SetValue("z", rawRes:GetZ())
+    npc:SetValue("angleZ", rawRes:GetAngleZ())
+    npc.pl:SetName(ru "Созданная лошадь")
+    if rawRes:GetLocation() == nil then
+      error("bad actor locaiton")
+    end
+    npc:SetValue("locationID", rawRes:GetLocation():GetID())
+    npc:SetValue("virtualWorld", rawRes:GetVirtualWorld())
+    npc:AddItem(ItemTypes.Lookup("Конина"), 10)
+    npc:Save()
+  end
+
   if tokens[1] == "/dummy" then
     if not Debug.IsDeveloper(user) then
       return true

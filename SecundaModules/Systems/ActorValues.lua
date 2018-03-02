@@ -9,6 +9,7 @@ function ActorValues.OnUserConnect(user)
 end
 
 function ActorValues.OnUserUpdate(user)
+  FurnOnUserUpdate(user)
   if user:IsJumping() then
     local stamina = user:GetCurrentAV("Stamina")
     user:SetCurrentAV("Stamina", stamina - 25)

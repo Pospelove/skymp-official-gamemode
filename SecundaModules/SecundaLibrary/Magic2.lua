@@ -78,4 +78,34 @@ function Magic2.Require()
   end
 end
 
+function Magic2.GetAny()
+  for k, v in pairs(gMagicByID) do return v end
+end
+
+function Magic2.TestPerfomance()
+
+  local FormatTime = function(clock, numCalls)
+    local ms = ((GetTickCount() - clock) / numCalls)
+    local perSec = math.floor(1 / ms * 1000)
+    return ms  .. "ms " .. "(" .. perSec .. " per sec)"
+  end
+
+  local clock = GetTickCount()
+  local numCalls = 10000
+  local anyIden = Magic2.GetAny():GetIdentifier()
+  for i = 1, numCalls do
+    local itemType = Magic.LookupByIdentifier(anyIden)
+  end
+  print("Magic.LookupByIdentifier() = " .. FormatTime(clock, numCalls))
+end
+
+function ItemTypes.Require()
+  Effects.Require()
+  Magic2.Require()
+  if not ItemTypes.inited then
+    ItemTypes.Init()
+    ItemTypes.inited = true
+  end
+end
+
 return Magic2
