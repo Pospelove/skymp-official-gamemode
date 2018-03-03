@@ -4,6 +4,7 @@ local gRaw = dsres.recipes
 local gRecipes = {}
 local gHasRecipes = {}
 local gKeywordFilters = {}
+local gSessionId = {}
 
 function Recipes.Init()
   local count = #gRaw
@@ -52,12 +53,15 @@ function Recipes.OnServerInit()
 end
 
 function Recipes.OnUserSpawn(user)
-  SetTimer(6000, function()
-    user:AddTask(function()
-      --Recipes.SendTo(user.pl)
-    end)
-  end)
   return true
+end
+
+function Recipes.OnUserConnect(user)
+  gSessionId[user:GetID()] = math.random(0, 1000000000)
+  if #gKeywordFilters > 10000 then
+    print("collecting garbage in Recipes")
+    gKeywordFilters = {}
+  end
 end
 
 function Recipes.SendTo(player, keywordFilter)
@@ -65,7 +69,7 @@ function Recipes.SendTo(player, keywordFilter)
     error("expected string keyword filter")
   end
   gKeywordFilters[keywordFilter] = true
-  local k = tostring(keywordFilter) .. tostring(player:GetID())
+  local k = tostring(keywordFilter) .. tostring(player:GetID()) .. tostring(player:GetName()) .. tostring(gSessionId[player:GetID()])
   if gHasRecipes[k] == true then return end
 
   SetTimer(1000, function()
@@ -92,13 +96,6 @@ function Recipes.SendTo(player, keywordFilter)
     end
     gHasRecipes[k] = true
   end)
-end
-
-function Recipes.OnPlayerDisconnect(player)
-  for k, v in pairs(gKeywordFilters) do
-    local k = tostring(keywordFilter) .. tostring(player:GetID())
-    gHasRecipes[k] = nil
-  end
 end
 
 return Recipes

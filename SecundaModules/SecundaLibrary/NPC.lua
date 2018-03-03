@@ -1,5 +1,7 @@
 NPC = class()
 
+local gRaw = dsres.npc
+
 function NPC.Docs()
   return [[
   -- Static methods:
@@ -174,6 +176,7 @@ function NPC:_ApplyData()
     self.pl = Player.CreateNPC(self.data.baseID)
     self.baseID = self.data.baseID
   end
+  self.pl:SetName(ru(tostring(self.data.name)))
   self.pl:SetPos(self.data.x, self.data.y, self.data.z)
   self.pl:SetAngleZ(self.data.angleZ)
   local loc = Location(self.data.locationID)
@@ -182,6 +185,23 @@ function NPC:_ApplyData()
     self.pl:Spawn()
   end
   self.pl:SetVirtualWorld(self.data.virtualWorld)
+  -- Inventory:
+  self.pl:RemoveAllItems()
+  for i = 1, #dsres.npc do
+    local entry = dsres.npc[i]
+    if entry then
+      if self.data.baseID == entry[1] then
+        local invent = entry[4]
+        for iden, n in pairs(invent) do
+          local itemType = ItemTypes.Lookup(iden)
+          if itemType then
+            self.pl:AddItem(itemType, n)
+            print("added item to npc")
+          end
+        end
+      end
+    end
+  end
 end
 
 function NPC:_PrepareDataToSave()
@@ -195,6 +215,7 @@ function NPC:_PrepareDataToSave()
       self.data.locationID = loc:GetID()
     end
     self.data.virtualWorld = self.pl:GetVirtualWorld()
+    self.data.name = self.pl:GetName()
   end
 end
 
@@ -267,10 +288,15 @@ function NPC._Index(self, key)
   return result
 end
 
+local function PrepareDsres()
+  return true
+end
+
 -- Callbacks
 
 function NPC.OnServerInit()
   NPC._LoadAll()
+  PrepareDsres()
   return true
 end
 

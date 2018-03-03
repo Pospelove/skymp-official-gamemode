@@ -90,6 +90,8 @@ function ItemTypes.Init()
           if class ~= itemType:GetClass() .. "." .. itemType:GetSubclass() and class ~= itemType:GetClass() then
             error(class .. " ~= " .. itemType:GetClass() .. "." .. itemType:GetSubclass())
           end
+          itemType:SetCapacity(gemSize)
+          itemType:SetSoulSize(soulSize)
           itemType:SetEnchantment(Magic2.Lookup(enchID))
           for i = 1, #effectItems do
             local formID = effectItems[i][1]

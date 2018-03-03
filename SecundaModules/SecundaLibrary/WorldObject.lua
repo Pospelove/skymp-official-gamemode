@@ -362,7 +362,7 @@ function WorldObject.OnPlayerStreamInObject(pl, obj)
       if wo:IsBlacksmithForge() then
         local user = User.Lookup(pl:GetID())
         if user ~= nil then
-          SetTimer(100, function() user:AddTask(function() Recipes.SendTo(pl, "CraftingSmithingForge") end) end)
+          SetTimer(4000, function() user:AddTask(function() Recipes.SendTo(pl, "CraftingSmithingForge") end) end)
         end
       end
       if wo:IsCooking() then

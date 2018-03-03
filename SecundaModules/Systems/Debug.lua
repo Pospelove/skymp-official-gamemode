@@ -167,6 +167,45 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if tokens[1] == "/summon" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    local i = 2
+    local str = ""
+    while tokens[i] ~= nil do
+      if str:len() == 0 then str = tokens[i] else str = str .. " " .. tokens[i] end
+      i = i + 1
+    end
+
+    for i = 1, #dsres.npc do
+      local entry = dsres.npc[i]
+      if entry then
+        if entry[2] == str then
+          user:SendChatMessage(Theme.success  .. "Персонаж " .. Theme.success .. str .. " создан")
+          local rawRes = user
+          local fileName = tostring(math.random(0, 2000000000))
+          fileName = fileName:gsub("%.", "")
+          local npc = NPC.Create(fileName)
+          npc:SetValue("baseID", entry[1])
+          npc:SetValue("x", rawRes:GetX())
+          npc:SetValue("y", rawRes:GetY())
+          npc:SetValue("z", rawRes:GetZ())
+          npc:SetValue("angleZ", rawRes:GetAngleZ())
+          if rawRes:GetLocation() == nil then
+            error("bad actor locaiton")
+          end
+          npc:SetValue("locationID", rawRes:GetLocation():GetID())
+          npc:SetValue("virtualWorld", rawRes:GetVirtualWorld())
+          npc:SetValue("name", str)
+          npc:Save()
+          return true
+        end
+      end
+    end
+    user:SendChatMessage(Theme.error .. "Персонаж не найден (" .. tostring(str) .. ")")
+  end
+
   if tokens[1] == "/additem" then
     if not Debug.IsDeveloper(user) then
       return true
@@ -369,7 +408,7 @@ function Debug.OnUserChatCommand(user, cmd)
     npc:SetValue("y", rawRes:GetY())
     npc:SetValue("z", rawRes:GetZ())
     npc:SetValue("angleZ", rawRes:GetAngleZ())
-    npc.pl:SetName(ru "Васёк Вася")
+    npc.pl:SetName(ru "Бандит")
     if rawRes:GetLocation() == nil then
       error("bad actor locaiton")
     end

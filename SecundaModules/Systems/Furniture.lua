@@ -1,6 +1,7 @@
 local Furniture = {}
 
 local acti = {}
+local unsynced = {}
 local UNSYNCED_AE = true
 local SYNCED_AE = false
 
@@ -154,7 +155,7 @@ local function UserActivateBed(user, target)
 		acti[refID] = true
 		user:SendAnimationEvent("IdleLaydownEnter")
 		user:SetPos(target.obj:GetX(), target.obj:GetY(), target.obj:GetZ())
-		user:ExecuteCommand("cdscript", "Game.SetRotationTo(" .. tostring(refID) .. ")")
+		SetTimer(300, function() user:ExecuteCommand("cdscript", "Game.SetRotationTo(" .. tostring(refID) .. ")") end)
 	end
 end
 
@@ -188,6 +189,14 @@ function Furniture.OnActivate(source, target)
 				return false
 			end
 
+			if target:GetValue("baseID") == 0x9dcf9 then -- chair
+				if target:GetValue("type") ~= "Furniture" then
+					target:SetValue("type", "Furniture")
+					return false
+				end
+
+			end
+
 			if target:IsCooking() then
 				--source:SendChatMessage(target:GetValue("type"))
 				target:SetValue("type", "Furniture")
@@ -214,6 +223,7 @@ function Furniture.OnActivate(source, target)
   		if target:GetValue("baseID") == 0x000CAE0B then
   			source.pl:SetChatBubble(Color.gold .. ru("Использует кузницу"), 60000, showSelf)
   			bubble[source:GetName()] = true
+				unsynced[source:GetName()] = true
         return true
   		end
 
@@ -244,9 +254,11 @@ function Furniture.OnActivate(source, target)
 end
 
 function Furniture.OnUserUpdate(user)
-
-  user.pl:EnableMovementSync(true)
-  user.pl:EnableMovementSync(false)
+	local name = user:GetName()
+	if user:GetCurrentFurniture() == nil then
+		unsynced[name] = nil
+	end
+  user.pl:EnableMovementSync(not unsynced[name])
   local furn = user:GetCurrentFurniture()
   if furn ~= nil then
     furnUserID[furn:GetID()] = user:GetID()

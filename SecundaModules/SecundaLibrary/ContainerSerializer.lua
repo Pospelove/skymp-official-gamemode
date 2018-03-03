@@ -24,6 +24,9 @@ local function GetItemTypeInfo(itemType)
   inf.health = packfloat(itemType:GetHealth())
   inf.skillName = itemType:GetSkillName()
   inf.effects = {}
+  if itemType:GetEnchantment() ~= nil then
+    inf.enchStr = MagicSerializer.Serialize(itemType:GetEnchantment())
+  end
   for i = 1, itemType:GetNumEffects() do
     local entry = {}
     entry.iden = itemType:GetNthEffectIdentifier(i)
@@ -55,6 +58,10 @@ local function CreateItemType(inf)
   itemType:SetArmorRating(unpackfloat(inf.armorRating))
   itemType:SetSoulSize(inf.soulSize)
   itemType:SetCapacity(inf.soulSize)
+  if inf.enchStr ~= nil then
+    local ench = MagicSerializer.Deserialize(inf.enchStr, "Enchantment")
+    itemType:SetEnchantment(ench)
+  end
   pcall(function() itemType:SetHealth(unpackfloat(inf.heatlh)) end)
   for i = 1, #inf.effects do
     local entry = inf.effects[i]

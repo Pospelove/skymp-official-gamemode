@@ -144,7 +144,9 @@ function Secunda.Hook()
 		"OnPlayerStreamInObject",
 		"OnPlayerStreamOutObject",
 		"OnPlayerBowShot",
-		"OnPlayerChangeContainer"
+		"OnPlayerChangeContainer",
+		"OnPlayerCreateItem",
+		"OnPlayerUseItem"
 	}
 	for i = 1, #tStandard do
 		_G[tStandard[i]] = Secunda[tStandard[i]]

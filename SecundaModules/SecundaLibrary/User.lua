@@ -33,6 +33,9 @@ function User.Docs()
   OnHit(user, target) --
   OnActivate(user, target) --
   OnUserDialogResponse(user, dialogId, inputtext, listitem) --
+  OnUserCraftItem(user, itemType, count) --
+  OnUserBowShot(user, power) --
+  OnUserUseItem(user, itemType) --  Called on item eat or use
   ]]
 end
 
@@ -746,7 +749,23 @@ function User.OnPlayerHitObject(pl, object, weap, ammo, spell)
     local user = User.Lookup(pl:GetName())
     local wo = WorldObject.Lookup(object:GetID())
     if wo ~= nil then
-      Secunda.OnHit(user, wo)
+      return Secunda.OnHit(user, wo)
+    end
+  end
+  return true
+end
+
+function User.OnPlayerHitPlayer(pl, target, weap, ammo, spell)
+  if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    local targetUser = User.Lookup(target:GetName())
+    if targetUser ~= nil then
+      return Secunda.OnHit(user, targetUser, weap, ammo, spell)
+    else
+      local npc = NPC.Lookup(target:GetID())
+      if npc ~= nil then
+          return Secunda.OnHit(user, npc, weap, ammo, spell)
+      end
     end
   end
   return true
@@ -800,6 +819,14 @@ function User.OnPlayerLearnEffect(pl, itemType, n)
 end
 
 function User.OnPlayerEatItem(pl, itemType)
+  return User.OnPlayerUseItem(pl, itemType)
+end
+
+function User.OnPlayerUseItem(pl, itemType)
+  if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    return Secunda.OnUserUseItem(user, itemType)
+  end
   return true
 end
 
@@ -820,12 +847,22 @@ function User.OnPlayerUpdate(pl)
 end
 
 function User.OnPlayerBowShot(pl, power)
+  if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    return Secunda.OnUserBowShot(user, power)
+  end
   return true
 end
 
 function User.OnPlayerDialogResponse(pl, dialogId, inputText, listItem)
   local user = User.Lookup(pl:GetID())
   if user then return Secunda.OnUserDialogResponse(user, dialogId, inputText, listItem) end
+  return true
+end
+
+function User.OnPlayerCreateItem(pl, itemType, count)
+  local user = User.Lookup(pl:GetID())
+  if user then return Secunda.OnUserCraftItem(user, itemType, count) end
   return true
 end
 
