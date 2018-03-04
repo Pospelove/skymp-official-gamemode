@@ -153,7 +153,9 @@ local function UserActivateBed(user, target)
 		acti[refID] = nil
 	else
 		acti[refID] = true
-		user:SendAnimationEvent("IdleLaydownEnter")
+		for i = 0, 10 do
+			SetTimer(i * 100, function() user:SendAnimationEvent("IdleLaydownEnter") end)
+		end
 		user:SetPos(target.obj:GetX(), target.obj:GetY(), target.obj:GetZ())
 		SetTimer(300, function() user:ExecuteCommand("cdscript", "Game.SetRotationTo(" .. tostring(refID) .. ")") end)
 	end
@@ -208,7 +210,7 @@ function Furniture.OnActivate(source, target)
 	  		target.obj:AddKeyword("RaceToScale")
 
 				source.pl:SetChatBubble(Color.gold .. ru("Занимается приготовлением пищи"), 60000, showSelf)
-  			bubble[source:GetName()] = true
+  			SetTimer(1000, function() bubble[source:GetName()] = true end)
 			end
 
 			if target:GetValue("baseID") == 0x000727A1 then -- Дубильный ствнок
@@ -222,7 +224,7 @@ function Furniture.OnActivate(source, target)
 
   		if target:GetValue("baseID") == 0x000CAE0B then
   			source.pl:SetChatBubble(Color.gold .. ru("Использует кузницу"), 60000, showSelf)
-  			bubble[source:GetName()] = true
+  			SetTimer(1000, function() bubble[source:GetName()] = true end)
 				unsynced[source:GetName()] = true
         return true
   		end
@@ -234,7 +236,7 @@ function Furniture.OnActivate(source, target)
 					return false
 				end
   			source.pl:SetChatBubble(Color.green .. ru("Использует алхимический стол"), 60000, showSelf)
-  			bubble[source:GetName()] = true
+  			SetTimer(1000, function() bubble[source:GetName()] = true end)
         Anim(source, furn, "Idlealchemyenter")
         return true
   		end
@@ -242,7 +244,7 @@ function Furniture.OnActivate(source, target)
   		if target:GetValue("baseID") == 0x000BAD0D or target:GetValue("baseID")== 0x000D5501 then
         if IsFurnitureInUse(furn) then return false end
   			source.pl:SetChatBubble("#f442f4" .. ru("Использует зачаровательный стол"), 60000, showSelf)
-  			bubble[source:GetName()] = true
+  			SetTimer(1000, function() bubble[source:GetName()] = true end)
         Anim(source, furn, "Idleenchantingenter")
         return true
   		end
