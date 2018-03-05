@@ -423,6 +423,31 @@ function Debug.OnUserChatCommand(user, cmd)
     npc:Save()
   end
 
+  if tokens[1] == "/clearchat" then
+    local msg = Theme.sel .. user:GetName() .. Theme.info .. " очистил(а) чат"
+    for i = 0, GetMaxPlayers() - 1 do
+      local pl = Player.LookupByID(i)
+      if pl then
+        pl:ClearChat()
+        pl:SendChatMessage(ru(msg))
+      end
+    end
+  end
+
+  if token[1] == "/clear" then
+    if tokens[2] == nil then tokens[2] = user:GetName() end
+    local target = User.Lookup(tokens[2])
+    if not target then
+      user:SendChatMessage(Theme.error .. "Ќе найден пользователь с таким именем (" .. tostring(tokens[2]) .. ")")
+    else
+      target:RemoveAllItems()
+      local msg = Theme.sel .. user:GetName() .. Theme.info .. " очистил(а) инвентарь игрока " .. Theme.sel .. target:GetName()
+      target:SendChatMessage(msg)
+      user:SendChatMessage(msg)
+    end
+
+  end
+
   return true
 end
 
