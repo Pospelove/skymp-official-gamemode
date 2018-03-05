@@ -235,6 +235,7 @@ function WorldObject:_ApplyData()
   		self.obj:AddKeyword("WICraftingEnchanting")
     end
     if self:IsCooking() then
+      print("creating cooking spit")
       self.data.type = "Furniture"
       self.obj:AddKeyword("CraftingCookpot")
       self.obj:AddKeyword("FurnitureForce3rdPerson")
