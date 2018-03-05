@@ -434,7 +434,7 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
-  if token[1] == "/clear" then
+  if tokens[1] == "/clear" then
     if tokens[2] == nil then tokens[2] = user:GetName() end
     local target = User.Lookup(tokens[2])
     if not target then
