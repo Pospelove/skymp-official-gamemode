@@ -10,7 +10,7 @@ end
 
 function ActorValues.OnUserUpdate(user)
   FurnOnUserUpdate(user)
-  if user:IsJumping() then
+  if user:IsJumping() or user:IsInJumpState() then
     local stamina = user:GetCurrentAV("Stamina")
     user:SetCurrentAV("Stamina", stamina - 25)
   end

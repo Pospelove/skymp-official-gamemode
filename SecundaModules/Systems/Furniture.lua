@@ -45,40 +45,6 @@ local function IsFurnitureInUse(object)
   return false
 end
 
-local FurnitureDialog01 = 1000001
-
-function Furniture.OnUserDialogResponse(user, dialogId, inputText, listItem)
-	if dialogId == FurnitureDialog01 then
-		local result = nil
-		local count = 0
-		local craftIngrFilter = ""
-		if listItem == 2 or listItem == -1 then -- отмена
-			return true
-		elseif listItem == 0 then -- кожа
-			result = ItemTypes.Lookup("Кожа")
-			count = 2
-			craftIngrFilter = "Шкура"
-		else -- полоски кожи
-			result = ItemTypes.Lookup("Полоски кожи")
-			count = 3
-			craftIngrFilter = "Кожа"
-		end
-		for i = 1, user:GetNumInventorySlots() do
-			local itemType = user:GetItemTypeInSlot(i)
-			local iden = itemType:GetIdentifier()
-			if stringx.startswith(iden, craftIngrFilter) then
-				if user:RemoveItem(itemType, 1) then
-					user:AddItem(result, count)
-					user:SendChatMessage(Theme.info .. "Вы создали предмет " .. Theme.sel .. result:GetIdentifier() .. Theme.info .. " в количестве " .. Theme.sel .. tostring(count))
-					return true
-				end
-			end
-		end
-		user:SendChatMessage(Theme.error .. "Вам требуется " .. craftIngrFilter .. ", чтобы изготовить это")
-	end
-	return true
-end
-
 local bedOwner = {}
 local lastBed = {}
 
@@ -214,7 +180,9 @@ function Furniture.OnActivate(source, target)
 			end
 
 			if target:GetValue("baseID") == 0x000727A1 then -- Дубильный ствнок
-				source:ShowDialog(FurnitureDialog01, "List", "Какой предмет Вы хотите изготовить?", "Кожа\nПолоски кожи\nОТМЕНА")
+				source.pl:SetChatBubble(Color.gold .. ru("Использует дубильный станок"), 60000, showSelf)
+  			SetTimer(1000, function() bubble[source:GetName()] = true end)
+				unsynced[source:GetName()] = true
 				return true
 			end
 

@@ -371,6 +371,23 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if tokens[1] == "/overdose" and tokens[2] == "object" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    if tonumber(tokens[3]) == nil then
+      user:SendChatMessage(Theme.error .. "Некорректное количество")
+    else
+      user:SendChatMessage(Theme.info .. "Создание " .. tokens[3] .. " объектов...")
+      for i = 1, tonumber(tokens[3]) do
+        local obj = Object.Create(0, 0x0000DEAD, Location(60), 1000*1000*1000, 1000*1000*1000, 0)
+        if not obj then error("unable to create error") end
+        obj:SetVirtualWorld(1000000)
+      end
+      user:SendChatMessage(Theme.success .. "Готово")
+    end
+  end
+
   if tokens[1] == "/chest" then
     local pl = user.pl
     Object.Create(0, 0x23a6d, pl:GetLocation(), pl:GetX(), pl:GetY(), pl:GetZ() + 16):RegisterAsContainer()

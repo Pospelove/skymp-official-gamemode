@@ -11,18 +11,12 @@ local horseIdsSet = {
 			[0x0010BF90] = true
 }
 
-function Horse.OnPlayerUpdate(pl)
-  if pl:IsNPC() and horseIdsSet[pl:GetBaseID()] then
-    pl:SetBaseAV("Health", 1000 * 1000)
-    pl:SetCurrentAV("Health", 1000 * 1000)
-  end
-  return true
-end
-
 local urbadguyMsg = {}
 
 function Horse.OnPlayerHitPlayer(pl, target, weap, ammo, spell)
   if target:IsNPC() and horseIdsSet[target:GetBaseID()] then
+    target:SetBaseAV("Health", 1000 * 1000)
+    target:SetCurrentAV("Health", 1000 * 1000)
     if weap == nil and ammo == nil and spell == nil then
       if not urbadguyMsg[pl:GetName()] then
         urbadguyMsg[pl:GetName()] = true

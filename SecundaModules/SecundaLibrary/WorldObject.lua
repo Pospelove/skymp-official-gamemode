@@ -148,6 +148,10 @@ function WorldObject:IsCooking()
   return self.data.baseID == 0x00068ADB or self.data.baseID == 0x0010BFE3 or self.data.baseID == 0x00104110 or self.data.baseID == 0x001010B3 or self.data.baseID == 0x00108203
 end
 
+function WorldObject:IsTanningRack()
+  return self.data.baseID == 0x000727A1
+end
+
 -- IMPLEMENTATION
 
 local function NewData()
@@ -217,6 +221,14 @@ function WorldObject:_ApplyData()
   		self.obj:AddKeyword("FurnitureSpecial")
   		self.obj:AddKeyword("RaceToScale")
   		self.obj:AddKeyword("WICraftingSmithing")
+    end
+    if self:IsTanningRack() then
+      self.data.type = "Furniture"
+      self.obj:AddKeyword("CraftingTanningRack")
+      self.obj:AddKeyword("FurnitureForce3rdPerson")
+      self.obj:AddKeyword("FurnitureSpecial")
+      self.obj:AddKeyword("RaceToScale")
+      self.obj:AddKeyword("isTanning")
     end
     if self:IsAlchemy() then
       self.data.type = "Furniture"
@@ -360,6 +372,12 @@ function WorldObject.OnPlayerStreamInObject(pl, obj)
       if wo:GetValue("isHarvested") then
         SetTimer(500, function() SetHarvestedForPlayer(obj, pl) end)
       end
+      if wo:IsTanningRack() then
+        local user = User.Lookup(pl:GetID())
+        if user ~= nil then
+          SetTimer(4000, function() user:AddTask(function() Recipes.SendTo(pl, "CraftingTanningRack") end) end)
+        end
+      end
       if wo:IsBlacksmithForge() then
         local user = User.Lookup(pl:GetID())
         if user ~= nil then
@@ -369,7 +387,7 @@ function WorldObject.OnPlayerStreamInObject(pl, obj)
       if wo:IsCooking() then
         local user = User.Lookup(pl:GetID())
         if user ~= nil then
-          SetTimer(100, function() user:AddTask(function() Recipes.SendTo(pl, "isCookingSpit"); Recipes.SendTo(pl, "CraftingCookpot"); print("send cookpot recipes") end) end)
+          SetTimer(4000, function() user:AddTask(function() Recipes.SendTo(pl, "isCookingSpit"); Recipes.SendTo(pl, "CraftingCookpot") end) end)
         end
       end
     end
