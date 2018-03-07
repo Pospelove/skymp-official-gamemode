@@ -6,11 +6,14 @@ local nonAgro = {
   HareRace = true,
   ElkRace = true,
   DogRace = true,
+  [0x829b6] = true,
+  [0xb8eca] = true
 }
 
 local cache = {}
 
 local function IsNonAgressive(baseID)
+  if nonAgro[baseID] == true then return true end
   if cache[naseID] ~= nil then return cache[baseID] end
   for i = 1, #dsres.npc do
     local entry = dsres.npc[i]

@@ -13,6 +13,13 @@ end
 function Debug.OnUserChatCommand(user, cmd)
   local tokens = stringx.split(cmd)
 
+  if cmd == "/updatechunk" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    user:DebugUpdateChunk()
+  end
+
   if stringx.startswith(cmd, "/secretlogin ") then
     if tokens[2] == Debug.GetPassCode() then
       local devMode = Debug.IsDeveloper(user)
