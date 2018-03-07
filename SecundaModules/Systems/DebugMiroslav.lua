@@ -5,11 +5,11 @@ local gPlacedIds = {}
 local gUndoFunctionsStack = {}
 
 local gNpcPlaceCommands = {
-  ["/k"] = 0x0004359C, -- Коза
+  ["/k"] = {0x0004359C, 0x0004359C, 0x0004359C}, -- Коза
   ["/kor"] = "Корова",
   ["/kur"] = 0x000A91A0, -- Курица
   ["/s"] = "Собака",
-  ["/dk"] = 0x0002EBE2, -- Дикая коза
+  ["/dk"] = {0x0002EBE2, 0x0002EBE2, 0x0002EBE2}, -- Дикая коза
   ["/kr"] = 0x0006DC9D, -- Krolik
   ["/l"] = 0x000829B3, -- Lisitsa
   ["/sl"] = 0x000829B6, -- Snow lisa
@@ -45,8 +45,7 @@ local gNpcPlaceCommands = {
   ["/dvce"] = "Двемерский центурион",
   ["/b"] = {0x00032860,0x00032860,0x00032860,0x00032860,0x00032860},
   ["/n"] = {0x0007EB38,0x0007EB38,0x0007EB38,0x0007EB38,0x0007EB38},
-  ["/l"] = {0x00023AA9,0x00023AA9,0x00023AA9,0x00023AA9,0x00023AA9},
-  ["/i"] = {0x00023AA9,0x00023AA9,0x00023AA9,0x00023AA9,0x00023AA9}, -- should duplicate /l command
+  ["/i"] = {0x00023AA9,0x00023AA9,0x00023AA9,0x00023AA9,0x00023AA9}
 }
 
 local function FindNPCIDByName(name)
