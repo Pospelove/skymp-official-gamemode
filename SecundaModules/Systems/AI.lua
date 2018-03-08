@@ -1,4 +1,4 @@
-local AI = {}
+AI = {}
 
 local nonAgro = {
   CowRace = true,
@@ -11,6 +11,7 @@ local nonAgro = {
 }
 
 local cache = {}
+local ignoredPlayers = {}
 
 local function IsNonAgressive(baseID)
   if nonAgro[baseID] == true then return true end
@@ -28,13 +29,24 @@ local function IsNonAgressive(baseID)
   return false
 end
 
+function AI.IgnoreUser(user)
+  table.insert(ignoredPlayers, user.pl)
+end
+
 function AI.OnPlayerStreamInPlayer(pl, target)
   if pl:IsNPC()then
     if not IsNonAgressive(pl:GetBaseID()) then
       if DebugMiroslav.IsPlacedID(pl:GetID()) then
         pl:SetCombatTarget(nil)
       else
-        pl:SetCombatTarget(pl:GetHost())
+        local host = pl:GetHost()
+        for i = 1, #ignoredPlayers do
+          if ignoredPlayers[i] == host then
+            pl:SetCombatTarget(nil)
+            return true
+          end
+        end
+        pl:SetCombatTarget(host)
       end
     end
   end

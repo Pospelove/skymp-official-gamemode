@@ -111,6 +111,10 @@ function DebugMiroslav.OnUserChatCommand(user, cmd)
   if not Debug.IsDeveloper(user) then
     return true
   end
+  if cmd == "/ignore" then
+    AI.IgnoreUser(user)
+    user:SendChatMessage(Theme.success .. "Враждебные NPC теперь игнорируют Ваше присутствие")
+  end
   if cmd == "/undo" then
     if #gUndoFunctionsStack == 0 then
       user:SendChatMessage(Theme.error .. "Нет действий для отмены")
