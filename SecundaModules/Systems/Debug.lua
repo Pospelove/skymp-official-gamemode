@@ -70,6 +70,13 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if cmd == "/ptrsize" or cmd == "/sizeofvoid" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    user:SendChatMessage(Theme.info .. "Размер указателя равен " .. Theme.sel .. tostring(GetPointerSize()))
+  end
+
   if stringx.startswith(cmd, "/incrskill ") then
     if not Debug.IsDeveloper(user) then
       return true
