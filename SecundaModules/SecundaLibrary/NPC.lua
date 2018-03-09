@@ -171,12 +171,43 @@ function NPC:_init(fileName)
   table.insert(gNpcs, self)
 end
 
+local function FindRandomBandit(isIsgoy)
+  local n = #dsres.npc
+  while true do
+    local i = math.random(1, n)
+    local entry = dsres.npc[i]
+    if entry then
+      local isUnique = (entry[5] == 1)
+      local race = entry[3]
+      local baseID = entry[1]
+      if isUnique then
+        if race == "NordRace" or race == "OrcRace" or race == "RedguardRace" or race == "BretonRace" or race == "KhajiitRace"  or race == "ArgonianRace" or race == "WoodElfRace" or race == "DarkElfRace" then
+          if not isIsgoy then return baseID end
+        end
+        if race == "BretonRace" and isIsgoy then return baseID end
+      end
+    end
+  end
+end
+
 function NPC:_ApplyData()
+  local isRandomBandit = false
   if self.pl == nil or self.baseID ~= self.data.baseID then
+    if self.data.baseID == 0x00032860 or self.data.baseID == 0x0007EB38 or self.data.baseID == 0x00023AA9 then -- bandit naebnik isgoy
+      self.isIsgoy = (self.data.baseID == 0x00023AA9)
+      self.data.baseID = FindRandomBandit(self.isIsgoy)
+      isRandomBandit = true
+    end
     self.pl = Player.CreateNPC(self.data.baseID)
     self.baseID = self.data.baseID
   end
   self.pl:SetName(ru(tostring(self.data.name)))
+  if deru(self.pl:GetName()) == "Бандит" or deru(self.pl:GetName()) == "Наемник" or deru(self.pl:GetName()) == "Наёмник" or deru(self.pl:GetName()) == "Изгой" then
+    isRandomBandit = true
+    if deru(self.pl:GetName()) == "Изгой" then
+      self.isIsgoy = true
+    end
+  end
   self.pl:SetPos(self.data.x, self.data.y, self.data.z)
   self.pl:SetAngleZ(self.data.angleZ)
   local loc = Location(self.data.locationID)
@@ -187,16 +218,37 @@ function NPC:_ApplyData()
   self.pl:SetVirtualWorld(self.data.virtualWorld)
   -- Inventory:
   self.pl:RemoveAllItems()
-  for i = 1, #dsres.npc do
-    local entry = dsres.npc[i]
-    if entry then
-      if self.data.baseID == entry[1] then
-        local invent = entry[4]
-        for iden, n in pairs(invent) do
-          local itemType = ItemTypes.Lookup(iden)
-          if itemType then
-            self.pl:AddItem(itemType, n)
-            print("added item to npc")
+  NPCLoot.FillContainer(self)
+  if isRandomBandit then
+    local add = function(a, b)
+      self.pl:AddItem(ItemTypes.Lookup(a), b)
+      self.pl:EquipItem(ItemTypes.Lookup(a), 0)
+    end
+    if self.isIsgoy then
+      add(0x000EAFD0, 1)
+      add("Сапоги Изгоев", 1)
+      add("Перчатки Изгоев", 1)
+      add("Головной убор Изгоев", 1)
+      add("Меч Изгоев", 1)
+    else
+      add("Сыромятная броня", 1)
+      add("Сыромятные сапоги", 1)
+      add("Сыромятные наручи", 1)
+      add("Сыромятный шлем", 1)
+      add("Железный меч", 1)
+    end
+    self.isRandomBandit = true
+  else
+    for i = 1, #dsres.npc do
+      local entry = dsres.npc[i]
+      if entry then
+        if self.data.baseID == entry[1] then
+          local invent = entry[4]
+          for iden, n in pairs(invent) do
+            local itemType = ItemTypes.Lookup(iden)
+            if itemType then
+              self.pl:AddItem(itemType, n)
+            end
           end
         end
       end
@@ -339,7 +391,19 @@ function NPC.OnPlayerDying(pl, killer)
       end
       obj:RegisterAsContainer()
       obj:SetName(pl:GetName())
-      SetTimer(1000, function() Container(pl):ApplyTo(obj) end) -- Prevents doubling items
+      SetTimer(1000, function() -- Prevents doubling items
+        Container(pl):ApplyTo(obj)
+        if npc.isRandomBandit then
+          obj:RemoveItem(ItemTypes.Lookup("Сыромятная броня"), 1)
+          obj:RemoveItem(ItemTypes.Lookup("Сыромятные сапоги"), 1)
+          obj:RemoveItem(ItemTypes.Lookup("Сыромятный шлем"), 1)
+          obj:RemoveItem(ItemTypes.Lookup("Сыромятные наручи"), 1)
+          obj:RemoveItem(ItemTypes.Lookup(0x000EAFD0), 1)
+          obj:RemoveItem(ItemTypes.Lookup("Сапоги Изгоев"), 1)
+          obj:RemoveItem(ItemTypes.Lookup("Головной убор Изгоев"), 1)
+          obj:RemoveItem(ItemTypes.Lookup("Перчатки Изгоев"), 1)
+        end
+      end)
       if gInvisibleChests[pl:GetID()] ~= nil then
         gInvisibleChests[pl:GetID()]:Delete()
         gInvisibleChests[pl:GetID()] = nil

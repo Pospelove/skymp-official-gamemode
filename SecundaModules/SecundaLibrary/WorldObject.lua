@@ -271,6 +271,10 @@ function WorldObject:_ApplyData()
       self.obj:RegisterAsActivator()
     elseif self.data.type == "Container" then
       self.obj:RegisterAsContainer()
+      if not self.data.filled7 then
+        self.data.filled7 = true
+        SetTimer(1, function() ContainerLoot.FillContainer(self) end)
+      end
     elseif self.data.type == "Furniture" then
       self.obj:RegisterAsFurniture()
     end

@@ -16,6 +16,7 @@ function Container:AddItem(itemType, count)
   if itemType == nil then
     error("bad ItemType")
   end
+  if count == nil then count = 1 end
   if type(count) ~= "number" or count < 0 then
     error("bad count " .. tostring(count))
   end
