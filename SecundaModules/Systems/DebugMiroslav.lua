@@ -111,6 +111,29 @@ function DebugMiroslav.OnUserChatCommand(user, cmd)
   if not Debug.IsDeveloper(user) then
     return true
   end
+  if cmd == "/droprange" or cmd == "/dr" then
+    local m = 20.0
+    local units = m * 70.0
+    user:SendChatMessage(Theme.info .. "”даление NPC в радиусе " .. m .. " метров")
+    local t = (NPC.GetAllNPCs())
+    local n = 0
+    for i = 1, #t do
+      local npc = t[i]
+      local npcX = npc:GetValue("x")
+      local npcY = npc:GetValue("y")
+      local npcZ = npc:GetValue("z")
+      local plX = user:GetX()
+      local plY = user:GetY()
+      local plZ = user:GetZ()
+      local sqr = function(x) return x * x end
+      local d = math.sqrt(sqr(npcX - plX) + sqr(npcY - plY) + sqr(npcZ - plZ))
+      if d < units then
+        n = n + 1
+        SetTimer(1, function() npc:Delete() end)
+      end
+    end
+    user:SendChatMessage(Theme.success .. "”далено " .. n .. " экземпл€ров")
+  end
   if cmd == "/ignore" then
     AI.IgnoreUser(user)
     user:SendChatMessage(Theme.success .. "¬раждебные NPC теперь игнорируют ¬аше присутствие")

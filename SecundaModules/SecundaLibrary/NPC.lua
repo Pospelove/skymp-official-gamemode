@@ -8,6 +8,7 @@ function NPC.Docs()
   NPC.IsFileNameInUse(fileName) -- Check if file name is already used for npc
   NPC.Lookup(id) -- Lookup npc by id
   NPC.Create(fileName) --
+  NPC.GetAllNPCs() --
 
   -- Methods:
   npc:GetFileName() --
@@ -32,6 +33,8 @@ function NPC.Docs()
 
   -- Callbacks:
   OnActivate(npc, target) --
+  OnNPCSpawn(npc) --
+  OnNPCDying(npc) --
   ]]
 end
 
@@ -385,6 +388,7 @@ function NPC.OnPlayerDying(pl, killer)
   if pl:IsNPC() then
     local npc = NPC.Lookup(pl:GetID())
     if npc ~= nil then
+      Secunda.OnNPCDying(npc)
       local obj = Object.Create(0, 0xaf6ae, pl:GetLocation(), pl:GetX(), pl:GetY(), pl:GetZ() - 1024)
       if obj == nil then
         error("unable to create invisible chest")
@@ -435,6 +439,16 @@ function NPC.OnPlayerDisconnect(pl)
   if gInvisibleChests[pl:GetID()] ~= nil then
     gInvisibleChests[pl:GetID()]:Delete()
     gInvisibleChests[pl:GetID()] = nil
+  end
+  return true
+end
+
+function NPC.OnPlayerSpawn(pl)
+  if pl:IsNPC() then
+    local npc = NPC.Lookup(pl:GetID())
+    if npc then
+      return Secunda.OnNPCSpawn(npc)
+    end
   end
   return true
 end
