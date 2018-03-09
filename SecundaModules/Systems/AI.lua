@@ -7,7 +7,8 @@ local nonAgro = {
   ElkRace = true,
   DogRace = true,
   [0x829b6] = true,
-  [0xb8eca] = true
+  [0xb8eca] = true,
+  FoxRace = true
 }
 
 local cache = {}
