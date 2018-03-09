@@ -36,6 +36,41 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if tokens[1] == "/say" then
+    local i = 2
+    local str = ""
+    while tokens[i] ~= nil do
+      str = str .. " " .. tokens[i]
+      i = i + 1
+    end
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    SendChatMessageToAll(Theme.notice .. user:GetName() .. ": " .. ru(str))
+  end
+
+  if tokens[1] == "/xyz" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    user:SendChatMessage(math.ceil(user:GetX()) .. " " .. math.ceil(user:GetY()) .. " " .. math.ceil(user:GetZ()))
+  end
+
+  if tokens[1] == "/online" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    local users = User.GetAllUsers()
+    user:SendChatMessage(Theme.info .. "Список игроков на сервере:")
+    for i = 1, #users do
+      local u = users[i]
+      if u then
+        user:SendChatMessage(u:GetName() .. "[" .. u:GetID() .. "]")
+      end
+    end
+    user:SendChatMessage()
+  end
+
   if stringx.startswith(cmd, "/setav ") then
     if not Debug.IsDeveloper(user) then
       return true

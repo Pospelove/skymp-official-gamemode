@@ -7,6 +7,10 @@ function SpecialNPC.OnNPCSpawn(npc)
     npc.pl:AddItem(ItemTypes.Lookup("Дубина великана"), 1)
     npc.pl:EquipItem(ItemTypes.Lookup("Дубина великана"), 0)
   end
+  if ru(deru(npc:GetValue("name"))) == ru "Скелет" then
+    npc.pl:AddItem(ItemTypes.Lookup("Стальной меч"), 1)
+    npc.pl:EquipItem(ItemTypes.Lookup("Стальной меч"), 0)
+  end
   return true
 end
 
