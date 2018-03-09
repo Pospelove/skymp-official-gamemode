@@ -4,6 +4,9 @@ function FirstSpawn.OnUserLoad(user)
   local hasSpawnPoint = (user:GetAccountVar("x") ~= nil and user:GetAccountVar("x") ~= 0.0)
   if not hasSpawnPoint then
     local spawnPoint = { 0x0000003C, 17224.7734, -47204.4531, -51.8551, 58.7287 }
+    if math.random(1, 2) == 1 then
+      spawnPoint = { 0x0000003C, 34197, -16343, -4436, 58.7287 }
+    end
     user:SetAccountVar("location", spawnPoint[1])
     user:SetAccountVar("x", spawnPoint[2])
     user:SetAccountVar("y", spawnPoint[3])

@@ -129,7 +129,7 @@ function DebugMiroslav.OnUserChatCommand(user, cmd)
       local d = math.sqrt(sqr(npcX - plX) + sqr(npcY - plY) + sqr(npcZ - plZ))
       if d < units then
         n = n + 1
-        SetTimer(1, function() npc:Delete() end)
+        SetTimer(1, function() npc:Unload() end)
       end
     end
     user:SendChatMessage(Theme.success .. "Удалено " .. n .. " экземпляров")
