@@ -60,15 +60,13 @@ function Debug.OnUserChatCommand(user, cmd)
     if not Debug.IsDeveloper(user) then
       return true
     end
-    local users = User.GetAllUsers()
-    user:SendChatMessage(Theme.info .. "Список игроков на сервере:")
-    for i = 1, #users do
-      local u = users[i]
-      if u then
-        user:SendChatMessage(u:GetName() .. "[" .. u:GetID() .. "]")
+    local n = 0
+    for i = 0, GetMaxPlayers()
+      if Player.LookupByID(i) ~= nil then
+        n = n + 1
       end
     end
-    user:SendChatMessage()
+    user:SendChatMessage(tostring(n))
   end
 
   if stringx.startswith(cmd, "/setav ") then
