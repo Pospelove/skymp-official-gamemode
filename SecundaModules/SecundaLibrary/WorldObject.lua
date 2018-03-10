@@ -68,10 +68,10 @@ function WorldObject:SetValue(varName, newValue)
   self:_PrepareDataToSave()
   self.data[varName] = newValue
   self:_ApplyData()
-  if varName == "isHarvested" and self.obj ~= nil then
+  if newValue and varName == "isHarvested" and self.obj ~= nil then
     for i = 0, GetMaxPlayers() do
       local pl = Player.LookupByID(i)
-      if pl ~= nil and newValue then
+      if pl ~= nil then
         SetHarvestedForPlayer(self.obj, pl)
       end
     end
@@ -247,7 +247,6 @@ function WorldObject:_ApplyData()
   		self.obj:AddKeyword("WICraftingEnchanting")
     end
     if self:IsCooking() then
-      print("creating cooking spit")
       self.data.type = "Furniture"
       self.obj:AddKeyword("CraftingCookpot")
       self.obj:AddKeyword("FurnitureForce3rdPerson")
@@ -296,7 +295,7 @@ function WorldObject:_ApplyData()
     self.obj:SetDisabled(self.data.isDisabled)
     local s, errorStr = pcall(function()
       if self.data.inventoryStr ~= nil then
-        ContainerSerializer.Deserialize(self.data.inventoryStr):ApplyTo(self.obj)
+        --ContainerSerializer.Deserialize(self.data.inventoryStr):ApplyTo(self.obj)
       end
     end)
     if not s then print("Error while loading container: " .. errorStr) end
@@ -357,6 +356,11 @@ end
 
 function WorldObject.OnServerInit()
   WorldObject._LoadAll()
+
+  local t = WorldObject.GetAllWorldObjects()
+  for i = 1, #t do
+    t[i]:SetValue("isHarvested", false)
+  end
   return true
 end
 

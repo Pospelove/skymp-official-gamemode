@@ -41,6 +41,7 @@ function NPCUnarmedDamage.OnNPCSpawn(npc)
   SetTimer(200, function()
     local t = gData[npc:GetValue("baseID")]
     if not t then t = gData[deru(npc:GetValue("name"))] end
+    if not t then return end
     npc.pl:SetBaseAV("UnarmedDamage", t[2])
     npc.pl:SetBaseAV("Health", t[1])
   end)

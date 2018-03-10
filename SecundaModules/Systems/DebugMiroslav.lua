@@ -111,10 +111,14 @@ function DebugMiroslav.OnUserChatCommand(user, cmd)
   if not Debug.IsDeveloper(user) then
     return true
   end
-  if cmd == "/droprange" or cmd == "/dr" then
+
+  local tokens = stringx.split(cmd)
+
+  if tokens[1] == "/droprange" or tokens[1] == "/dr" then
+    if not tokens[2] then tokens[2] = "Delete" end
     local m = 20.0
-    local units = m * 70.0
-    user:SendChatMessage(Theme.info .. "Удаление NPC в радиусе " .. m .. " метров")
+    local units =  m * 70.0
+    user:SendChatMessage("Обработка целей в радиусе " .. m .. " метров...")
     local t = (NPC.GetAllNPCs())
     local n = 0
     for i = 1, #t do
@@ -129,10 +133,19 @@ function DebugMiroslav.OnUserChatCommand(user, cmd)
       local d = math.sqrt(sqr(npcX - plX) + sqr(npcY - plY) + sqr(npcZ - plZ))
       if d < units then
         n = n + 1
-        SetTimer(1, function() npc:Unload() end)
+        SetTimer(1, function()
+          npc:Save()
+          local f = npc[tokens[2]]
+          local success = pcall(function() f(npc) end)
+          if not success then user:SendChatMessage(Theme.error .. tokens[2] .. " - функция не найдена") end
+        end)
       end
     end
-    user:SendChatMessage(Theme.success .. "Удалено " .. n .. " экземпляров")
+    if tokens[2] == "Delete" then
+      user:SendChatMessage(Theme.success .. "Удалено " .. n .. " экземпляров")
+    else
+      user:SendChatMessage(Theme.success .. "Вызвана операция " .. tokens[2] .. " для " .. n .. " экземпляров")
+    end
   end
   if cmd == "/ignore" then
     AI.IgnoreUser(user)
@@ -147,7 +160,7 @@ function DebugMiroslav.OnUserChatCommand(user, cmd)
     if f then f() end
     return true
   end
-  local tokens = stringx.split(cmd)
+
   for command, result in pairs(gNpcPlaceCommands) do
     if command == tokens[1] then
       gMiroslavUser = user

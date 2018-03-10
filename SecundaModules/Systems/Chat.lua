@@ -3,7 +3,7 @@ local Chat = {}
 function Chat.OnUserChatMessage(user, text)
 	local n = 96
 	if deru(text):len() > n then
-		return user:SendChatMessage(Theme.error .. "Р”Р»РёРЅР° СЃРѕРѕР±С‰РµРЅРёСЏ РЅРµ РґРѕР»Р¶РЅР° РїСЂРµРІС‹С€Р°С‚СЊ " .. n .. " СЃРёРјРІРѕР»РѕРІ")
+		return user:SendChatMessage(Theme.error .. "Длина сообщения не должна превышать " .. n .. " символов")
 	end
 
 	text:gsub("#", " ")
