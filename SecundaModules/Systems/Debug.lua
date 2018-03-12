@@ -62,7 +62,7 @@ function Debug.OnUserChatCommand(user, cmd)
     end
     local n = 0
     for i = 0, GetMaxPlayers() do
-      if Player.LookupByID(i) ~= nil then
+      if Player.LookupByID(i) ~= nil and Player.LookupByID(i):IsNPC() == false then
         n = n + 1
       end
     end

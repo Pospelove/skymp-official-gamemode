@@ -205,9 +205,9 @@ function NPC:_ApplyData()
     self.baseID = self.data.baseID
   end
   self.pl:SetName(ru(tostring(self.data.name)))
-  if deru(self.pl:GetName()) == "пїЅпїЅпїЅпїЅпїЅпїЅ" or deru(self.pl:GetName()) == "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ" or deru(self.pl:GetName()) == "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ" or deru(self.pl:GetName()) == "пїЅпїЅпїЅпїЅпїЅ" then
+  if deru(self.pl:GetName()) == "Изгой" or deru(self.pl:GetName()) == "Бандит" or deru(self.pl:GetName()) == "Наемник" or deru(self.pl:GetName()) == "Наёмник" then
     isRandomBandit = true
-    if deru(self.pl:GetName()) == "пїЅпїЅпїЅпїЅпїЅ" then
+    if deru(self.pl:GetName()) == "Изгой" then
       self.isIsgoy = true
     end
   end
@@ -229,16 +229,16 @@ function NPC:_ApplyData()
     end
     if self.isIsgoy then
       add(0x000EAFD0, 1)
-      add("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ", 1)
-      add("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ", 1)
-      add("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ", 1)
-      add("пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ", 1)
+      add("Сапоги Изгоев", 1)
+      add("Перчатки Изгоев", 1)
+      add("Головной убор Изгоев", 1)
+      add("Меч Изгоев", 1)
     else
-      add("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ", 1)
-      add("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ", 1)
-      add("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ", 1)
-      add("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ", 1)
-      add("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ", 1)
+      add("Сыромятная броня", 1)
+      add("Сыромятные сапоги", 1)
+      add("Сыромятные наручи", 1)
+      add("Сыромятный шлем", 1)
+      add("Железный меч", 1)
     end
     self.isRandomBandit = true
   else
@@ -398,14 +398,8 @@ function NPC.OnPlayerDying(pl, killer)
       SetTimer(1000, function() -- Prevents doubling items
         Container(pl):ApplyTo(obj)
         if npc.isRandomBandit then
-          obj:RemoveItem(ItemTypes.Lookup("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ"), 1)
-          obj:RemoveItem(ItemTypes.Lookup("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ"), 1)
-          obj:RemoveItem(ItemTypes.Lookup("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ"), 1)
-          obj:RemoveItem(ItemTypes.Lookup("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ"), 1)
-          obj:RemoveItem(ItemTypes.Lookup(0x000EAFD0), 1)
-          obj:RemoveItem(ItemTypes.Lookup("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ"), 1)
-          obj:RemoveItem(ItemTypes.Lookup("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ"), 1)
-          obj:RemoveItem(ItemTypes.Lookup("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ"), 1)
+          obj:RemoveAllItems()
+          obj:AddItem(pl:GetEquippedWeapon(0), 1)
         end
       end)
       if gInvisibleChests[pl:GetID()] ~= nil then
