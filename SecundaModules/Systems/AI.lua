@@ -34,7 +34,7 @@ function AI.IgnoreUser(user)
   table.insert(ignoredPlayers, user.pl)
 end
 
-function AI.OnPlayerStreamInPlayer(pl, target)
+local function UpdateCombat(pl)
   if pl:IsNPC()then
     if not IsNonAgressive(pl:GetBaseID()) then
       if DebugMiroslav.IsPlacedID(pl:GetID()) then
@@ -44,14 +44,23 @@ function AI.OnPlayerStreamInPlayer(pl, target)
         for i = 1, #ignoredPlayers do
           if ignoredPlayers[i] == host then
             pl:SetCombatTarget(nil)
-            return true
+            return
           end
         end
         pl:SetCombatTarget(host)
       end
     end
   end
+end
+
+function AI.OnPlayerStreamInPlayer(pl, target)
+  UpdateCombat(pl)
+  UpdateCombat(target)
   return true
+end
+
+function AI.OnPlayerHostPlayer(pl, target)
+  UpdateCombat(target)
 end
 
 return AI
