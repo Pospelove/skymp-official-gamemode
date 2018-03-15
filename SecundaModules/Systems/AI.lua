@@ -54,41 +54,9 @@ local function UpdateCombat(pl)
   end
 end
 
-local function StepAI(playerid)
-  local pl = Player.LookupByID(playerid)
-  if pl and pl:IsNPC() and pl:GetCurrentAV("Health") > 0 and pl:GetHost() ~= nil then
-    UpdateCombat(pl)
-    SetTimer(10000, function()
-      StepAI(playerid)
-    end)
-  else
-    timerSet[playerid] = nil
-  end
-end
-
-local function SetAITimer(pl)
-  local playerid = pl:GetID()
-  if pl:IsNPC() and not timerSet[playerid] then
-    timerSet[playerid] = true
-    SetTimer(1, function()
-      StepAI(playerid)
-    end)
-  end
-end
-
-function AI.OnPlayerSpawn(pl)
-  return true
-end
-
-function AI.OnPlayerStreamInPlayer(pl, target)
-  SetAITimer(pl)
+function AI.OnPlayerUpdate(pl)
   UpdateCombat(pl)
-  UpdateCombat(target)
   return true
-end
-
-function AI.OnPlayerHostPlayer(pl, target)
-  UpdateCombat(target)
 end
 
 return AI
