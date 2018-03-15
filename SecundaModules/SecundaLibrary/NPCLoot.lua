@@ -119,9 +119,11 @@ local function GetContFor(key)
 end
 
 function NPCLoot.FillContainer(npc)
+  --print("1")
   local cont = GetContFor(npc:GetValue("baseID"))
   if not cont then cont = GetContFor(deru(npc:GetValue("name"))) end
   if cont then
+      --print("2")
     --if npc:GetValue("baseID") ==  0x000A91A0  then print("CHICKEN LOOT 2") end
     cont:ApplyTo(npc.pl)
   end
