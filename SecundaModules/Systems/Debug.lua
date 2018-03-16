@@ -130,6 +130,9 @@ function Debug.OnUserChatCommand(user, cmd)
     if u1 and u2 then
       u1:SetSpawnPoint(u2:GetLocation(), u2:GetX(), u2:GetY(), u2:GetZ(), u2:GetAngleZ())
       u1:Spawn()
+      u1:AddTask(function()
+        u1:DebugUpdateChunk()
+      end)
       user:SendChatMessage(Theme.success .. "Игрок " .. tostring(u1) .. " будет телепортирован к " .. tostring(u2))
     end
   end
