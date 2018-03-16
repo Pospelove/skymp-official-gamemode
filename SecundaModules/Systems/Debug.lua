@@ -131,7 +131,7 @@ function Debug.OnUserChatCommand(user, cmd)
       u1:SetSpawnPoint(u2:GetLocation(), u2:GetX(), u2:GetY(), u2:GetZ(), u2:GetAngleZ())
       u1:Spawn()
       u1:AddTask(function()
-        u1:DebugUpdateChunk()
+        SetTimer(500, function() u1:DebugUpdateChunk() end)
       end)
       user:SendChatMessage(Theme.success .. "Игрок " .. tostring(u1) .. " будет телепортирован к " .. tostring(u2))
     end
