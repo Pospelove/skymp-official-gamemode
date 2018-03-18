@@ -210,6 +210,9 @@ function NPC:_ApplyData()
     if deru(self.pl:GetName()) == "Изгой" then
       self.isIsgoy = true
     end
+    if deru(self.pl:GetName()) == "Наемник" or deru(self.pl:GetName()) == "Наёмник" then
+      self.isNaemnik = true
+    end
   end
   self.pl:SetPos(self.data.x, self.data.y, self.data.z)
   self.pl:SetAngleZ(self.data.angleZ)
@@ -233,12 +236,70 @@ function NPC:_ApplyData()
       add("Перчатки Изгоев", 1)
       add("Головной убор Изгоев", 1)
       add("Меч Изгоев", 1)
+    elseif self.isNaemnik then
+      local r = math.random(0, 100)
+      if r > 70 then
+        add("Стальной меч", 1)
+      elseif r > 50 then
+        add("Стальная булава", 1)
+      elseif r > 30 then
+        add("Железная секира", 1)
+      else
+        add("Стальной боевой молот", 1)
+      end
+      r = math.random(0, 100)
+      if r > 90 then
+        add("Стальная пластинчатая броня", 1)
+        add("Стальные пластинчатые сапоги", 1)
+        add("Стальные пластинчатые перчатки", 1)
+        add("Стальной пластинчатый шлем", 1)
+      elseif r > 30 then
+        add("Железная броня", 1)
+        add("Железные сапоги", 1)
+        add("Железные наручи", 1)
+        add("Железный шлем", 1)
+      else
+        add("Стальная броня", 1)
+        add("Стальные сапоги с оковкой", 1)
+        add("Железные наручи", 1)
+        if math.random(0, 1) == 1 then
+          add("Стальной шлем", 1)
+        else
+          add("Стальной рогатый шлем", 1)
+        end
+      end
     else
-      add("Сыромятная броня", 1)
+      local r = math.random(0, 100)
+      if math.random(0, 2) == 2 then add("Ламеллярная броня", 1) else add("Сыромятная броня", 1) end
       add("Сыромятные сапоги", 1)
       add("Сыромятные наручи", 1)
-      add("Сыромятный шлем", 1)
-      add("Железный меч", 1)
+      if math.random(0, 10) > 8 then
+        add("Капюшон", 1)
+      else
+        if math.random(0, 2) == 0 then add("Кожаный шлем", 1) else add("Сыромятный шлем", 1) end
+      end
+      if r > 90 then
+        add("Железный меч", 1)
+      elseif r > 80 then
+        add("Стеклянный кинжал", 1)
+      elseif r > 70 then
+        add("Железная булава", 1)
+      elseif r > 60 then
+        add("Колун", 1)
+      elseif r > 50 then
+        add("Железный боевой топор", 1)
+      elseif r > 40 then
+        add("Стальной меч", 1)
+      elseif r > 30 then
+        add("Стальная булава", 1)
+      elseif r > 20 then
+        add("Железный меч", 1)
+      elseif r > 10 then
+        add("Железный боевой молот", 1)
+      else
+        add("Железный двуручный меч", 1)
+      end
+
     end
     self.isRandomBandit = true
   else
@@ -397,10 +458,10 @@ function NPC.OnPlayerDying(pl, killer)
       obj:SetName(pl:GetName())
       SetTimer(1000, function() -- Prevents doubling items
         Container(pl):ApplyTo(obj)
-        if npc.isRandomBandit then
-          obj:RemoveAllItems()
-          obj:AddItem(pl:GetEquippedWeapon(0), 1)
-        end
+        --if npc.isRandomBandit then
+        --  obj:RemoveAllItems()
+        --  obj:AddItem(pl:GetEquippedWeapon(0), 1)
+        --end
       end)
       if gInvisibleChests[pl:GetID()] ~= nil then
         gInvisibleChests[pl:GetID()]:Delete()
