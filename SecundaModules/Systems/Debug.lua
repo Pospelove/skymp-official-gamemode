@@ -36,6 +36,17 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if tokens[1] == "/saveall" then
+    if not Debug.IsDeveloper(user) then
+      return true
+    end
+    for i = 0, GetMaxPlayers() do
+      local user = User.Lookup(i)
+      if user then user:Save() end
+    end
+    user:SendChatMessage("Готово")
+  end
+
   if tokens[1] == "/say" then
     local i = 2
     local str = ""
