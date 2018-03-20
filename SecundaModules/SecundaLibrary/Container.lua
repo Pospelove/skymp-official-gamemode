@@ -56,11 +56,25 @@ end
 
 function Container:ApplyTo(rawCont)
   rawCont:RemoveAllItems()
+  self:AddTo(rawCont)
+end
+
+function Container:AddTo(rawCont)
   for i = 1, #self.items do
     if self.items[i].count > 0 then
       rawCont:AddItem(self.items[i].itemType, self.items[i].count)
     end
   end
+end
+
+function Container:Dump()
+  local str = ""
+  for i = 1, #self.items do
+    if self.items[i].count > 0 then
+      str = str .. (self.items[i].itemType:GetIdentifier() ..  "(" .. self.items[i].count .. ")") .. " "
+    end
+  end
+  return str
 end
 
 function Container.Init()

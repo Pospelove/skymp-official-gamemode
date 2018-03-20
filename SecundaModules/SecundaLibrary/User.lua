@@ -674,7 +674,10 @@ end
 
 function User.OnPlayerCharacterCreated(pl)
   if pl:IsNPC() == false then
-    pl:SetVirtualWorld(0)
+    local lastVw = pl:GetVirtualWorld()
+    SetTimer(4000, function()
+      if pl:GetVirtualWorld() == lastVw then pl:SetVirtualWorld(0); print("switch vw") end
+    end)
     local user = User.Lookup(pl:GetName())
     user:Save()
     Secunda.OnUserCharacterCreated(user)
