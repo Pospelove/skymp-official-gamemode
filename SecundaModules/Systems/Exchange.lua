@@ -178,7 +178,7 @@ function Exchange.OnUserChatCommand(user, cmd)
     return true
   end
 
-  if tokens[1] == "/obmen" or tokens[1] == "/ob" or tokens[1] == "/ex" or tokens[1] == "/exchange" or tokens[1] == "/change" then
+  if false and (tokens[1] == "/obmen" or tokens[1] == "/ob" or tokens[1] == "/ex" or tokens[1] == "/exchange" or tokens[1] == "/change") then
     if not tokens[2] then
       user:SendChatMessage(Theme.error .. "Вы не ввели имя игрока")
       return true
