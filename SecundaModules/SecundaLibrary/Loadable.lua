@@ -1,5 +1,7 @@
 Loadable = {}
 
+local gCount = {}
+
 function Loadable.Load(loadable, dirName)
   local file = nil
   local suc, errstr = pcall(function()
@@ -8,7 +10,10 @@ function Loadable.Load(loadable, dirName)
     if file == nil then
       error("unable to open " .. filePath)
     end
-    print("loading data from " .. filePath)
+    if not gCount[dirName] then gCount[dirName] = 1 end
+    local n = gCount[dirName]
+    gCount[dirName] = gCount[dirName] + 1
+    print("loading data from " .. filePath .. "[" .. n .. "]")
     local str = ""
     for line in file:lines() do
       str = str .. line
