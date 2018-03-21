@@ -8,6 +8,7 @@ function Loadable.Load(loadable, dirName)
     if file == nil then
       error("unable to open " .. filePath)
     end
+    print("loading data from " .. filePath)
     local str = ""
     for line in file:lines() do
       str = str .. line
