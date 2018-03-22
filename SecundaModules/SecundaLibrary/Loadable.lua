@@ -1,5 +1,11 @@
 Loadable = {}
 
+local clock = os.clock
+function sleep(n)  -- seconds
+  local t0 = clock()
+  while clock() - t0 <= n do end
+end
+
 local gCount = {}
 
 function Loadable.Load(loadable, dirName)
@@ -14,6 +20,7 @@ function Loadable.Load(loadable, dirName)
     local n = gCount[dirName]
     gCount[dirName] = gCount[dirName] + 1
     print("loading data from " .. filePath .. "[" .. n .. "]")
+    if n % 2000 == 0 then sleep(2) end
     local str = ""
     for line in file:lines() do
       str = str .. line
