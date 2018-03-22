@@ -20,7 +20,7 @@ function Loadable.Load(loadable, dirName)
     local n = gCount[dirName]
     gCount[dirName] = gCount[dirName] + 1
     print("loading data from " .. filePath .. "[" .. n .. "]")
-    if n % 2000 == 0 then sleep(2) end
+    if n % 1000 == 0 then sleep(3) end
     local str = ""
     for line in file:lines() do
       str = str .. line
