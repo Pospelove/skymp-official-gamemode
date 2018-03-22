@@ -9,7 +9,7 @@ local daysPassed = 0x00000039
 
 local knownHour = {}
 
-function DateTime.OnUserUpdate(user)
+function DateTime.OnEvery1000ms(user)
   local date = os.date("*t")
   if knownHour[user:GetID()] ~= date.hour then
     user:SetGlobal(gameHour, date.hour)

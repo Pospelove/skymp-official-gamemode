@@ -8,7 +8,10 @@ function ActorValues.OnUserConnect(user)
   end)
 end
 
-function ActorValues.OnUserUpdate(user)
+function ActorValues.OnPlayerUpdate(pl)
+  local user = User.Lookup(pl:GetID())
+  if not user then return true end
+
   FurnOnUserUpdate(user)
   if user:IsJumping() or user:IsInJumpState() then
     local stamina = user:GetCurrentAV("Stamina")

@@ -54,7 +54,7 @@ local function UpdateCombat(pl)
   end
 end
 
-function AI.OnPlayerUpdate(pl)
+function AI.OnPlayerStreamInPlayer(pl, target)
   UpdateCombat(pl)
   return true
 end

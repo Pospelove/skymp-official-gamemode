@@ -19,7 +19,9 @@ function Loadable.Load(loadable, dirName)
     if not gCount[dirName] then gCount[dirName] = 1 end
     local n = gCount[dirName]
     gCount[dirName] = gCount[dirName] + 1
-    print("loading data from " .. filePath .. "[" .. n .. "]")
+    if n % 1000 == 0 then
+      print("loading data from " .. filePath .. "[" .. n .. "]")
+    end
     if n % 20000 == 0 then sleep(1) end
     local str = ""
     for line in file:lines() do

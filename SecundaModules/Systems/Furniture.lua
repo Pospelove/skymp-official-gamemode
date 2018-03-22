@@ -223,7 +223,10 @@ function Furniture.OnActivate(source, target)
   return true
 end
 
-function Furniture.OnUserUpdate(user)
+function Furniture.OnPlayerUpdate(pl)
+	local user = User.Lookup(pl:GetID())
+	if not user then return true end
+
 	local name = user:GetName()
 	if user:GetCurrentFurniture() == nil then
 		unsynced[name] = nil

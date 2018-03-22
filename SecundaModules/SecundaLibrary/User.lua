@@ -23,7 +23,6 @@ function User.Docs()
   OnUserConnect(user) --
   OnUserDisconnect(user) --
   OnUserSpawn(user) --
-  OnUserUpdate(user) --
   OnUserCharacterCreated(user) --
   OnUserChatMessage(user, text) -- Called on chat message (not command)
   OnUserChatCommand(user, cmdtext) -- Called on chat command
@@ -44,6 +43,7 @@ end
 local gUserCtorEnabled = true
 local gUsersMap = {}
 local gUserTested = false
+local gIsTimerStarted = {}
 
 -- Public
 
@@ -685,7 +685,21 @@ function User.OnPlayerCharacterCreated(pl)
   return true
 end
 
+local function Every1000ms(id)
+  local user = User.Lookup(id)
+  if user ~= nil then
+    Secunda.OnEvery1000ms(user)
+  end
+  SetTimer(1000, function() Every1000ms(id) end)
+end
+
 function User.OnPlayerSpawn(pl)
+  local id = pl:GetID()
+  if not gIsTimerStarted[id] then
+    gIsTimerStarted[id] = true
+    SetTimer(1, function() Every1000ms(id) end)
+  end
+
   if pl:IsNPC() == false then
     local user = User.Lookup(pl:GetName())
     Secunda.OnUserSpawn(user)
@@ -836,9 +850,9 @@ end
 function User.OnPlayerUpdate(pl)
   local emptyFunc = function() end
   if pl:IsNPC() == false then
-    local user = User.Lookup(pl:GetName())
-    if user:IsSpawned() then
-      Secunda.OnUserUpdate(user)
+    local user = User.Lookup(pl:GetID())
+    if pl:IsSpawned() then
+      --Secunda.OnUserUpdate(user)
       if #user.tasksOnSpawn > 0 then
         for i = 1, #user.tasksOnSpawn do
           user.tasksOnSpawn[i]()
