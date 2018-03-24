@@ -36,10 +36,11 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if not Debug.IsDeveloper(user) then
+    return true
+  end
+
   if tokens[1] == "/saveall" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     for i = 0, GetMaxPlayers() do
       local user = User.Lookup(i)
       if user then user:Save() end
@@ -54,23 +55,14 @@ function Debug.OnUserChatCommand(user, cmd)
       str = str .. " " .. tokens[i]
       i = i + 1
     end
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     SendChatMessageToAll(Theme.notice .. user:GetName() .. ": " .. ru(str))
   end
 
   if tokens[1] == "/xyz" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     user:SendChatMessage(math.ceil(user:GetX()) .. " " .. math.ceil(user:GetY()) .. " " .. math.ceil(user:GetZ()))
   end
 
   if tokens[1] == "/online" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     local n = 0
     for i = 0, GetMaxPlayers() do
       if Player.LookupByID(i) ~= nil and Player.LookupByID(i):IsNPC() == false then
@@ -81,9 +73,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if stringx.startswith(cmd, "/setav ") then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     if tokens[2] ~= nil and tokens[3] ~= nil then
       if(tokens[4] == "current") then
         user:SetCurrentAV(tokens[2], tonumber(tokens[3]))
@@ -97,9 +86,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if stringx.startswith(cmd, "/setflag ") then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     if tokens[2] ~= nil and tokens[3] ~= nil then
       tokens[3] = tokens[3]:lower()
       if tokens[3] == "on" or tokens[3] == "off" then
@@ -115,23 +101,16 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if cmd == "/ptrsize" or cmd == "/sizeofvoid" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     user:SendChatMessage(Theme.info .. "Размер указателя равен " .. Theme.sel .. tostring(GetPointerSize()))
   end
 
   if stringx.startswith(cmd, "/incrskill ") then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     if tokens[2] == nil then tokens[2] = user:GetName() end
     if tokens[3] == nil then tokens[3] = "Marksman" end
     User.Lookup(tokens[1]):IncrementSkill(tokens[2])
   end
 
   if tokens[1] == "/tp" then
-    if not Debug.IsDeveloper(user) then return true end
     local u1 = User.Lookup(tokens[2])
     local u2 = User.Lookup(tokens[3])
     if u1 and not u2 then
@@ -153,16 +132,10 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if cmd == "/kill" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     user:SetCurrentAV("Health", 0.0)
   end
 
   if tokens[1] == "/drop" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     if tokens[2] == "worldobject" then
       local n = #WorldObject.GetAllWorldObjects()
       WorldObject.DeleteAll()
@@ -182,9 +155,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/clearloc" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     local loc = user:GetLocation()
     local locID = loc:GetID()
     local wos = WorldObject.GetAllWorldObjects()
@@ -199,9 +169,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/hittask" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     if tokens[2] ~= nil then
       local i = 2
       local str = ""
@@ -217,9 +184,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/cmd" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     if tokens[2] ~= nil and tokens[3] ~= nil then
       local i = 3
       local str = ""
@@ -233,9 +197,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/summon" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     local i = 2
     local str = ""
     while tokens[i] ~= nil do
@@ -272,9 +233,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/additem" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     local i = 2
     local str = ""
     while tokens[i] ~= nil do
@@ -294,9 +252,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/addspell" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     local i = 2
     local str = ""
     while tokens[i] ~= nil do
@@ -317,9 +272,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/rmspell" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     local i = 2
     local str = ""
     while tokens[i] ~= nil do
@@ -340,9 +292,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/setval" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     if type(tokens[2]) ~= "string" then
       user:SendChatMessage(Theme.error .. "Вы не ввели название переменной")
       return true
@@ -362,9 +311,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/regen" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     local wos = WorldObject.GetAllWorldObjects()
     local n = 0
     for i = 1, #wos do
@@ -391,9 +337,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/countitem" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     local i = 2
     local str = ""
     while tokens[i] ~= nil do
@@ -411,17 +354,11 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/abort" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     user:SendChatMessage(Theme.error .. "Сервер будет уничтожен. Зачем вы это сделали?")
     Terminate()
   end
 
   if tokens[1] == "/overdose" and tokens[2] == "npc" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     if tonumber(tokens[3]) == nil then
       user:SendChatMessage(Theme.error .. "Некорректное количество")
     else
@@ -437,9 +374,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/overdose" and tokens[2] == "object" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     if tonumber(tokens[3]) == nil then
       user:SendChatMessage(Theme.error .. "Некорректное количество")
     else
@@ -459,9 +393,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/horse" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     local npc = NPC.Create("dummy")
     npc:SetValue("baseID", 0x0009CCD7)
     local rawRes = user
@@ -480,9 +411,6 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if tokens[1] == "/dummy" then
-    if not Debug.IsDeveloper(user) then
-      return true
-    end
     local npc = NPC.Create("dummy")
     local rawRes = user
     npc:SetValue("baseID", 1)
