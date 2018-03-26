@@ -2,7 +2,7 @@ Party = class()
 Party.data = {}
 Party.data.parties = {}
 Party.data.vals = {}
-Party.chatCol = "#1a9759"
+Party.chatCol = ChatTheme.party
 Party.chatName = '[Шайка]'
 Party.maxMembers = 4
 
@@ -32,9 +32,9 @@ function Party.Docs()
   OnPartyChangedLeader(party, oldleader, newleader) - Call when leader is changed
   OnPartyDestroy(party) -- Call when party destroying..
   OnPartyInit(party, leader, user) -- Call when party init
+  OnPartySendedChatMsg(user, msg) -- Call when msg is sended in party chat
   ]]
 end
---- ChatTheme.lua create
 --- ошибка во время запроса
 Party.cmds = {} -- Cmds of Party module
 
@@ -42,13 +42,14 @@ Party.cmds['invite'] = {}
 Party.cmds['invite']['func'] = function(user, victim, act)
 	Party.CheckInvite( user, victim ) end
 Party.cmds['invite']['customcheck'] = function(user,victim)
-	if victim == nil then return Party.SystemMsg( user, "Неправильный формат. Подробнее /party help") end
+	if victim == nil then return Party.SystemMsg( user, Theme.error .. "Неправильный формат. Подробнее /party help") end
 	local inparty = Party.GetVal(user,"InParty")
 	local isleader = Party.GetVal(user,"IsPartyLeader")
-	if inparty and not isleader then Party.SystemMsg( user, ("Вы не являетесь лидером!")) end
+	if inparty and not isleader then Party.SystemMsg( user, Theme.error .."Вы не являетесь лидером!") end
 	return inparty == isleader end
 Party.cmds['invite']['description'] = 'Пригласить игрока в шайку.'
 Party.cmds['invite']['format'] = " <Имя игрока>"
+Party.cmds['invite']['adm'] = false
 
 Party.cmds['yes'] = {}
 Party.cmds['yes']['func'] = function(user, victim, act)
@@ -57,6 +58,7 @@ Party.cmds['yes']['customcheck'] = function(user, victim)
 	return true	end
 Party.cmds['yes']['description'] = 'Принять приглашение.'
 Party.cmds['yes']['format'] = ""
+Party.cmds['yes']['adm'] = false
 
 Party.cmds['no'] = {}
 Party.cmds['no']['func'] = function(user, victim, act)
@@ -65,21 +67,23 @@ Party.cmds['no']['customcheck'] = function(user, victim)
 	return true	end
 Party.cmds['no']['description'] = 'Принять приглашение.'
 Party.cmds['no']['format'] = ""
+Party.cmds['no']['adm'] = false
 
 Party.cmds['kick'] = {}
 Party.cmds['kick']['func'] = function(user, victim, act)
 	Party.GetPartyPool(user):kickMember(victim) end
 Party.cmds['kick']['customcheck'] = function(user, victim)
-	if victim == nil then return Party.SystemMsg( user, "Неправильный формат. Подробнее /party help") end
+	if victim == nil then return Party.SystemMsg( user, Theme.error .. "Неправильный формат. Подробнее /party help") end
 	local isleader = Party.GetVal(user,"IsPartyLeader")
 	local inparty = Party.GetVal(user,"InParty")
-	local vic_inparty = Party.GetVal(victim, 'InParty')
-	if not vic_inparty then Party.SystemMsg( user, "Игрок не в шайке!") return end
-	if not inparty then Party.SystemMsg( user, "Вы не в шайке!") return false end
-	if not isleader then Party.SystemMsg( user, "Вы не являетесь лидером!") return false end
+	local vic_inparty = Party.GetVal(victim,'InParty')
+	if not vic_inparty then Party.SystemMsg( user, Theme.error .. "Игрок не в шайке!") return end
+	if not inparty then Party.SystemMsg( user, Theme.error .. "Вы не в шайке!") return false end
+	if not isleader then Party.SystemMsg( user, Theme.error .. "Вы не являетесь лидером!") return false end
 	return true	end
 Party.cmds['kick']['description'] = 'Исключить игрока из шайки.'
 Party.cmds['kick']['format'] = " <Имя игрока>"
+Party.cmds['kick']['adm'] = false
 
 Party.cmds['destroy'] = {}
 Party.cmds['destroy']['func'] = function(user, victim, act)
@@ -87,54 +91,61 @@ Party.cmds['destroy']['func'] = function(user, victim, act)
 Party.cmds['destroy']['customcheck'] = function(user, victim)
 	local isleader = Party.GetVal(user,"IsPartyLeader")
 	local inparty = Party.GetVal(user,"InParty")
-	if not inparty then Party.SystemMsg( user, "Вы не в шайке!") return false end
-	if not isleader then Party.SystemMsg( user, "Вы не являетесь лидером!") return false end
+	if not inparty then Party.SystemMsg( user, Theme.error .. "Вы не в шайке!") return false end
+	if not isleader then Party.SystemMsg( user, Theme.error .. "Вы не являетесь лидером!") return false end
 	return true	end
 Party.cmds['destroy']['description'] = 'Расформировать шайку.'
 Party.cmds['destroy']['format'] = ""
+Party.cmds['destroy']['adm'] = false
 
 Party.cmds['changeleader'] = {}
 Party.cmds['changeleader']['func'] = function(user, victim, act)
 	Party.GetPartyPool(user):changeLeader(victim) end
 Party.cmds['changeleader']['customcheck'] = function(user, victim)
-	if victim == nil then return Party.SystemMsg( user, "Неправильный формат. Подробнее /party help") end
+	if victim == nil then return Party.SystemMsg( user, Theme.error .. "Неправильный формат. Подробнее /party help") end
 	local isleader = Party.GetVal(user,"IsPartyLeader")
 	local inparty = Party.GetVal(user,"InParty")
-	local vic_inparty = Party.GetVal(victim, 'InParty')
-	if not vic_inparty then Party.SystemMsg( user, "Игрок не в шайке!") return end
-	if not inparty then Party.SystemMsg( user, "Вы не в шайке!") return false end
-	if not isleader then Party.SystemMsg( user, "Вы не являетесь лидером!") return false end
+	local vic_inparty = Party.GetVal(victim,'InParty')
+	if not vic_inparty then Party.SystemMsg( user, Theme.error .. "Игрок не в шайке!") return end
+	if not inparty then Party.SystemMsg( user, Theme.error .. "Вы не в шайке!") return false end
+	if not isleader then Party.SystemMsg( user, Theme.error .. "Вы не являетесь лидером!") return false end
 	return true	end
 Party.cmds['changeleader']['description'] = 'Сменить лидера шайки.'
 Party.cmds['changeleader']['format'] = " <Имя игрока>"
+Party.cmds['changeleader']['adm'] = false
 
 Party.cmds['dev'] = {}
 Party.cmds['dev']['func'] = function(user, victim, act)
 	Party.DevFunc(user, victim) end
 Party.cmds['dev']['customcheck'] = function(user, victim)
-	return true	end
+	local dev = Debug.IsDeveloper(user)
+	if not dev then Party.SystemMsg( user, Theme.error .. "Неправильный формат. Подробнее /party help") return false end
+	return true end
 Party.cmds['dev']['description'] = 'Команда для тестирования.'
 Party.cmds['dev']['format'] = ""
+Party.cmds['dev']['adm'] = true
 
 Party.cmds['members'] = {}
 Party.cmds['members']['func'] = function(user, victim, act)
-	Party.GetAllMembers(user) end
+	Party.GetAllMembers(user,user) end
 Party.cmds['members']['customcheck'] = function(user, victim)
 	local inparty = Party.GetVal(user,"InParty")
-	if not inparty then Party.SystemMsg( user, "Вы не в шайке!") return false end
+	if not inparty then Party.SystemMsg( user, Theme.error .. "Вы не в шайке!") return false end
 	return true end
 Party.cmds['members']['description'] = 'Показать список членов шайки.'
 Party.cmds['members']['format'] = ""
+Party.cmds['members']['adm'] = false
 
 Party.cmds['leave'] = {}
 Party.cmds['leave']['func'] = function(user, victim, act)
-	Party.GetPartyPool(user):kickMember(user) end
+	Party.GetPartyPool(Party.InParty(user)):kickMember(user) end
 Party.cmds['leave']['customcheck'] = function(user, victim)
 	local inparty = Party.GetVal(user,"InParty")
-	if not inparty then Party.SystemMsg( user, "Вы не в шайке!") return false end
+	if not inparty then Party.SystemMsg( user, Theme.error .. "Вы не в шайке!") return false end
 	return true end
 Party.cmds['leave']['description'] = 'Покинуть шайку.'
 Party.cmds['leave']['format'] = ""
+Party.cmds['leave']['adm'] = false
 
 Party.cmds['help'] = {}
 Party.cmds['help']['func'] = function(user, victim, act)
@@ -143,7 +154,46 @@ Party.cmds['help']['customcheck'] = function(user, victim)
 	return true end
 Party.cmds['help']['description'] = 'Показать список команд для управления шайкой'
 Party.cmds['help']['format'] = ""
+Party.cmds['help']['adm'] = false
 
+Party.cmds['admsee'] = {}
+Party.cmds['admsee']['func'] = function(user, victim, act)
+	Party.GetAllMembers(user, victim) end
+Party.cmds['admsee']['customcheck'] = function(user, victim)
+	local dev = Debug.IsDeveloper(user)
+	if not dev then Party.SystemMsg( user, Theme.error .. "Неправильный формат. Подробнее /party help") return false end
+	local party = Party.InParty(victim)
+	if not party then Party.SystemMsg( user, Theme.error .. "Данный персонаж не в шайке!") end
+	return true end
+Party.cmds['admsee']['description'] = 'Показать список членов шайки игрока.'
+Party.cmds['admsee']['format'] = ""
+Party.cmds['admsee']['adm'] = true
+
+Party.cmds['admkick'] = {}
+Party.cmds['admkick']['func'] = function(user, victim, act)
+	Party.GetPartyPool(Party.InParty(victim)):kickMember(victim) end
+Party.cmds['admkick']['customcheck'] = function(user, victim)
+	local dev = Debug.IsDeveloper(user)
+	if not dev then Party.SystemMsg( user, Theme.error .. "Неправильный формат. Подробнее /party help") return false end
+	local party = Party.InParty(victim)
+	if not party then Party.SystemMsg( user, Theme.error .. "Данный персонаж не в шайке!") end
+	return true end
+Party.cmds['admkick']['description'] = 'Кикнуть игрока из его шайки.'
+Party.cmds['admkick']['format'] = "<Иия игрока>"
+Party.cmds['admkick']['adm'] = true
+
+Party.cmds['admdestroy'] = {}
+Party.cmds['admdestroy']['func'] = function(user, victim, act)
+	Party.GetPartyPool(Party.InParty(victim)):destroyParty() end
+Party.cmds['admdestroy']['customcheck'] = function(user, victim)
+	local dev = Debug.IsDeveloper(user)
+	if not dev then Party.SystemMsg( user, Theme.error .. "Неправильный формат. Подробнее /party help") return false end
+	local party = Party.InParty(victim)
+	if not party then Party.SystemMsg( user, Theme.error .. "Данный персонаж не в шайке!") end
+	return true end
+Party.cmds['admdestroy']['description'] = 'Расформировать шайку, в которой находиться игрок.'
+Party.cmds['admdestroy']['format'] = ""
+Party.cmds['admdestroy']['adm'] = true
 
 function Party.Think(user, victim, act)
 
@@ -151,17 +201,17 @@ function Party.Think(user, victim, act)
 		victim = User.Lookup(victim)
 
 		if victim == nil then
-			return Party.SystemMsg( user, "Игрок не найден!")
+			return Party.SystemMsg( user, Theme.error .. "Игрок не найден!")
 		end
 	end
 
-	if user == victim then return Party.SystemMsg( user, "Вы не можете выполнить это действие над собой!")  end
+	if user == victim then return Party.SystemMsg( user, Theme.error .. "Вы не можете выполнить это действие над собой!")  end
 
 	if Party.cmds[act] then
 		if Party.cmds[act]['customcheck'](user,victim) then
 			return Party.cmds[act]['func'](user,victim,act)
 		else return end
-	else Party.SystemMsg( user, "Команда не найдена. Подробнее /party help") end
+	else Party.SystemMsg( user, Theme.error .. "Команда не найдена. Подробнее /party help") end
 end
 
 function Party.CheckInvite(user, victim)
@@ -174,27 +224,37 @@ function Party.CheckInvite(user, victim)
 			if user_inparty then
 				local mems = tablex.size(Party.GetPartyPool(Party.GetVal(user,'PartyLeader')):getMembers())
 				if mems <= Party.maxMembers then Party.MakeRequest(user, victim)
-				else Party.SystemMsg( user, 'Слишком много игроков в шайке!' ) end
+				else Party.SystemMsg( user, Theme.error .. 'Слишком много игроков в шайке!' ) end
 			else Party.MakeRequest(user, victim) end
-		else Party.SystemMsg( user,  tostring(victim) .. ' уже отвечает на приглашению в шайку. Подождите!') end
-	else Party.SystemMsg( user, "Игрок " .. tostring(victim) .. " уже в шайке!" ) end
+		else Party.SystemMsg( user, Theme.sel .. tostring(victim) .. Theme.error .. ' уже отвечает на приглашению в шайку. Подождите!') end
+	else Party.SystemMsg( user, Theme.error .. "Игрок " .. Theme.sel .. tostring(victim) .. Theme.error .. " уже в шайке!" ) end
 end
 
-function Party.GetAllMembers(user)
-	local mems = Party.GetPartyPool(Party.GetVal(user,'PartyLeader')):getMembers()
-	Party.SystemMsg( user, "Игроки в пати: ")
+function Party.GetAllMembers(user, victim)
+	local leader = Party.InParty(victim)
+	local mems = Party.GetPartyPool(leader):getMembers()
+	Party.SystemMsg( user, Theme.info .. "Игроки в шайке: ")
+
 	for k,v in pairs(mems) do
-		Party.SystemMsg( user, k .. ": " .. tostring(v))
+		if not v == leader then
+			Party.SystemMsg( user, Theme.info .. k .. ": " .. Theme.sel .. tostring(v))
+		else
+			Party.SystemMsg( user, Theme.info .. k .. ": " .. Theme.sel .. tostring(v) .. ' - Лидер')
+		end
 	end
 
 end
 
 function Party.GetCmds(u)
-	Party.SystemMsg( u, "Список команд для управления шайкой:" )
+	Party.SystemMsg( u, Theme.info .. "Список команд для управления шайкой:" )
 	for k,v in pairs(Party.cmds) do
-		Party.SystemMsg( u, "/party " .. k .. v['format'] .. " - " .. v['description'])
+		if not v['adm'] then
+			Party.SystemMsg( u, Theme.info .. "/party " .. k .. v['format'] .. " - " .. v['description'])
+		elseif Debug.IsDeveloper(u) then
+			Party.SystemMsg( u, Theme.info .. "/party " .. k .. v['format'] .. " - " .. v['description'])
+		end
 	end
-	Party.SystemMsg(u, "/p <Сообщение> - отправить сообщение в чат.")
+	Party.SystemMsg(u, Theme.info .. "/p <Сообщение> - отправить сообщение в чат.")
 end
 
 function Party.CheckCmd(user, cmdtext)
@@ -206,13 +266,13 @@ function Party.CheckCmd(user, cmdtext)
 		local victim = args[3]
 
 		if #args < 2 or #args > 3 then
-			Party.SystemMsg( user, "Неправильный формат. Подробнее /party help")
+			Party.SystemMsg( user, Theme.error .. "Неправильный формат. Подробнее /party help")
 			return end
 
 		Party.Think( user, victim, act )
 
 	elseif cmd == 'p' then
-		args = stringx.split(cmdtext, ' ', 2)
+		args = stringx.split(cmdtext,' ', 2)
 		local text = args[2]
 		Party.ChatMsg(user, text)
 	end
@@ -220,18 +280,19 @@ end
 
 function Party.ChatMsg(user, text)
 	local party = Party.InParty(user)
-	local suffix = tostring(user) .. ':   '
+	local suffix = tostring(user) .. ': '
 
 	if party then Party.SendToAll(party, Party.chatCol .. Party.chatName .. suffix .. text ) return
 	else return user:SendChatMessage(Party.chatCol .. Party.chatName .. ' Вы не состоите в шайке') end
+	Secunda.OnPartySendedChatMsg(user, text)
 end
 
 function Party.SystemMsg(user, text, all)
 	if all then
 		local party = Party.InParty(user)
-		Party.SendToAll(party, Party.chatCol ..'[Шайка] ' .. text )
+		Party.SendToAll(party,' ' .. text )
 	else
-		user:SendChatMessage(Party.chatCol ..'[Шайка] ' .. text )
+		user:SendChatMessage(' ' .. text )
 	end
 end
 
@@ -258,25 +319,25 @@ function Party.DevFunc(user, vic)
 	for k, v in pairs(Party.data.parties) do
 		Party.SystemMsg( user, k)
 	end
-	if Party.InParty(user) then Party.SystemMsg( user, 'true')
-	elseif not Party.InParty(user) then Party.SystemMsg( user, 'false')  end
+	if Party.InParty(user) then Party.SystemMsg( user, Theme.info .. 'true')
+	elseif not Party.InParty(user) then Party.SystemMsg( user, Theme.info .. 'false')  end
 
-	Party.SystemMsg( user, 'InParty? '.. tostring(Party.GetVal(vic,'InParty')))
-	Party.SystemMsg( user, 'Partyleader?' .. tostring(Party.GetVal(vic,'PartyLeader')))
-	Party.SystemMsg( user, 'IsPartyLeader?' .. tostring(Party.GetVal(vic,'IsPartyLeader')))
+	Party.SystemMsg( user, Theme.info .. 'InParty? '.. tostring(Party.GetVal(vic,'InParty')))
+	Party.SystemMsg( user, Theme.info .. 'Partyleader?' .. tostring(Party.GetVal(vic,'PartyLeader')))
+	Party.SystemMsg( user, Theme.info .. 'IsPartyLeader?' .. tostring(Party.GetVal(vic,'IsPartyLeader')))
 
 
 end
 
 function Party.MakeRequest(user, victim)
-	Party.SystemMsg( user, "Приглашение отправлено персонажу " .. tostring(victim))
-	Party.SystemMsg( victim,  tostring(user) .. " предложил вступить в шайку. Введите /party 'yes' или 'no'")
+	Party.SystemMsg( user, Theme.info .. "Приглашение отправлено персонажу " .. Theme.sel .. tostring(victim))
+	Party.SystemMsg( victim, Theme.sel .. tostring(user) .. Theme.info .. " предложил вступить в шайку. Введите /party 'yes' или 'no'")
 	Party.SetVal(victim,'PartyInviter', user)
 	SetTimer(20000, function()
-						if Party.GetVal(victim, 'PartyInviter') then
+						if Party.GetVal(victim,'PartyInviter') then
 						Party.SetVal(victim,'PartyInviter', nil)
-						Party.SystemMsg(victim, 'Время ожидания приглашения истекло.')
-						Party.SystemMsg(user, tostring(victim) .. ' не ответил на приглашение.') end end)
+						Party.SystemMsg(victim, Theme.info .. 'Время ожидания приглашения истекло.')
+						Party.SystemMsg(user, Theme.sel .. tostring(victim) .. Theme.info .. ' не ответил на приглашение.') end end)
 end
 
 function Party.Confirmation(user, act)
@@ -294,11 +355,11 @@ function Party.Confirmation(user, act)
 				party:addMember(user)
 			end
 		else
-			Party.SystemMsg( user, "Вы отклонили запрос на вступление в шайку персонажа " .. tostring(leader))
-			Party.SystemMsg( leader, "Персонаж " .. tostring(user) .. "отклонил запрос на вступление в шайку.")
+			Party.SystemMsg( user, Theme.info .. "Вы отклонили запрос на вступление в шайку персонажа " .. Theme.sel .. tostring(leader))
+			Party.SystemMsg( leader, Theme.info .. "Персонаж " .. Theme.sel .. tostring(user) .. Theme.info .. "отклонил запрос на вступление в шайку.")
 		end
 	else
-		Party.SystemMsg( user, "У вас нет запросов на вступление в шайку.")
+		Party.SystemMsg( user, Theme.info .. "У вас нет запросов на вступление в шайку.")
 	end
 end
 
@@ -325,12 +386,12 @@ function Party:setLeader(l)
 end
 
 function Party:addMember(m)
-	Party.SystemMsg( self.leader, tostring(m) .. ' вступил в шайку.', 1)
+	Party.SystemMsg( self.leader, Theme.sel .. tostring(m) .. Theme.info .. ' вступил в шайку.', 1)
 	self.mems[#self.mems+1] = m
 	Party.SetVal(m,'InParty', true)
 	Party.SetVal(m,'PartyLeader', self.leader)
 	Secunda.OnUserAddedToParty(self,m)
-	Party.SystemMsg( m, "Вы вступили в шайку персонажа " .. tostring(self.leader))
+	Party.SystemMsg( m, Theme.info .. "Вы вступили в шайку персонажа " .. Theme.sel .. tostring(self.leader))
 end
 
 function Party:kickMember(m)
@@ -342,8 +403,8 @@ function Party:kickMember(m)
 	Party.SetVal(m,'InParty', nil)
 	Party.SetVal(m,'PartyLeader', nil)
 	table.remove( self.mems, tablex.find(self.mems, m))
-	Party.SystemMsg(self.leader, 'Игрок '..tostring(m)..' покинул шайку.', 1)
-	Party.SystemMsg(m, 'Вы покинули шайку!')
+	Party.SystemMsg(self.leader, Theme.info .. 'Игрок '.. Theme.sel ..tostring(m).. Theme.info .. ' покинул шайку.', 1)
+	Party.SystemMsg(m, Theme.info .. 'Вы покинули шайку!')
 	local size = tablex.size(self.mems)
 	Secunda.OnUserKickedFromParty(self, m)
 	if size < 2 then
@@ -366,7 +427,7 @@ function Party:changeLeader(newleader)
 		Party.SetVal(v,'PartyLeader', self.leader)
 	end
 	Secunda.OnPartyChangedLeader(self, oldl, newleader)
-	Party.SystemMsg(self.leader, 'В шайке новый лидер: '..tostring(self.leader), 1)
+	Party.SystemMsg(self.leader, Theme.info .. 'В шайке новый лидер: '.. Theme.sel ..tostring(self.leader), 1)
 end
 
 function Party:swap(u1,u2)
@@ -379,7 +440,7 @@ function Party:swap(u1,u2)
 end
 
 function Party:destroyParty()
-	Party.SystemMsg(self.leader, 'Шайка расформирована!', 1)
+	Party.SystemMsg(self.leader, Theme.info .. 'Шайка расформирована!', 1)
 
 	for k,v in pairs(self.mems) do
 		Party.SetVal(v,'InParty', nil)
@@ -424,9 +485,8 @@ end
 
 function Party.OnUserChatCommand(user, cmdtext)
 	Party.CheckCmd(user, cmdtext)
-  return true
-end
 
+end
 function Party.OnUserDisconnect(user)
 	local isTest = user.pl:IsNPC()
   if isTest then
@@ -434,12 +494,12 @@ function Party.OnUserDisconnect(user)
   end
 	local inparty = Party.InParty(user)
 	if inparty then Party.GetPartyPool(inparty):kickMember(user) end
-  return true
+
 end
 
 function Party.OnHit(source, target)
 	if Party.GetVal(source,'InParty') then
-		if tostring(Party.InParty(source)) == tostring(Party.InParty(target)) then Party.SystemMsg(source, 'Своих бить запрещено!') return false end
+		if tostring(Party.InParty(source)) == tostring(Party.InParty(target)) then Party.SystemMsg(source, Theme.error .. 'Своих бить запрещено!') return false end
 	else return true end
 end
 
