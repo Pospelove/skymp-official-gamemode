@@ -4,7 +4,7 @@ Party.data.parties = {}
 Party.data.vals = {}
 Party.chatCol = ChatTheme.party
 Party.chatName = '[Шайка]'
-Party.maxMembers = 4
+Party.maxMembers = 7
 
 function Party.Docs()
   return [[
@@ -13,8 +13,8 @@ function Party.Docs()
   Party.InParty(user) -- Get leader of user's party
   Party.ChatMsg(leader, msg ) -- Send msg to party chat
   Party.SystemMsg(user, msg, all) -- Send msg to all users: user = leader of party, all = 1; to one user: user = user, all = 0
-  Party.SetVal(user, var, val) -- Set temporaru var on user.
-  Party.GetVal(user, var) -- Set temporaru var on user.
+  Party.SetVal(user, var, val) -- Set temporary var on user.
+  Party.GetVal(user, var) -- Get temporaruy var on user.
 
   -- Methods:
   Party:getLeader() -- Get leader
@@ -226,32 +226,34 @@ function Party.CheckInvite(user, victim)
 				if mems <= Party.maxMembers then Party.MakeRequest(user, victim)
 				else Party.SystemMsg( user, Theme.error .. 'Слишком много игроков в шайке!' ) end
 			else Party.MakeRequest(user, victim) end
-		else Party.SystemMsg( user, Theme.sel .. tostring(victim) .. Theme.error .. ' уже отвечает на приглашению в шайку. Подождите!') end
-	else Party.SystemMsg( user, Theme.error .. "Игрок " .. Theme.sel .. tostring(victim) .. Theme.error .. " уже в шайке!" ) end
+		else Party.SystemMsg( user, Theme.error .. tostring(victim) .. ' уже отвечает на приглашению в шайку. Подождите!') end
+	else Party.SystemMsg( user, Theme.error .. "Игрок " .. tostring(victim) .. " уже в шайке!" ) end
 end
 
 function Party.GetAllMembers(user, victim)
 	local leader = Party.InParty(victim)
 	local mems = Party.GetPartyPool(leader):getMembers()
-	Party.SystemMsg( user, Theme.info .. "Игроки в шайке: ")
+
+  local dialogMessage = "Игроки в шайке:\n"
 
 	for k,v in pairs(mems) do
 		if tostring(v) ~= tostring(leader) then
-			Party.SystemMsg( user, Theme.info .. k .. ": " .. Theme.sel .. tostring(v))
+			dialogMessage = dialogMessage .. k .. ": " .. tostring(v)
 		else
-			Party.SystemMsg( user, Theme.info .. k .. ": " .. Theme.sel .. tostring(v) .. ' - Лидер')
+			dialogMessage = dialogMessage .. k .. ": " .. tostring(v) .. " *"
 		end
 	end
 
+  user:ShowDialog(1, "message", "", dialogMessage, -1)
 end
 
 function Party.GetCmds(u)
 	Party.SystemMsg( u, Theme.info .. "Список команд для управления шайкой:" )
 	for k,v in pairs(Party.cmds) do
 		if not v['adm'] then
-			Party.SystemMsg( u, Theme.info .. "/party " .. k .. v['format'] .. " - " .. v['description'])
+			Party.SystemMsg( u, Theme.sel .. "/party " .. k .. v['format'] .. Theme.info .. " - " .. v['description'])
 		elseif Debug.IsDeveloper(u) then
-			Party.SystemMsg( u, Theme.info .. "/party " .. k .. v['format'] .. " - " .. v['description'])
+			Party.SystemMsg( u, Theme.sel .. "/party " .. k .. v['format'] .. Theme.info .. " - " .. v['description'])
 		end
 	end
 	Party.SystemMsg(u, Theme.info .. "/p <Сообщение> - отправить сообщение в чат.")
@@ -261,7 +263,7 @@ function Party.CheckCmd(user, cmdtext)
 	local args = stringx.split(cmdtext)
 	local cmd = stringx.replace(args[1], '/', '')
 
-	if cmd == 'party' then
+	if cmd == 'party' or cmd == 'pa' then
 		local act = args[2]
 		local victim = args[3]
 
@@ -290,9 +292,9 @@ end
 function Party.SystemMsg(user, text, all)
 	if all then
 		local party = Party.InParty(user)
-		Party.SendToAll(party,' ' .. text )
+		Party.SendToAll(party,'' .. text )
 	else
-		user:SendChatMessage(' ' .. text )
+		user:SendChatMessage('' .. text )
 	end
 end
 
@@ -485,16 +487,17 @@ end
 
 function Party.OnUserChatCommand(user, cmdtext)
 	Party.CheckCmd(user, cmdtext)
-
+  return true
 end
+
 function Party.OnUserDisconnect(user)
 	local isTest = user.pl:IsNPC()
   if isTest then
-    return
+    return true
   end
 	local inparty = Party.InParty(user)
 	if inparty then Party.GetPartyPool(inparty):kickMember(user) end
-
+  return true
 end
 
 function Party.OnHit(source, target)
