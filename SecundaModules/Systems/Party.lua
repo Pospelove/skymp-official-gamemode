@@ -256,7 +256,7 @@ function Party.GetCmds(u)
 			Party.SystemMsg( u, Theme.sel .. "/party " .. k .. v['format'] .. Theme.info .. " - " .. v['description'])
 		end
 	end
-	Party.SystemMsg(u, Theme.info .. "/p <Сообщение> - отправить сообщение в чат.")
+	Party.SystemMsg(u, Theme.sel .. "/p <Сообщение> " .. Theme.info .. "- отправить сообщение в чат.")
 end
 
 function Party.CheckCmd(user, cmdtext)
