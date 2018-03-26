@@ -236,7 +236,7 @@ function Party.GetAllMembers(user, victim)
 	Party.SystemMsg( user, Theme.info .. "Игроки в шайке: ")
 
 	for k,v in pairs(mems) do
-		if not v == leader then
+		if tostring(v) ~= tostring(leader) then
 			Party.SystemMsg( user, Theme.info .. k .. ": " .. Theme.sel .. tostring(v))
 		else
 			Party.SystemMsg( user, Theme.info .. k .. ": " .. Theme.sel .. tostring(v) .. ' - Лидер')
