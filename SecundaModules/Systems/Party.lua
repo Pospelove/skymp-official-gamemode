@@ -65,7 +65,7 @@ Party.cmds['no']['func'] = function(user, victim, act)
 	Party.Confirmation(user, act) end
 Party.cmds['no']['customcheck'] = function(user, victim)
 	return true	end
-Party.cmds['no']['description'] = 'Принять приглашение.'
+Party.cmds['no']['description'] = 'Отказаться от приглашения.'
 Party.cmds['no']['format'] = ""
 Party.cmds['no']['adm'] = false
 
