@@ -238,9 +238,9 @@ function Party.GetAllMembers(user, victim)
 
 	for k,v in pairs(mems) do
 		if tostring(v) ~= tostring(leader) then
-			dialogMessage = dialogMessage .. k .. ": " .. tostring(v)
+			dialogMessage = dialogMessage .. k .. ": " .. tostring(v) .. "\n"
 		else
-			dialogMessage = dialogMessage .. k .. ": " .. tostring(v) .. " *"
+			dialogMessage = dialogMessage .. k .. ": " .. tostring(v) .. " *" .. "\n"
 		end
 	end
 
