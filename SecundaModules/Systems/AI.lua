@@ -59,4 +59,9 @@ function AI.OnPlayerStreamInPlayer(pl, target)
   return true
 end
 
+function AI.OnPlayerUpdate(pl)
+  UpdateCombat(pl)
+  return true
+end
+
 return AI
