@@ -8,7 +8,7 @@ function User.Docs()
   User.GetUsersMap() -- Get map-like table of users, faster than GetAllUsers() (example: user = User.GetUsersMap()["Pospelov"])
 
   -- Methods:
-  tostring(user) -- Convert user to "<name>[<id>]" string (example: Pospelov[0])
+  tostring(user) -- same to 'user:GetName()'
   user:Load() -- Load account
   user:Save() -- Save account
   user:CheckAuth(callback) -- Async check if user is logged. Calls callback(true) if is logged or callback(false) if not
@@ -66,7 +66,7 @@ function User.GetUsersMap()
 end
 
 function User:__tostring()
-  return self:GetName() .. "[" .. self:GetID() .. "]"
+  return self:GetName() 
 end
 
 function User:Load()
