@@ -25,7 +25,7 @@ function Chat.OnUserChatMessage(user, text)
 					local hexStr = string.format("%02x", math.floor((1 - d) * 256))
 					if hexStr == "100" then hexStr = "FF" end
 					local colorStr = "#" .. hexStr .. hexStr .. hexStr
-					u:SendChatMessage(colorStr .. user:GetName() .. "[" .. user:GetID() .. "]: " .. text)
+					u:SendChatMessage(colorStr .. tostring(user) .. " " .. text)
 				end
 			end
 		end
