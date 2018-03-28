@@ -26,14 +26,30 @@ function AnimList.OnUserDialogResponse(user, dialogID, inputText, listItem)
 		if listItem == 7 then
 			inputText = "IdleSearchingChest"
 		end
-		if inputText and string.len(inputText) > 0 then
-      print("play animation " .. inputText .. " for " .. tostring(user))
+		if inputText ~= "" and inputText ~= nil then
+			user:SetTempVar("bAnimStarted", true)
+			user:ForceThirdPerson()
 			for i = 0, 2 do
 				user.pl:SendAnimationEvent(inputText)
 			end
 		end
 	end
   return true
+end
+
+function AnimList.OnEvery1000ms(user)
+	-- Fix of FirstPerson movement in anim
+	if user:GetTempVar("bAnimStarted") and user:IsFirstPerson() then
+		user:SetTempVar("bAnimStarted", false)
+		user:ForceThirdPerson()
+		SetTimer(350, function()
+			user:SendAnimationEvent("jumpfall")
+			SetTimer(100, function()
+				user:SendAnimationEvent("jumpland")
+			end)
+		end)
+	end
+	return true
 end
 
 function AnimList.OnUserChatCommand(user, cmdtext)

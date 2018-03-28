@@ -4,7 +4,7 @@ function User.Docs()
   return [[
   -- Static methods:
   User.Lookup(key) -- Lookup user by key (ID or Name)
-  User.GetAllUsers() -- Get list of users
+  User.GetAllUsers() -- Get list of users (very fat)
   User.GetUsersMap() -- Get map-like table of users, faster than GetAllUsers() (example: user = User.GetUsersMap()["Pospelov"])
 
   -- Methods:
@@ -16,6 +16,10 @@ function User.Docs()
   user:SetAccountVar(varName, newValue, forceChanges) -- Change account var value. It's OK to use in OnUserLoad
   user:ShowRaceMenu() -- Show the character editor
   user:UnequipAll() -- Unequip all items
+  user:SetTempVar(varName, newValue) --
+  user:GetTempVar(varName) --
+  user:ForceFirstPerson() --
+  user:ForceThirdPerson() --
 
   -- Callbacks:
   OnUserLoad(user) -- Called from user:Load() when loading account
@@ -35,6 +39,7 @@ function User.Docs()
   OnUserCraftItem(user, itemType, count) --
   OnUserBowShot(user, power) --
   OnUserUseItem(user, itemType) --  Called on item eat or use
+  OnUserTempVarAssign(user, varName, oldValue, newValue) -- Called when you use SetTempVar()
   ]]
 end
 
@@ -145,6 +150,24 @@ function User:UnequipAll()
     local itemType = self.pl:GetItemTypeInSlot(i)
     for handID = -1, 1 do self.pl:UnequipItem(itemType, handID) end
   end
+end
+
+function User:SetTempVar(varName, newVal)
+  local oldVal = self.tempVars[varName]
+  self.tempVars[varName] = newVal
+  Secunda.OnUserTempVarAssign(self, varName, oldVal, newVal)
+end
+
+function User:GetTempVar(varName)
+  return self.tempVars[varName]
+end
+
+function User:ForceFirstPerson()
+  self.pl:ExecuteCommand("cdscript", "Game.ForceFirstPerson()")
+end
+
+function User:ForceThirdPerson()
+  self.pl:ExecuteCommand("cdscript", "Game.ForceThirdPerson()")
 end
 
 function User:AddTask(f)
@@ -515,6 +538,7 @@ function User:_init(pl)
   self.perksMap = {}
   self.tasksOnSpawn = {}
   self.learnedEffects = {}
+  self.tempVars = {}
 end
 
 function User:__index(key)
