@@ -60,12 +60,13 @@ function NPC.IsFileNameInUse(fileName)
   return false
 end
 
+-- TODO: fix this function
 function NPC.Lookup(id)
   local pl = Player.LookupByID(id)
   if pl ~= nil then
     for i = 1, #gNpcs do
       local npc = gNpcs[i]
-      if npc ~= nil and npc.pl ~= nil and npc.pl:GetID() == id then
+      if npc ~= nil and npc.pl ~= nil and npc.pl:GetID() == id then -- attempt to index field 'pl' (function value)
         return npc
       end
     end

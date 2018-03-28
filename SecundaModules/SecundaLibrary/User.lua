@@ -66,7 +66,7 @@ function User.GetUsersMap()
 end
 
 function User:__tostring()
-  return self:GetName() 
+  return self:GetName()
 end
 
 function User:Load()
@@ -773,19 +773,25 @@ function User.OnPlayerHitObject(pl, object, weap, ammo, spell)
 end
 
 function User.OnPlayerHitPlayer(pl, target, weap, ammo, spell)
-  if pl:IsNPC() == false then
-    local user = User.Lookup(pl:GetName())
-    local targetUser = User.Lookup(target:GetName())
-    if targetUser ~= nil then
-      return Secunda.OnHit(user, targetUser, weap, ammo, spell)
-    else
-      local npc = NPC.Lookup(target:GetID())
-      if npc ~= nil then
+  local success, errorText = pcall(function()
+    if pl:IsNPC() == false then
+      local user = User.Lookup(pl:GetName())
+      local targetUser = User.Lookup(target:GetName())
+      if targetUser ~= nil then
+        return Secunda.OnHit(user, targetUser, weap, ammo, spell)
+      else
+        local npc = NPC.Lookup(target:GetID())
+        if npc ~= nil then
           return Secunda.OnHit(user, npc, weap, ammo, spell)
+        end
       end
     end
+  end)
+  if not success then
+    print(errorText)
   end
   return true
+
 end
 
 function User.OnPlayerActivateObject(pl, object)
@@ -915,7 +921,7 @@ function User.RunTests()
       error("test failed - Unable to create user")
     end
 
-    local userStr = user:GetName() .. "[" .. user:GetID() .. "]"
+    local userStr = user:GetName()
     if tostring(user) ~= userStr then
       error("test failed - Operator tostring failed (" .. tostring(tostring(user)) .. " ~= "  .. userStr .. ")")
     end
