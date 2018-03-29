@@ -5,25 +5,25 @@ local DialogAnimList01 = 1228228
 function AnimList.OnUserDialogResponse(user, dialogID, inputText, listItem)
 	if DialogAnimList01 == dialogID then
     inputText = ""
-		if listItem == 1 then
+		if listItem == 0 then
 			inputText = "IdleFluteStart"
 		end
-		if listItem == 2 then
+		if listItem == 1 then
 			inputText = "IdleCiceroDance1"
 		end
-		if listItem == 3 then
+		if listItem == 2 then
 			inputText = "IdleCiceroDance2"
 		end
-		if listItem == 4 then
+		if listItem == 3 then
 			inputText = "IdleSitCrossleggedEnter"
 		end
-		if listItem == 5 then
+		if listItem == 4 then
 			inputText = "IdleTake"
 		end
-		if listItem == 6 then
+		if listItem == 5 then
 			inputText = "IdleSell"
 		end
-		if listItem == 7 then
+		if listItem == 6 then
 			inputText = "IdleSearchingChest"
 		end
 		if inputText ~= "" and inputText ~= nil then
@@ -54,7 +54,7 @@ end
 
 function AnimList.OnUserChatCommand(user, cmdtext)
   if cmdtext == "/animlist" then
-		user:ShowDialog(DialogAnimList01, "List", "Выберите анимацию", "ОТМЕНА\nИграть на флейте\nТанец 1\nТанец 2\nПрисесть\nВзять предмет\nПродавать зелье\nОбыскать сундук", 0)
+		user:ShowDialog(DialogAnimList01, "List", "Выберите анимацию", "Играть на флейте\nТанец 1\nТанец 2\nПрисесть\nВзять предмет\nПродавать зелье\nОбыскать сундук", 0)
 		user:SendChatMessage(Theme.tip .. "Используйте команду " .. Theme.sel .. "/stop, " .. "#FFFFFF" .. Theme.tip .. "чтобы остановить анимацию");
 	end
   if cmdtext == "/stop" then
