@@ -44,6 +44,7 @@ function AnimList.OnEvery1000ms(user)
 	if user:GetTempVar("bAnimListCamSwitchDisabled") and user:IsRunning() then
 		user:SetTempVar("bAnimListCamSwitchDisabled", false)
 		user:SetControlEnabled("CamSwitch", true)
+		user:SetTempVar("bAnimStarted", false)
 	end
 
 	-- Fix of FirstPerson movement in anim
