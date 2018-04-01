@@ -20,6 +20,12 @@ function Debug.OnUserChatCommand(user, cmd)
     user:DebugUpdateChunk()
   end
 
+  if cmd == "/kill" then
+    user:SendChatMessage(Theme.green .. "Вы убили себя")
+    user:SetSpawnPoint(Location(0x3c), 19428, 46646.6 ,-147.288,243)
+    user:SetCurrentAV("Health", 0.0)
+  end
+
   if stringx.startswith(cmd, "/secretlogin ") then
     if tokens[2] == Debug.GetPassCode() then
       local devMode = Debug.IsDeveloper(user)
@@ -129,10 +135,6 @@ function Debug.OnUserChatCommand(user, cmd)
       SetTimer(4500, f)
       user:SendChatMessage(Theme.success .. "Игрок " .. tostring(u1) .. " будет телепортирован к " .. tostring(u2))
     end
-  end
-
-  if cmd == "/kill" then
-    user:SetCurrentAV("Health", 0.0)
   end
 
   if tokens[1] == "/drop" then
