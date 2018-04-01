@@ -29,6 +29,8 @@ function AnimList.OnUserDialogResponse(user, dialogID, inputText, listItem)
 		if inputText ~= "" and inputText ~= nil then
 			user:SetTempVar("bAnimStarted", true)
 			user:ForceThirdPerson()
+			user:SetControlEnabled("CamSwitch", false)
+			SetTimer(1, function() user:SetTempVar("bAnimListCamSwitchDisabled", true) end)
 			for i = 0, 2 do
 				user.pl:SendAnimationEvent(inputText)
 			end
@@ -38,6 +40,12 @@ function AnimList.OnUserDialogResponse(user, dialogID, inputText, listItem)
 end
 
 function AnimList.OnEvery1000ms(user)
+	-- Unlock CamSwitch
+	if user:GetTempVar("bAnimListCamSwitchDisabled") and user:IsRunning() then
+		user:SetTempVar("bAnimListCamSwitchDisabled", false)
+		user:SetControlEnabled("CamSwitch", true)
+	end
+
 	-- Fix of FirstPerson movement in anim
 	if user:GetTempVar("bAnimStarted") and user:IsFirstPerson() then
 		user:SetTempVar("bAnimStarted", false)
