@@ -21,7 +21,7 @@ function Debug.OnUserChatCommand(user, cmd)
   end
 
   if cmd == "/kill" then
-    user:SendChatMessage(Theme.green .. "Вы убили себя")
+    user:SendChatMessage(Theme.success .. "Вы убили себя")
     user:SetSpawnPoint(Location(0x3c), 19428, 46646.6 ,-147.288,243)
     user:SetCurrentAV("Health", 0.0)
   end
