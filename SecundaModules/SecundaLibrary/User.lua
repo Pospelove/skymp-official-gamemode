@@ -797,25 +797,19 @@ function User.OnPlayerHitObject(pl, object, weap, ammo, spell)
 end
 
 function User.OnPlayerHitPlayer(pl, target, weap, ammo, spell)
-  local success, errorText = pcall(function()
-    if pl:IsNPC() == false then
-      local user = User.Lookup(pl:GetName())
-      local targetUser = User.Lookup(target:GetName())
-      if targetUser ~= nil then
-        return Secunda.OnHit(user, targetUser, weap, ammo, spell)
-      else
-        local npc = NPC.Lookup(target:GetID())
-        if npc ~= nil then
-          return Secunda.OnHit(user, npc, weap, ammo, spell)
-        end
+  if pl:IsNPC() == false then
+    local user = User.Lookup(pl:GetName())
+    local targetUser = User.Lookup(target:GetName())
+    if targetUser ~= nil then
+      return Secunda.OnHit(user, targetUser, weap, ammo, spell)
+    else
+      local npc = NPC.Lookup(target:GetID())
+      if npc ~= nil then
+        return Secunda.OnHit(user, npc, weap, ammo, spell)
       end
     end
-  end)
-  if not success then
-    print(errorText)
   end
   return true
-
 end
 
 function User.OnPlayerActivateObject(pl, object)
