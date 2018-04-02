@@ -22,10 +22,10 @@ function Anticheat.OnPlayerHitPlayer(pl, target, weap, ammo, spell)
     if clock - gLastPlayerHit[playerid] > 100 then
       gLastPlayerHit[playerid] = clock
     else
-      OnDetect(pl, 0x01)
+      --OnDetect(pl, 0x01)-- bad calls
     end
   end
-
+  return true
 end
 
 return Anticheat
