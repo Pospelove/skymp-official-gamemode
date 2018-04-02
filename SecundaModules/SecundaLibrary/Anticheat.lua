@@ -2,9 +2,16 @@ Anticheat = {}
 
 local gLastPlayerHit = {}
 
+local isTest = true
+
+
 local function OnDetect(pl, acCode)
-  pl:SendChatMessage(Theme.error .. "¬ы были кикнуты по подозрению в читерстве (", acCode, ")")
-  SetTimer(500, function() pl:Kick() end)
+  if isTest then
+    pl:SendChatMessage(Theme.error .. "Error " .. acCode)
+  else
+    pl:SendChatMessage(Theme.error .. "¬ы были кикнуты по подозрению в читерстве (", acCode, ")")
+    SetTimer(500, function() pl:Kick() end)
+  end
 end
 
 function Anticheat.OnPlayerHitPlayer(pl, target, weap, ammo, spell)
@@ -22,3 +29,5 @@ function Anticheat.OnPlayerHitPlayer(pl, target, weap, ammo, spell)
 end
 
 return Anticheat
+
+----------------------------------------------------------------------------------------------
