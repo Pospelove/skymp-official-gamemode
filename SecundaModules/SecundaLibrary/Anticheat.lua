@@ -11,6 +11,7 @@ function Anticheat.OnPlayerHitPlayer(pl, target, weap, ammo, spell)
   local playerid = pl:GetID()
   local clock = GetTickCount()
   if not spell then
+    if gLastPlayerHit[playerid] == nil then gLastPlayerHit[playerid] = 0 end
     if clock - gLastPlayerHit[playerid] > 100 then
       gLastPlayerHit[playerid] = clock
     else
