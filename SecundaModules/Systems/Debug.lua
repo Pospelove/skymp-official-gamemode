@@ -360,6 +360,16 @@ function Debug.OnUserChatCommand(user, cmd)
     Terminate()
   end
 
+  if tokens[1] == "/overloadmult" then
+    local mult = tonumber(tokens[2])
+    if mult == nil then
+      user:SendChatMessage(Theme.error .. "Вы не ввели число")
+    else
+      SetOverloadMult(mult)
+      user:SendChatMessage(Theme.info .. "Мультипликатор перегрузки теперь равен " .. Theme.sel .. mult)
+    end
+  end
+
   if tokens[1] == "/overdose" and tokens[2] == "npc" then
     if tonumber(tokens[3]) == nil then
       user:SendChatMessage(Theme.error .. "Некорректное количество")
