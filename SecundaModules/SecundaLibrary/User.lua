@@ -713,6 +713,16 @@ local function Every1000ms(id)
   local user = User.Lookup(id)
   if user ~= nil then
     Secunda.OnEvery1000ms(user)
+
+    if user.pl:IsSpawned() then
+      if #user.tasksOnSpawn > 0 then
+        for i = 1, #user.tasksOnSpawn do
+          user.tasksOnSpawn[i]()
+        end
+        user.tasksOnSpawn = {}
+      end
+    end
+
   end
   SetTimer(1000, function() Every1000ms(id) end)
 end
@@ -872,19 +882,7 @@ function User.OnPlayerUseItem(pl, itemType)
 end
 
 function User.OnPlayerUpdate(pl)
-  local emptyFunc = function() end
-  if pl:IsNPC() == false then
-    local user = User.Lookup(pl:GetID())
-    if pl:IsSpawned() then
-      --Secunda.OnUserUpdate(user)
-      if #user.tasksOnSpawn > 0 then
-        for i = 1, #user.tasksOnSpawn do
-          user.tasksOnSpawn[i]()
-        end
-        user.tasksOnSpawn = {}
-      end
-    end
-  end
+  return true
 end
 
 function User.OnPlayerBowShot(pl, power)
