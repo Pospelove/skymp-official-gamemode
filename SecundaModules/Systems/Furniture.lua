@@ -64,7 +64,7 @@ function Furniture.OnUserConnect(user)
 	onBed[user:GetID()] = nil
 end
 
-function FurnOnUserUpdate(user)
+local function FurnOnUserUpdate(user)
 	if onBed[user:GetID()] then
 		user:SetBaseAV("StaminaRateMult", 0)
 		user:SetCurrentAV("Stamina", 0)
@@ -224,7 +224,7 @@ function Furniture.OnActivate(source, target)
 end
 
 function Furniture.OnPlayerActivateObjet(pl, obj)
-	SetTimer(10, function() Furniture.UpdatePlayer(pl) end)
+	SetTimer(30, function() Furniture.UpdatePlayer(pl) end)
 	return true
 end
 
@@ -236,6 +236,8 @@ end
 function Furniture.UpdatePlayer(pl)
 	local user = User.Lookup(pl:GetID())
 	if not user then return true end
+
+	FurnOnUserUpdate(user)
 
 	local name = user:GetName()
 	if user:GetCurrentFurniture() == nil then
