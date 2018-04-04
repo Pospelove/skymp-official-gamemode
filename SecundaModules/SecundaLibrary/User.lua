@@ -881,10 +881,6 @@ function User.OnPlayerUseItem(pl, itemType)
   return true
 end
 
-function User.OnPlayerUpdate(pl)
-  return true
-end
-
 function User.OnPlayerBowShot(pl, power)
   if pl:IsNPC() == false then
     local user = User.Lookup(pl:GetName())
