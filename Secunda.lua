@@ -147,7 +147,10 @@ function Secunda.Hook()
 		"OnPlayerChangeContainer",
 		"OnPlayerCreateItem",
 		"OnPlayerUseItem",
-		"OnPlayerHostPlayer"
+		"OnPlayerHostPlayer",
+		"OnPlayerJump",
+		"OnPlayerFall",
+		"OnPlayerOnTheGround"
 	}
 	for i = 1, #tStandard do
 		_G[tStandard[i]] = Secunda[tStandard[i]]
