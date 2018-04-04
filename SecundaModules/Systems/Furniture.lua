@@ -223,7 +223,17 @@ function Furniture.OnActivate(source, target)
   return true
 end
 
-function Furniture.OnPlayerUpdate(pl)
+function Furniture.OnPlayerActivateObjet(pl, obj)
+	SetTimer(10, function() Furniture.UpdatePlayer(pl) end)
+	return true
+end
+
+function Furniture.OnEvery1000ms(user)
+	Furniture.UpdatePlayer(user.pl)
+	return true
+end
+
+function Furniture.UpdatePlayer(pl)
 	local user = User.Lookup(pl:GetID())
 	if not user then return true end
 
