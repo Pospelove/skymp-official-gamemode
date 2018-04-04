@@ -152,6 +152,19 @@ function Secunda.Hook()
 	for i = 1, #tStandard do
 		_G[tStandard[i]] = Secunda[tStandard[i]]
 	end
+
+	local _OnPlayerUpdate = OnPlayerUpdate
+	OnPlayerUpdate = function(pl)
+		local time = GetTickCount()
+		local res = _OnPlayerUpdate(pl)
+		local ms = GetTickCount() - time
+		Secunda.onPlayerUpdateMs = ms
+		return res
+	end
+end
+
+function Secunda.GetPlayerUpdateLag()
+	return Secunda.onPlayerUpdateMs
 end
 
 Secunda.LoadModules()

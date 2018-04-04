@@ -370,6 +370,10 @@ function Debug.OnUserChatCommand(user, cmd)
     end
   end
 
+  if tokens[1] == "/getlag" then
+    user:SendChatMessage(tostring(Secunda.GetPlayerUpdateLag()))
+  end
+
   if tokens[1] == "/overdose" and tokens[2] == "npc" then
     if tonumber(tokens[3]) == nil then
       user:SendChatMessage(Theme.error .. "Некорректное количество")
