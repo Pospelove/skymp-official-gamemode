@@ -24,7 +24,7 @@ function FirstSpawn.OnUserLoad(user)
     local wo = GetRandomSpawnPointWObject()
     spawnPoint[1] = wo:GetValue("x") + math.random(-128, 128)
     spawnPoint[2] = wo:GetValue("y") + math.random(-128, 128)
-    spawnPoint[3] = wo:GetValue("z") + 256
+    spawnPoint[3] = wo:GetValue("z")
     spawnPoint[4] = math.random(0, 359)
     spawnPoint[5] = 0x0000003C
 
