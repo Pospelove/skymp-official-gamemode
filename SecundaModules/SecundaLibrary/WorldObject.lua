@@ -133,7 +133,7 @@ function WorldObject.DeleteAll() -- Soft
 end
 
 function WorldObject:IsBlacksmithForge()
-  return self.data.baseID == 0x000D932F
+  return self.data.baseID == 0x000D932F or self.data.baseID == 0x000BBCF1 or self.data.baseID == 0x000BF9E1
 end
 
 function WorldObject:IsAlchemy()
