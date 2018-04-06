@@ -1,5 +1,8 @@
 ChatTheme = {
-  party = Colors.Get("LimeGreen")
+	party = Colors.Get("LimeGreen"),
+	shout = Colors.Get("White"),
+	ooc = Colors.Get("White"),
+	whisper = Colors.Get("RebeccaPurple")
 }
 
 
