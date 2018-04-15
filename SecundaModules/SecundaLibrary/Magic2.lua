@@ -99,13 +99,4 @@ function Magic2.TestPerfomance()
   print("Magic.LookupByIdentifier() = " .. FormatTime(clock, numCalls))
 end
 
-function ItemTypes.Require()
-  Effects.Require()
-  Magic2.Require()
-  if not ItemTypes.inited then
-    ItemTypes.Init()
-    ItemTypes.inited = true
-  end
-end
-
 return Magic2
