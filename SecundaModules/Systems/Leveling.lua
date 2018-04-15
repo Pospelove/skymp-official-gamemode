@@ -28,10 +28,14 @@ local function FixExp(user)
   SetTimer(1, function() user:SetBaseAV("experience", experience) end)
 end
 
+local function sqr(a)
+    return a * a
+end
+
 local function GetPointsForSkillLevel(skillLevel, skillName)
   local mult = koef[skillName][1]
   local mod = koef[skillName][2]
-  return mult * math.pow(skillLevel, 2) + mod
+  return mult * sqr(skillLevel) + mod
 end
 
 local function AddSkillPoints(user, skillName, n)
